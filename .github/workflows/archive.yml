@@ -1,0 +1,33 @@
+name: Archive sources
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/incidents/**'
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Save new sources to Internet Archive
+        run: npm run archive
+
+      - name: Commit updated archive_url fields
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: update archive URLs [skip ci]'
+          file_pattern: 'content/incidents/*.md'

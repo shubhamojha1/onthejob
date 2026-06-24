@@ -1,0 +1,420 @@
+[
+  {
+    "id": "cloudflare-2022-backbone",
+    "company": "Cloudflare",
+    "title": "A backbone change crushed 19 data centers",
+    "year": 2022,
+    "date": "2022-06-21",
+    "duration": "~1.5h",
+    "classes": [
+      "config-change",
+      "bad-deploy"
+    ],
+    "patterns": [
+      "routing-change",
+      "no-staged-rollout"
+    ],
+    "impact": "19 of Cloudflare's busiest data centers dropped offline at once, hitting a large share of global traffic.",
+    "trigger": "A routing-policy change made during a long-running project to increase backbone resilience.",
+    "mechanism": "An incorrect change to how traffic was routed withdrew routes and concentrated load, taking the busiest sites down together — ironically, during resilience work.",
+    "lesson": "Network and routing changes deserve the same staged rollout and review as application code. The \"resilience project\" is itself a risk window.",
+    "interview": "Change management for network config; why infra changes need canaries too.",
+    "source": "https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/",
+    "sourceLabel": "Cloudflare blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": true
+  },
+  {
+    "id": "aws-2021-autoscale",
+    "company": "AWS",
+    "title": "The autoscaler that fought the network",
+    "year": 2021,
+    "date": "2021-12-07",
+    "duration": "~5h",
+    "classes": [
+      "automation-misfire",
+      "cascade"
+    ],
+    "patterns": [
+      "feedback-loop",
+      "retry-storm",
+      "monitoring-shared-fate"
+    ],
+    "impact": "A major us-east-1 disruption affecting a long list of AWS services and the customers built on them.",
+    "trigger": "Automated scaling activity on the main AWS network provoked unexpected behavior from a large number of internal clients.",
+    "mechanism": "A surge of connection activity overwhelmed networking devices between the internal and main networks. Retries plus the impaired network created a congestion-collapse feedback loop — and monitoring rode the same impaired path, blinding responders.",
+    "lesson": "Feedback loops between automated clients and the network they depend on cause congestion collapse. Monitoring must not share fate with the thing it monitors.",
+    "interview": "Congestion collapse, backoff/jitter on retries, and observability that survives the outage it's reporting on.",
+    "source": "https://aws.amazon.com/message/12721/",
+    "sourceLabel": "AWS post-event summary",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "fastly-2021-config",
+    "company": "Fastly",
+    "title": "One customer's config, the whole CDN down",
+    "year": 2021,
+    "date": "2021-06-08",
+    "duration": "~1h",
+    "classes": [
+      "config-change",
+      "bad-deploy"
+    ],
+    "patterns": [
+      "latent-bug",
+      "customer-triggered",
+      "global-blast-radius"
+    ],
+    "impact": "85% of Fastly's network returned errors within a minute — gov.uk, Reddit, Amazon and major news sites went down together.",
+    "trigger": "A valid customer configuration change tripped a latent bug that had been introduced in an earlier software deployment.",
+    "mechanism": "The dormant bug only woke when a particular, entirely legitimate customer setting hit it — at which point most of the global network began failing simultaneously.",
+    "lesson": "A latent bug can sit quiet until ordinary input you don't control wakes it. That input is part of your test matrix.",
+    "interview": "Talk about latent bugs surfaced by input, and why you fuzz/replay real customer configs in staging.",
+    "source": "https://www.fastly.com/blog/summary-of-june-8-outage",
+    "sourceLabel": "Fastly blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "meta-2021-bgp",
+    "company": "Meta",
+    "title": "The day Facebook deleted itself from the internet",
+    "year": 2021,
+    "date": "2021-10-04",
+    "duration": "~6h",
+    "classes": [
+      "dns-bgp",
+      "dependency"
+    ],
+    "patterns": [
+      "bgp-withdrawal",
+      "circular-dependency",
+      "internal-tools-down"
+    ],
+    "impact": "Facebook, Instagram, WhatsApp gone globally for ~6 hours. Internal tools, badge access and conference systems were down too, slowing recovery.",
+    "trigger": "A routine backbone-maintenance command, meant to assess capacity, accidentally severed all backbone connections between data centers.",
+    "mechanism": "Meta's DNS servers withdrew their BGP routes when they lost backbone reachability — a designed safety reflex. With DNS unreachable, every property vanished, and the very tools needed to fix it were on the network that was down.",
+    "lesson": "A safety mechanism reacting to a bigger failure can amplify it. Watch for circular dependencies where the tools to fix an outage are taken out by it.",
+    "interview": "Discuss BGP/DNS as a hard dependency and the danger of recovery tooling sharing fate with production.",
+    "source": "https://engineering.fb.com/2021/10/04/networking-traffic/outage/",
+    "sourceLabel": "Engineering at Meta",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "roblox-2021-consul",
+    "company": "Roblox",
+    "title": "73 hours down via one coordination layer",
+    "year": 2021,
+    "date": "2021-10-28",
+    "duration": "73h",
+    "classes": [
+      "resource-exhaustion",
+      "cascade"
+    ],
+    "patterns": [
+      "single-point-of-failure",
+      "contention",
+      "recovery-blocked"
+    ],
+    "impact": "A near three-day full platform outage over Halloween weekend.",
+    "trigger": "A new streaming feature on the HashiCorp Consul cluster, combined with an unusual load pattern, triggered heavy contention in Consul's write path.",
+    "mechanism": "Consul underpinned service discovery and health for everything. Under contention its performance collapsed; a separate Consul bug then blocked recovery. Because so many services depended on it, the whole platform stayed down for days.",
+    "lesson": "When one coordination layer underpins everything, its failure is total. Know the failure modes of your service-discovery/consensus substrate before you scale onto it.",
+    "interview": "Single-points-of-failure in the control plane; why service discovery deserves its own blast-radius analysis.",
+    "source": "https://blog.roblox.com/2022/01/roblox-return-to-service-10-28-10-31-2021/",
+    "sourceLabel": "Roblox blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "slack-2021-herd",
+    "company": "Slack",
+    "title": "The first-Monday thundering herd",
+    "year": 2021,
+    "date": "2021-01-04",
+    "duration": "~5h",
+    "classes": [
+      "thundering-herd",
+      "cascade"
+    ],
+    "patterns": [
+      "retry-amplification",
+      "health-check-flapping",
+      "slow-autoscaling"
+    ],
+    "impact": "Widespread connection failures on the first work-Monday of the year, exactly when everyone logged on at once.",
+    "trigger": "A return-from-holiday traffic spike hit while Slack's AWS Transit Gateways were still scaling up.",
+    "mechanism": "Network saturation caused packet loss; that tripped health checks, which pulled servers from rotation, concentrating load on fewer machines — a downward spiral. Autoscaling lagged partly because the provisioning service itself was starved.",
+    "lesson": "Demand can outrun autoscaling. Pre-scale for known surges and make health checks resilient to transient loss so they don't amplify the failure.",
+    "interview": "Health-check design under load, pre-warming for predictable spikes, and avoiding retry amplification.",
+    "source": "https://slack.engineering/slacks-outage-on-january-4th-2021/",
+    "sourceLabel": "Slack Engineering",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "discord-redis-failover",
+    "company": "Discord",
+    "title": "A cloud live-migration tipped over Redis",
+    "year": 2020,
+    "date": "2020-01-01",
+    "duration": "~20 min restart",
+    "classes": [
+      "cascade",
+      "automation-misfire"
+    ],
+    "patterns": [
+      "provider-automation",
+      "failover-bug",
+      "cascade"
+    ],
+    "impact": "A real-time outage that forced a full service restart, reconnecting millions of clients over ~20 minutes.",
+    "trigger": "Google Cloud automatically live-migrated the VM hosting Discord's primary Redis node.",
+    "mechanism": "The node briefly dropped offline; the HA cluster rebalanced and hit known bugs in Discord's Redis-failover handling. The partial outage exposed latent issues elsewhere, cascading through the real-time system until a full restart was required.",
+    "lesson": "Your cloud provider's routine automation — like live migration — is an event your failover code must survive. Test failover against real triggers, not just clean kills.",
+    "interview": "Failover correctness under provider-initiated events; chaos-testing the real failure triggers.",
+    "source": "https://status.discordapp.com/incidents/qk9cdgnqnhcn",
+    "sourceLabel": "Discord status",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "cloudflare-2019-regex",
+    "company": "Cloudflare",
+    "title": "The regex that ate every CPU",
+    "year": 2019,
+    "date": "2019-07-02",
+    "duration": "27 min",
+    "classes": [
+      "config-change",
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "no-staged-rollout",
+      "removed-safeguard",
+      "global-blast-radius"
+    ],
+    "impact": "Global 502s across ~10% of the web — Discord, Shopify, and Cloudflare's own dashboard went dark.",
+    "trigger": "A new WAF managed rule for XSS detection was pushed to every edge server worldwide in a single deploy.",
+    "mechanism": "The rule contained a regex with catastrophic backtracking. On every HTTP request it drove CPU to 100% across all edge cores at once. A CPU guard that would have caught it had been removed in an earlier refactor.",
+    "lesson": "Config changes need the same staged rollout as code. \"It's just a rule\" is how a global outage starts.",
+    "interview": "When asked about safe deploys, cite canary rollouts plus automatic CPU/latency circuit breakers on rule engines.",
+    "source": "https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/",
+    "sourceLabel": "Cloudflare blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": true
+  },
+  {
+    "id": "allegro-2018-scaling",
+    "company": "Allegro",
+    "title": "A marketing campaign DDoSed itself",
+    "year": 2018,
+    "date": "2018-08-01",
+    "duration": "hours",
+    "classes": [
+      "config-change",
+      "thundering-herd"
+    ],
+    "patterns": [
+      "scaling-misconfig",
+      "known-traffic-event"
+    ],
+    "impact": "Poland's largest e-commerce site went down at the moment a campaign was driving peak traffic.",
+    "trigger": "A marketing push caused a sudden traffic spike.",
+    "mechanism": "A misconfiguration in cluster resource management stopped new service instances from starting — so even with free hardware available, the platform couldn't scale to meet demand and fell over.",
+    "lesson": "Capacity you can't actually schedule isn't capacity. Test that autoscaling can really claim idle resources under real load.",
+    "interview": "Capacity planning for known traffic events; verifying the scheduler can place instances under pressure.",
+    "source": "https://allegro.tech/2018/08/postmortem-why-allegro-went-down.html",
+    "sourceLabel": "allegro.tech",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": true
+  },
+  {
+    "id": "github-2018-splitbrain",
+    "company": "GitHub",
+    "title": "43 seconds that cost 24 hours",
+    "year": 2018,
+    "date": "2018-10-21",
+    "duration": "24h 11m",
+    "classes": [
+      "split-brain",
+      "automation-misfire"
+    ],
+    "patterns": [
+      "automated-failover",
+      "cross-region",
+      "async-replication"
+    ],
+    "impact": "A day of stale, read-only metadata; webhooks and Pages builds frozen; manual write reconciliation afterward.",
+    "trigger": "A 43-second network partition between the US-East hub and the primary data center during optical-equipment maintenance.",
+    "mechanism": "Orchestrator (Raft-based MySQL failover) promoted West-Coast primaries. When the link healed, East and West had each accepted writes the other lacked — divergence. Cross-country latency then made the app unusable.",
+    "lesson": "Automated failover that reacts faster than your network heals can manufacture split-brain. Tune failover to application topology, not just node liveness.",
+    "interview": "The canonical CAP-in-practice story: consistency vs availability under partition, plus async-replication data-loss risk.",
+    "source": "https://github.blog/news-insights/company-news/oct21-post-incident-analysis/",
+    "sourceLabel": "The GitHub Blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": true
+  },
+  {
+    "id": "aws-s3-2017-typo",
+    "company": "AWS",
+    "title": "A typo took out us-east-1",
+    "year": 2017,
+    "date": "2017-02-28",
+    "duration": "~4h",
+    "classes": [
+      "config-change",
+      "cascade"
+    ],
+    "patterns": [
+      "operator-error",
+      "slow-restart",
+      "status-page-dependency"
+    ],
+    "impact": "S3 in us-east-1 down for hours; thousands of dependent sites and services degraded — including AWS's own status dashboard.",
+    "trigger": "While debugging a billing-system slowdown, an engineer ran a playbook command with a mistyped parameter, removing far more capacity than intended.",
+    "mechanism": "Two core S3 subsystems (indexing and placement) required a full restart. They hadn't been fully restarted in years and took hours to come back; everything depending on S3 in the region degraded with them.",
+    "lesson": "Tooling should refuse to remove capacity below safe thresholds. And your status page must never depend on the thing that's down.",
+    "interview": "Blast-radius control: guardrails on destructive ops, plus out-of-band status reporting.",
+    "source": "https://aws.amazon.com/message/41926/",
+    "sourceLabel": "AWS post-event summary",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "gitlab-2017-rmrf",
+    "company": "GitLab",
+    "title": "rm -rf on the wrong database",
+    "year": 2017,
+    "date": "2017-01-31",
+    "duration": "~18h + permanent loss",
+    "classes": [
+      "data-loss",
+      "automation-misfire"
+    ],
+    "patterns": [
+      "operator-error",
+      "untested-backups",
+      "manual-step"
+    ],
+    "impact": "~300GB of production database gone; six hours of issues, merge requests and users lost for good.",
+    "trigger": "An engineer fighting spam-induced replication lag ran a directory removal against what turned out to be the primary, not the replica.",
+    "mechanism": "The data vanished in seconds. Then the gut-punch: five of five backup and replication methods were broken or untested. A six-hour-old LVM snapshot, taken by luck, was the only thing that saved most of the data.",
+    "lesson": "Backups you've never restored are not backups. The deletion is the famous part; the broken recovery path is the real lesson.",
+    "interview": "Disaster recovery: define RPO/RTO and, above all, prove your restores actually work.",
+    "source": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/",
+    "sourceLabel": "GitLab blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "circleci-github-recovery",
+    "company": "CircleCI",
+    "title": "When GitHub came back, the queue fell over",
+    "year": 2015,
+    "date": "2015-01-01",
+    "duration": "hours",
+    "classes": [
+      "thundering-herd",
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "recovery-surge",
+      "queue-collapse",
+      "upstream-recovery"
+    ],
+    "impact": "Build throughput collapsed to roughly one transaction per minute; the backlog couldn't drain.",
+    "trigger": "GitHub recovered from its own outage, and all the backed-up webhooks and builds hit CircleCI at once.",
+    "mechanism": "The recovery surge pushed CircleCI's queue subsystem into a pathological slow state. With throughput near zero, the flood of queued work had nowhere to go.",
+    "lesson": "Recovery is a traffic event. The herd that hits you when an upstream comes back can be worse than its going down.",
+    "interview": "Designing for upstream-recovery surges: backpressure, rate limits, and draining strategies.",
+    "source": "https://circleci.statuspage.io/incidents/hr0mm9xmm3x6",
+    "sourceLabel": "CircleCI status",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "chef-2014-healthcheck",
+    "company": "Chef",
+    "title": "Health checks too impatient to live",
+    "year": 2014,
+    "date": "2014-07-10",
+    "duration": "hours",
+    "classes": [
+      "cascade",
+      "thundering-herd"
+    ],
+    "patterns": [
+      "health-check-flapping",
+      "aggressive-timeout"
+    ],
+    "impact": "The Supermarket community site crashed two hours after launch with intermittent unresponsiveness.",
+    "trigger": "Launch-day load caused intermittent latency spikes.",
+    "mechanism": "Health-check timeouts were set so low that a brief latency blip made healthy nodes look dead. They were pulled from rotation, concentrating load on the rest, causing more latency — a self-reinforcing removal spiral.",
+    "lesson": "Aggressive health checks turn a latency blip into an outage. Set timeouts comfortably above your real tail latency.",
+    "interview": "Why health-check thresholds must account for p99 latency, not just the mean.",
+    "source": "https://www.chef.io/blog/2014/07/10/supermarket-intermittent-unresponsiveness-postmortem",
+    "sourceLabel": "Chef blog",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "knight-2012-powerpeg",
+    "company": "Knight Capital",
+    "title": "$440M in 45 minutes",
+    "year": 2012,
+    "date": "2012-08-01",
+    "duration": "45 min",
+    "classes": [
+      "bad-deploy",
+      "automation-misfire"
+    ],
+    "patterns": [
+      "partial-deploy",
+      "reused-flag",
+      "dead-code",
+      "no-kill-switch"
+    ],
+    "impact": "A runaway trading algorithm lost roughly $460M in 45 minutes and effectively ended the firm.",
+    "trigger": "New SEC-mandated code was deployed to 8 servers — but one server didn't get the update. A repurposed feature flag reactivated 8-year-old dead code (\"Power Peg\") on that machine.",
+    "mechanism": "The revived code began firing millions of unintended orders into the market. With no kill switch and ambiguous alerting, it ran unchecked for ~45 minutes before anyone could stop it.",
+    "lesson": "Incomplete deploys are landmines. Don't reuse flags, delete dead code, and keep a tested kill switch for anything that touches money.",
+    "interview": "Deployment safety and idempotency: detect partial rollouts; never let one un-updated node run divergent logic.",
+    "source": "https://www.sec.gov/litigation/admin/2013/34-70694.pdf",
+    "sourceLabel": "SEC order (34-70694)",
+    "source_quote": "",
+    "archive_url": "",
+    "date_added": "2026-06-23",
+    "verified": false
+  }
+]
