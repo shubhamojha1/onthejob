@@ -1,0 +1,16 @@
+{
+  "last_commit_date": {
+    "danluu/post-mortems": "2026-06-25T13:39:11.304Z"
+  },
+  "last_feed_date": {
+    "cloudflare-blog": "2026-06-25T13:00:00.000Z",
+    "slack-engineering": "2026-06-11T14:15:28.000Z",
+    "github-engineering": "2026-05-26T13:39:15.405Z",
+    "netflix-tech-blog": "2026-06-23T00:31:01.000Z",
+    "sre-weekly": "2026-06-22T02:28:00.000Z",
+    "aws-blog": "2026-06-22T22:40:07.000Z"
+  },
+  "last_pr_number": {
+    "danluu/post-mortems": 260
+  }
+}
