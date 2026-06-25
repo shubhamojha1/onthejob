@@ -61,7 +61,7 @@ export interface Candidate {
   discovered_title: string
   source_feed: string
   date_found: string
-  status: 'new'
+  status: 'new' | 'done' | 'rejected'
 }
 
 interface State {

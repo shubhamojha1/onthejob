@@ -13,7 +13,8 @@
     "link-check": "tsx scripts/link-check.ts",
     "archive": "tsx scripts/archive.ts",
     "discover": "tsx scripts/discovery.ts",
-    "queue": "tsx scripts/queue.ts"
+    "queue": "tsx scripts/queue.ts",
+    "ingest": "tsx scripts/ingest.ts"
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.10.9",
@@ -23,6 +24,7 @@
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.106.0",
     "@types/node": "^22.9.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
