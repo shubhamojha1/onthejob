@@ -1,7 +1,10 @@
 #!/usr/bin/env tsx
 /**
  * Print the discovery queue in a readable table.
- * Usage: npm run queue [-- --status new|rejected|done]
+ * Usage:
+ *   npm run queue                       — show all 'new' candidates
+ *   npm run queue -- --status done      — filter by status
+ *   npm run queue -- --pick 8           — print full URL for entry #8
  */
 
 import { existsSync, readFileSync } from 'node:fs'
@@ -18,6 +21,17 @@ if (!existsSync(CANDIDATES)) {
 }
 
 const all: Candidate[] = JSON.parse(readFileSync(CANDIDATES, 'utf-8'))
+
+// --pick <n>: print the full URL for entry #n and exit
+if (process.argv.includes('--pick')) {
+  const n = parseInt(process.argv[process.argv.indexOf('--pick') + 1], 10)
+  const filterStatus = 'new'
+  const items = all.filter(c => c.status === filterStatus)
+  const item = items[n - 1]
+  if (!item) { console.error(`No entry #${n} in the queue.`); process.exit(1) }
+  console.log(item.url)
+  process.exit(0)
+}
 
 const filterStatus = process.argv.includes('--status')
   ? process.argv[process.argv.indexOf('--status') + 1]
