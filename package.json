@@ -14,7 +14,9 @@
     "archive": "tsx scripts/archive.ts",
     "discover": "tsx scripts/discovery.ts",
     "queue": "tsx scripts/queue.ts",
-    "ingest": "tsx scripts/ingest.ts"
+    "ingest": "tsx scripts/ingest.ts",
+    "ingest-prep": "tsx scripts/ingest-prep.ts",
+    "ingest-apply": "tsx scripts/ingest-apply.ts"
   },
   "dependencies": {
     "@tanstack/react-virtual": "^3.10.9",

@@ -8,3 +8,4 @@ src/generated/
 # Editor
 .DS_Store
 *.local
+content/queue/
