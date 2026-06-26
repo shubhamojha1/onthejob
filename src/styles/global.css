@@ -57,6 +57,12 @@
   max-width:1080px; margin:0 auto 34px;
   display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:10px;
 }
+.oj-board-hd{grid-column:1/-1;margin-bottom:14px}
+.oj-board-eyebrow{
+  font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600;
+  letter-spacing:-.01em; color:var(--text); margin:0;
+}
+
 .oj-tile{
   --c:#888; text-align:left; background:var(--panel); border:1px solid var(--line);
   border-radius:10px; padding:14px 14px 15px; cursor:pointer; color:var(--text);

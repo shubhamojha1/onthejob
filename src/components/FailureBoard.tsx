@@ -15,6 +15,9 @@ export function FailureBoard({ incidents, active, onToggle }: Props) {
 
   return (
     <section className="oj-board" aria-label="Filter by failure class">
+      <div className="oj-board-hd">
+        <h2 className="oj-board-eyebrow">Browse by failure class</h2>
+      </div>
       {classes.map(c => {
         const on = active.has(c.key)
         return (
