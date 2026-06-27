@@ -23,10 +23,14 @@ if (!existsSync(CANDIDATES)) {
 const all: Candidate[] = JSON.parse(readFileSync(CANDIDATES, 'utf-8'))
 
 // --pick <n>: print the full URL for entry #n and exit
-if (process.argv.includes('--pick')) {
-  const n = parseInt(process.argv[process.argv.indexOf('--pick') + 1], 10)
-  const filterStatus = 'new'
-  const items = all.filter(c => c.status === filterStatus)
+// npm eats --pick on some platforms, so also detect a bare number argument
+const pickIdx = process.argv.indexOf('--pick')
+const bareNum = process.argv.slice(2).find(a => /^\d+$/.test(a))
+if (pickIdx !== -1 || bareNum) {
+  const n = pickIdx !== -1
+    ? parseInt(process.argv[pickIdx + 1], 10)
+    : parseInt(bareNum!, 10)
+  const items = all.filter(c => c.status === 'new')
   const item = items[n - 1]
   if (!item) { console.error(`No entry #${n} in the queue.`); process.exit(1) }
   console.log(item.url)
