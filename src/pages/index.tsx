@@ -96,6 +96,12 @@ export function Component() {
         <Head>
           <meta charSet="UTF-8" />
           <title>Systems Failed</title>
+          <meta property="og:title" content="Systems Failed — Engineering postmortems by failure class" />
+          <meta property="og:description" content="Pick a way systems break and see who it bit, why it spread, and the transferable lesson." />
+          <meta property="og:image" content="https://systemsfailed.vercel.app/og-image.svg" />
+          <meta property="og:url" content="https://systemsfailed.vercel.app" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:image" content="https://systemsfailed.vercel.app/og-image.svg" />
         </Head>
 
         <Masthead />

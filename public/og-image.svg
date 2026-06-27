@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0C1014"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="210" x2="1200" y2="210" stroke="#1A2230" stroke-width="1"/>
+  <line x1="0" y1="420" x2="1200" y2="420" stroke="#1A2230" stroke-width="1"/>
+  <line x1="400" y1="0" x2="400" y2="630" stroke="#1A2230" stroke-width="1"/>
+  <line x1="800" y1="0" x2="800" y2="630" stroke="#1A2230" stroke-width="1"/>
+
+  <!-- Amber accent bar -->
+  <rect x="80" y="180" width="6" height="180" rx="3" fill="#E8A33D"/>
+
+  <!-- Wordmark -->
+  <text x="112" y="258" font-family="monospace" font-size="52" font-weight="700" fill="#E8A33D" letter-spacing="-1">systemsfailed</text>
+  <text x="112" y="318" font-family="monospace" font-size="52" font-weight="700" fill="#4A5568" letter-spacing="-1">.dev</text>
+
+  <!-- Tagline -->
+  <text x="112" y="380" font-family="system-ui, sans-serif" font-size="28" fill="#8B95A3" letter-spacing="0">Engineering postmortems, indexed by failure class</text>
+
+  <!-- Stats row -->
+  <text x="112" y="460" font-family="monospace" font-size="18" fill="#4A5568">failures  ·  root causes  ·  transferable lessons</text>
+
+  <!-- Decorative failure class pills -->
+  <rect x="112" y="490" width="170" height="36" rx="6" fill="#1A2230" stroke="#262E39" stroke-width="1"/>
+  <text x="197" y="513" font-family="monospace" font-size="13" fill="#A78BFA" text-anchor="middle">split-brain</text>
+
+  <rect x="294" y="490" width="190" height="36" rx="6" fill="#1A2230" stroke="#262E39" stroke-width="1"/>
+  <text x="389" y="513" font-family="monospace" font-size="13" fill="#F87171" text-anchor="middle">cascade</text>
+
+  <rect x="496" y="490" width="200" height="36" rx="6" fill="#1A2230" stroke="#262E39" stroke-width="1"/>
+  <text x="596" y="513" font-family="monospace" font-size="13" fill="#FBBF24" text-anchor="middle">thundering-herd</text>
+
+  <rect x="708" y="490" width="180" height="36" rx="6" fill="#1A2230" stroke="#262E39" stroke-width="1"/>
+  <text x="798" y="513" font-family="monospace" font-size="13" fill="#60A5FA" text-anchor="middle">config-change</text>
+
+  <rect x="900" y="490" width="180" height="36" rx="6" fill="#1A2230" stroke="#262E39" stroke-width="1"/>
+  <text x="990" y="513" font-family="monospace" font-size="13" fill="#FB923C" text-anchor="middle">bad-deploy</text>
+</svg>
