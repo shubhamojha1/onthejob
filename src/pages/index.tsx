@@ -98,7 +98,7 @@ export function Component() {
     <div className="oj-root">
         <Head>
           <meta charSet="UTF-8" />
-          <title>onthejob.dev — Engineering postmortems by failure class</title>
+          <title>Engineering postmortems by failure class</title>
         </Head>
 
         {/* Masthead */}
