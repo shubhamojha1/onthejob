@@ -4,6 +4,7 @@ import type { LoaderFunctionArgs } from 'react-router-dom'
 import { FAILURE_CLASSES } from '../../../content/taxonomy'
 import type { Incident } from '../../schema/incident'
 import allIncidents from '../../generated/incidents-all.json'
+import { Masthead } from '../../components/Masthead'
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<Incident> {
   const incident = (allIncidents as Incident[]).find(i => i.id === params.id)
@@ -32,10 +33,7 @@ export function Component() {
           <meta name="twitter:description" content={ogDesc} />
         </Head>
 
-        {/* Masthead */}
-        <header className="oj-mast">
-          <a href="/" className="oj-wordmark">systemsfailed<span>.dev</span></a>
-        </header>
+        <Masthead />
 
         <div className="oj-detail-page">
           {/* Back link */}

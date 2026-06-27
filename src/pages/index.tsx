@@ -5,9 +5,9 @@ import { Head } from 'vite-react-ssg'
 import { FailureBoard } from '../components/FailureBoard'
 import { Card } from '../components/Card'
 import { Toolbar } from '../components/Toolbar'
+import { Masthead } from '../components/Masthead'
 import { getSearchIndex, searchIds } from '../lib/search'
 import type { Incident } from '../schema/incident'
-import { FAILURE_CLASSES } from '../../content/taxonomy'
 import incidentsData from '../generated/incidents-index.json'
 import type MiniSearch from 'minisearch'
 
@@ -44,9 +44,6 @@ export function Component() {
       return next
     })
   }
-
-  const yearMin = useMemo(() => Math.min(...incidents.map(i => i.year)), [incidents])
-  const yearMax = useMemo(() => Math.max(...incidents.map(i => i.year)), [incidents])
 
   const results = useMemo(() => {
     const q = query.trim()
@@ -101,17 +98,7 @@ export function Component() {
           <title>Systems Failed</title>
         </Head>
 
-        {/* Masthead */}
-        <header className="oj-mast">
-          <a href="/" className="oj-wordmark">systemsfailed<span>.dev</span></a>
-          <nav className="oj-mast-meta">
-            <span>{incidents.length} incidents</span>
-            <span className="oj-dot" />
-            <span>{Object.keys(FAILURE_CLASSES).length} failure classes</span>
-            <span className="oj-dot" />
-            <span>{yearMin}–{yearMax}</span>
-          </nav>
-        </header>
+        <Masthead />
 
         {/* Hero */}
         <section className="oj-hero">
@@ -201,6 +188,14 @@ export function Component() {
           </p>
           <p className="oj-foot-cta">
             Know one we're missing? The whole point is that the list keeps growing.
+          </p>
+          <p className="oj-foot-by">
+            Built by{' '}
+            <a href="https://shubham-ojha.com" target="_blank" rel="noreferrer">Shubham Ojha</a>
+            {' '}·{' '}
+            <a href="https://x.com/claudeabuser" target="_blank" rel="noreferrer">@claudeabuser</a>
+            {' '}·{' '}
+            <a href="https://www.linkedin.com/in/shubhamojha1/" target="_blank" rel="noreferrer">LinkedIn</a>
           </p>
         </footer>
       </div>

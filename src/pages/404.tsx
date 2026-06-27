@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom'
+import { Masthead } from '../components/Masthead'
 
 export function Component() {
   return (
     <div className="oj-root">
-      <header className="oj-mast">
-        <a href="/" className="oj-wordmark">systemsfailed<span>.dev</span></a>
-      </header>
+      <Masthead />
       <div className="oj-empty" style={{ paddingTop: 80 }}>
         <p>Page not found.</p>
         <Link to="/">

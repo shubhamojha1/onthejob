@@ -199,6 +199,7 @@
 .oj-footer p{font-size:13px;line-height:1.6;color:var(--muted2);margin:0 0 8px;max-width:74ch}
 .oj-footer a{color:var(--muted);text-decoration:underline}
 .oj-foot-cta{color:var(--muted)!important}
+.oj-foot-by{color:var(--muted2)!important;font-size:12px!important;margin-top:14px!important}
 
 /* ─── Per-incident detail page ───────────────────────────────────────────── */
 
