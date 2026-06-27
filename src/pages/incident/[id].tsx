@@ -22,7 +22,7 @@ export function Component() {
     <div className="oj-root">
         <Head>
           <meta charSet="UTF-8" />
-          <title>{`${i.title} — ${i.company} ${i.year} | onthejob.dev`}</title>
+          <title>{`${i.title} — ${i.company} ${i.year} | systemsfailed.dev`}</title>
           <meta name="description" content={i.impact} />
           <meta property="og:title" content={ogTitle} />
           <meta property="og:description" content={ogDesc} />
@@ -34,7 +34,7 @@ export function Component() {
 
         {/* Masthead */}
         <header className="oj-mast">
-          <a href="/" className="oj-wordmark">onthejob<span>.dev</span></a>
+          <a href="/" className="oj-wordmark">systemsfailed<span>.dev</span></a>
         </header>
 
         <div className="oj-detail-page">

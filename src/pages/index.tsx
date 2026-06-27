@@ -98,12 +98,12 @@ export function Component() {
     <div className="oj-root">
         <Head>
           <meta charSet="UTF-8" />
-          <title>Engineering postmortems by failure class</title>
+          <title>Systems Failed</title>
         </Head>
 
         {/* Masthead */}
         <header className="oj-mast">
-          <a href="/" className="oj-wordmark">onthejob<span>.dev</span></a>
+          <a href="/" className="oj-wordmark">systemsfailed<span>.dev</span></a>
           <nav className="oj-mast-meta">
             <span>{incidents.length} incidents</span>
             <span className="oj-dot" />

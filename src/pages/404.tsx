@@ -4,7 +4,7 @@ export function Component() {
   return (
     <div className="oj-root">
       <header className="oj-mast">
-        <a href="/" className="oj-wordmark">onthejob<span>.dev</span></a>
+        <a href="/" className="oj-wordmark">systemsfailed<span>.dev</span></a>
       </header>
       <div className="oj-empty" style={{ paddingTop: 80 }}>
         <p>Page not found.</p>
