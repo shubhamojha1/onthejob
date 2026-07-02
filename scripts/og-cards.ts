@@ -404,5 +404,12 @@ await render(
   join(ROOT, 'public', 'og-image.png'),
 )
 
+// Apple touch icon: rasterize the favicon (resvg renders its light variant)
+const faviconSvg = readFileSync(join(ROOT, 'public', 'favicon.svg'), 'utf-8')
+writeFileSync(
+  join(ROOT, 'public', 'apple-touch-icon.png'),
+  new Resvg(faviconSvg, { fitTo: { mode: 'width', value: 180 } }).render().asPng(),
+)
+
 console.log(`✓ Share cards: ${made} generated, ${incidents.length - made} cached → public/cards/`)
 console.log('✓ Site og-image.png regenerated')

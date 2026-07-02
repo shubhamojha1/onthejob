@@ -83,6 +83,17 @@ writeFileSync(
   JSON.stringify(ms.toJSON()),
 )
 
+// Sitemap — homepage + one URL per incident report
+const SITE = 'https://systemsfailed.vercel.app'
+const sitemap =
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  [`${SITE}/`, ...incidents.map(i => `${SITE}/incident/${i.id}`)]
+    .map(url => `  <url><loc>${url}</loc></url>`)
+    .join('\n') +
+  '\n</urlset>\n'
+writeFileSync(join(ROOT, 'public', 'sitemap.xml'), sitemap)
+
 console.log(`\n✓ Built index: ${incidents.length} incidents`)
 console.log(`  → src/generated/incidents-all.json`)
 console.log(`  → src/generated/incidents-index.json`)

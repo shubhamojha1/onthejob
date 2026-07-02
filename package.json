@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "predev": "tsx scripts/build-index.ts",
+    "predev": "tsx scripts/build-index.ts && tsx scripts/og-cards.ts",
     "dev": "vite-react-ssg dev",
     "prebuild": "tsx scripts/build-index.ts && tsx scripts/og-cards.ts",
     "build": "vite-react-ssg build",
