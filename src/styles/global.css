@@ -38,6 +38,7 @@
   font-family:var(--body);
   min-height:100vh; padding:0 20px 72px;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden; /* belt-and-braces: no child should be able to widen the page */
 }
 .oj-root *{box-sizing:border-box}
 .oj-root a{color:inherit}
@@ -479,7 +480,8 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
   .oj-h1{font-size:36px}
   .oj-hero{padding:38px 0 26px}
   .oj-master{margin-bottom:32px}
-  .oj-master-strip .oj-mtick{height:26px}
+  .oj-master-strip{gap:1px}
+  .oj-master-strip .oj-mtick{height:26px; min-width:1px}
   .oj-master-legend b{display:none}
   .oj-card-head{flex-wrap:wrap}
   .oj-meta{white-space:normal}

@@ -47,6 +47,13 @@ export function Component() {
     })
   }
 
+  // Scroll to the first matching card when a failure-class tile is switched on
+  const scrollToFeedRef = useRef(false)
+  function toggleClass(key: string) {
+    scrollToFeedRef.current = !active.has(key)
+    toggle(setActive, key)
+  }
+
   const results = useMemo(() => {
     const q = query.trim()
     const matchIds = q && searchIndex ? searchIds(searchIndex, q) : null
@@ -93,6 +100,16 @@ export function Component() {
 
   const virtualItems = virtualizer.getVirtualItems()
 
+  // Runs after the filtered feed has re-rendered, so the first card's
+  // position is already correct before we scroll to it
+  useEffect(() => {
+    if (!scrollToFeedRef.current) return
+    scrollToFeedRef.current = false
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const top = feedRef.current?.getBoundingClientRect().top ?? 0
+    window.scrollTo({ top: window.scrollY + top - 18, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }, [results])
+
   return (
     <div className="oj-root">
         <Head>
@@ -131,7 +148,7 @@ export function Component() {
         <FailureBoard
           incidents={incidents}
           active={active}
-          onToggle={key => toggle(setActive, key)}
+          onToggle={toggleClass}
         />
 
         {/* Toolbar + active pills */}
