@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://systemsfailed.vercel.app/sitemap.xml
+Sitemap: https://www.systemsfailed.dev/sitemap.xml

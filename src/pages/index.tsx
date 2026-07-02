@@ -147,12 +147,14 @@ export function Component() {
         <Head>
           <meta charSet="UTF-8" />
           <title>Systems Failed</title>
+          <meta name="description" content="Pick a way systems break and see who it bit, why it spread, and the transferable lesson." />
           <meta property="og:title" content="Systems Failed — Engineering postmortems by failure class" />
           <meta property="og:description" content="Pick a way systems break and see who it bit, why it spread, and the transferable lesson." />
-          <meta property="og:image" content="https://systemsfailed.vercel.app/og-image.png" />
-          <meta property="og:url" content="https://systemsfailed.vercel.app" />
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content="https://www.systemsfailed.dev/og-image.png" />
+          <meta property="og:url" content="https://www.systemsfailed.dev" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:image" content="https://systemsfailed.vercel.app/og-image.png" />
+          <meta name="twitter:image" content="https://www.systemsfailed.dev/og-image.png" />
         </Head>
 
         <Intro incidentCount={incidents.length} />

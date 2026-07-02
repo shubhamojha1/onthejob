@@ -9,7 +9,7 @@ import { ShareRow } from '../../components/ShareRow'
 import { ImpactText } from '../../components/ImpactText'
 import { UptimeStrip } from '../../components/TickStrip'
 
-const SITE = 'https://systemsfailed.vercel.app'
+const SITE = 'https://www.systemsfailed.dev'
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<Incident> {
   const incident = (allIncidents as Incident[]).find(i => i.id === params.id)
