@@ -168,10 +168,10 @@ export function Component() {
             <em>This one doesn't.</em>
           </h1>
           <p className="oj-lede">
-            {incidents.length} public engineering postmortems, kept on permanent record and
-            indexed by <strong>how the system broke</strong> — not who it embarrassed.
-            Pick a failure class; see who it bit, how it spread, and the one lesson
-            worth stealing. Every entry links to the original writeup.
+            {incidents.length} public engineering postmortems, indexed by{' '}
+            <strong>how the system broke</strong> — so you can spot the pattern
+            before it repeats on your watch. Pick a company or a failure class.
+            Every entry links to the original writeup.
           </p>
         </section>
 

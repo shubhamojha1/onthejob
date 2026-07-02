@@ -150,7 +150,7 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
   line-height:1.02; letter-spacing:-.028em; margin:0 0 20px; max-width:21ch;
 }
 .oj-h1 em{font-style:normal; color:var(--down-ink)}
-.oj-lede{font-size:16.5px; line-height:1.6; color:var(--muted); max-width:60ch; margin:0}
+.oj-lede{font-size:16.5px; line-height:1.6; font-weight:500; color:color-mix(in srgb,var(--muted) 45%,var(--ink) 55%); max-width:60ch; margin:0}
 .oj-lede strong{color:var(--ink); font-weight:600}
 
 /* ─── Master strip: 2010 → now, every red tick a real incident ───────────── */
