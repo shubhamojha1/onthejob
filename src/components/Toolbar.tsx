@@ -1,4 +1,9 @@
-import { FAILURE_CLASSES } from '../../content/taxonomy'
+import { FAILURE_CLASSES, colorForCompany } from '../../content/taxonomy'
+
+// Company names are Title Case; failure classes and patterns are lowercase-kebab
+const isCompanyTag = (tag: string) => /[A-Z ]/.test(tag)
+
+const LIMIT_OPTIONS: (number | 'all')[] = [5, 10, 25, 'all']
 
 interface Props {
   query: string
@@ -6,6 +11,12 @@ interface Props {
   sort: 'year' | 'az'
   onSort: (s: 'year' | 'az') => void
   count: number
+  /** Full record size when the feed is capped; undefined when everything is shown */
+  total?: number
+  limit: number | 'all'
+  onLimit: (l: number | 'all') => void
+  /** The limit selector only applies to the default (unfiltered) view */
+  showLimit: boolean
   active: Set<string>
   onRemoveFilter: (tag: string) => void
   onClearAll: () => void
@@ -13,7 +24,8 @@ interface Props {
 
 export function Toolbar({
   query, onQuery, sort, onSort,
-  count, active, onRemoveFilter, onClearAll,
+  count, total, limit, onLimit, showLimit,
+  active, onRemoveFilter, onClearAll,
 }: Props) {
   return (
     <>
@@ -33,7 +45,25 @@ export function Toolbar({
           )}
         </div>
         <div className="oj-toolbar-right">
-          <span className="oj-count">{count} shown</span>
+          <span className="oj-count">
+            {total ? `latest ${count} of ${total}` : `${count} shown`}
+          </span>
+          {showLimit && (
+            <label className="oj-limit">
+              show
+              <select
+                value={String(limit)}
+                onChange={e => onLimit(e.target.value === 'all' ? 'all' : +e.target.value)}
+                aria-label="How many incidents to show"
+              >
+                {LIMIT_OPTIONS.map(o => (
+                  <option key={o} value={String(o)}>
+                    {o === 'all' ? 'all' : `latest ${o}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <div className="oj-sort">
             <button className={sort === 'year' ? 'on' : ''} onClick={() => onSort('year')}>
               Newest
@@ -49,11 +79,12 @@ export function Toolbar({
         <div className="oj-active">
           {[...active].map(tag => {
             const meta = FAILURE_CLASSES[tag as keyof typeof FAILURE_CLASSES]
+            const color = meta ? meta.color : isCompanyTag(tag) ? colorForCompany(tag) : '#8B949E'
             return (
               <button
                 key={tag}
                 className="oj-pill"
-                style={{ '--c': meta ? meta.color : '#8B949E' } as React.CSSProperties}
+                style={{ '--c': color } as React.CSSProperties}
                 onClick={() => onRemoveFilter(tag)}
               >
                 {meta ? meta.label : tag} <span className="oj-x">×</span>

@@ -53,3 +53,12 @@ export const FAILURE_CLASSES = {
 
 export type FailureClassKey = keyof typeof FAILURE_CLASSES
 export type FailureClassMeta = (typeof FAILURE_CLASSES)[FailureClassKey]
+
+// Reused for company tiles, which have no fixed taxonomy color of their own
+const PALETTE = Object.values(FAILURE_CLASSES).map(c => c.color)
+
+export function colorForCompany(company: string): string {
+  let hash = 0
+  for (let i = 0; i < company.length; i++) hash = (hash * 31 + company.charCodeAt(i)) | 0
+  return PALETTE[Math.abs(hash) % PALETTE.length]
+}

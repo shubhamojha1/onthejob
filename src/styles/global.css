@@ -184,34 +184,53 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
   overflow:hidden;
 }
 .oj-board-hd{
-  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
-  padding:13px 18px; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:11px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap;
 }
+.oj-board-hd-left{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
 .oj-board-eyebrow{
   font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.05em;
-  text-transform:uppercase; color:var(--muted); margin:0;
+  text-transform:uppercase; color:var(--muted); margin:0; min-width:9ch;
 }
 .oj-board-hint{font-family:var(--mono); font-size:11.5px; color:var(--faint)}
+.oj-filtermode{display:flex; background:var(--paper); border:1px solid var(--line2); border-radius:8px; overflow:hidden}
+.oj-filtermode button{
+  background:0; border:0; color:var(--muted); font-family:var(--mono); font-size:11.5px;
+  padding:6px 12px; cursor:pointer; white-space:nowrap;
+}
+.oj-filtermode button.on{background:var(--ink); color:var(--card)}
 .oj-board-grid{
   display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:8px; padding:12px;
 }
 .oj-tile{
-  --c:#888; text-align:left; background:transparent; border:0; cursor:pointer;
-  color:var(--ink); font-family:inherit; padding:14px 18px 15px;
+  --c:#888; text-align:left; background:var(--card); cursor:pointer;
+  color:var(--ink); font-family:inherit; padding:12px 14px 13px;
   display:flex; flex-direction:column; gap:6px;
-  border-right:1px solid var(--line); border-bottom:1px solid var(--line);
-  margin-right:-1px; margin-bottom:-1px;
-  transition:background .14s ease;
+  border:1px solid var(--line); border-radius:10px;
+  transition:background .14s ease, border-color .14s ease, transform .14s ease;
 }
-.oj-tile:hover{background:color-mix(in srgb,var(--c) 6%,var(--card))}
+.oj-tile:hover{
+  background:color-mix(in srgb,var(--c) 6%,var(--card));
+  border-color:color-mix(in srgb,var(--c) 45%,var(--line));
+  transform:translateY(-1px);
+}
 .oj-tile.on{
   background:color-mix(in srgb,var(--c) 12%,var(--card));
-  box-shadow:inset 3px 0 0 color-mix(in srgb,var(--c) 60%,var(--ink));
+  border-color:color-mix(in srgb,var(--c) 60%,var(--ink));
 }
 .oj-tile-top{display:flex; align-items:center; gap:8px}
 .oj-swatch{
   width:9px; height:9px; border-radius:50%; flex:none;
   background:color-mix(in srgb,var(--c) 75%,var(--ink));
+}
+.oj-mark{width:16px; height:16px; flex:none; fill:var(--muted); transition:fill .14s ease}
+.oj-tile:hover .oj-mark, .oj-tile.on .oj-mark{fill:var(--ink)}
+.oj-monogram{
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:4.5px; font-family:var(--display); font-weight:800; font-size:10px;
+  background:color-mix(in srgb,var(--c) 22%,var(--card));
+  color:color-mix(in srgb,var(--c) 48%,var(--ink));
 }
 .oj-tile-label{
   font-family:var(--display); font-weight:700; font-size:14px; letter-spacing:-.005em;
@@ -242,6 +261,16 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
 .oj-clear{background:0; border:0; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; padding:0 2px}
 .oj-toolbar-right{display:flex; align-items:center; gap:14px}
 .oj-count{font-family:var(--mono); font-size:12px; color:var(--faint)}
+.oj-limit{
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+}
+.oj-limit select{
+  background:var(--card); border:1px solid var(--line2); border-radius:8px;
+  color:var(--muted); font-family:var(--mono); font-size:12px;
+  padding:7px 8px; cursor:pointer;
+}
+.oj-limit select:hover{color:var(--ink)}
 .oj-sort{display:flex; background:var(--card); border:1px solid var(--line2); border-radius:8px; overflow:hidden}
 .oj-sort button{
   background:0; border:0; color:var(--muted); font-family:var(--mono); font-size:12px;
@@ -354,6 +383,16 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
   display:flex; align-items:center; gap:5px;
 }
 .oj-source:hover{text-decoration:underline}
+
+/* ─── Show-all (capped feed) ─────────────────────────────────────────────── */
+
+.oj-showall{display:flex; justify-content:center; padding:10px 0 4px}
+.oj-showall button{
+  background:var(--card); border:1px solid var(--line2); border-radius:8px;
+  color:var(--muted); font-family:var(--mono); font-size:12.5px;
+  padding:10px 22px; cursor:pointer; transition:border-color .14s, color .14s;
+}
+.oj-showall button:hover{border-color:var(--ink); color:var(--ink)}
 
 /* ─── Empty state + footer ───────────────────────────────────────────────── */
 

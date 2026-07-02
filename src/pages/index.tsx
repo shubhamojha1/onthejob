@@ -2,7 +2,7 @@ import { useLoaderData, useSearchParams } from 'react-router-dom'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import { Head } from 'vite-react-ssg'
-import { FailureBoard } from '../components/FailureBoard'
+import { FilterBoard } from '../components/FilterBoard'
 import { Card } from '../components/Card'
 import { Toolbar } from '../components/Toolbar'
 import { Masthead } from '../components/Masthead'
@@ -25,12 +25,18 @@ export function Component() {
     const initial = new Set<string>()
     const cls = searchParams.get('class')
     const pat = searchParams.get('pattern')
+    const co = searchParams.get('company')
     if (cls) initial.add(cls)
     if (pat) initial.add(pat)
+    if (co) initial.add(co)
     return initial
   })
+  // Deep links into a company should open the board on the company tab
+  const initialBoardMode = searchParams.get('company') ? 'company' : searchParams.get('class') ? 'class' : 'company'
   const [query, setQuery]   = useState('')
   const [sort, setSort]     = useState<'year' | 'az'>('year')
+  // How many incidents the unfiltered feed shows; filters/search always show all matches
+  const [limit, setLimit]   = useState<number | 'all'>(10)
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [searchIndex, setSearchIndex] = useState<MiniSearch | null>(null)
 
@@ -38,6 +44,18 @@ export function Component() {
   useEffect(() => {
     getSearchIndex().then(setSearchIndex).catch(console.error)
   }, [])
+
+  // Restore the user's feed-size choice after mount (SSG markup uses the default)
+  useEffect(() => {
+    const saved = localStorage.getItem('sf-feed-limit')
+    if (saved === 'all') setLimit('all')
+    else if (saved && !Number.isNaN(+saved)) setLimit(+saved)
+  }, [])
+
+  function changeLimit(next: number | 'all') {
+    setLimit(next)
+    try { localStorage.setItem('sf-feed-limit', String(next)) } catch { /* private mode */ }
+  }
 
   function toggle(setter: React.Dispatch<React.SetStateAction<Set<string>>>, value: string) {
     setter(prev => {
@@ -47,9 +65,9 @@ export function Component() {
     })
   }
 
-  // Scroll to the first matching card when a failure-class tile is switched on
+  // Scroll to the first matching card when a company/failure-class tile is switched on
   const scrollToFeedRef = useRef(false)
-  function toggleClass(key: string) {
+  function toggleFilter(key: string) {
     scrollToFeedRef.current = !active.has(key)
     toggle(setActive, key)
   }
@@ -60,7 +78,7 @@ export function Component() {
 
     let list = incidents.filter(i => {
       if (active.size > 0) {
-        const tags = [...i.classes, ...i.patterns]
+        const tags = [...i.classes, ...i.patterns, i.company]
         if (![...active].some(a => tags.includes(a))) return false
       }
       if (q) {
@@ -83,6 +101,20 @@ export function Component() {
     )
   }, [incidents, active, query, sort, searchIndex])
 
+  // The default (unfiltered, unsearched) view is capped to the latest k.
+  // "Latest" means most recent by date regardless of the display sort,
+  // so the k newest are picked first and then ordered per the sort choice.
+  const isDefaultView = active.size === 0 && query.trim() === ''
+  const capped = isDefaultView && limit !== 'all' && results.length > limit
+  const visible = useMemo(() => {
+    if (!capped) return results
+    const newest = [...results]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, limit as number)
+    const keep = new Set(newest.map(i => i.id))
+    return results.filter(i => keep.has(i.id))
+  }, [results, capped, limit])
+
   // ── Virtualized feed ────────────────────────────────────────────────────
   const feedRef = useRef<HTMLDivElement>(null)
   const parentOffsetRef = useRef(0)
@@ -92,7 +124,7 @@ export function Component() {
   }, [])
 
   const virtualizer = useWindowVirtualizer({
-    count: results.length,
+    count: visible.length,
     estimateSize: () => 244,
     overscan: 4,
     scrollMargin: parentOffsetRef.current,
@@ -144,11 +176,12 @@ export function Component() {
         {/* Master timeline strip */}
         <MasterStrip incidents={incidents} />
 
-        {/* Failure-class board */}
-        <FailureBoard
+        {/* Filter board: companies or failure classes */}
+        <FilterBoard
           incidents={incidents}
           active={active}
-          onToggle={toggleClass}
+          onToggle={toggleFilter}
+          initialMode={initialBoardMode}
         />
 
         {/* Toolbar + active pills */}
@@ -157,7 +190,11 @@ export function Component() {
           onQuery={setQuery}
           sort={sort}
           onSort={setSort}
-          count={results.length}
+          count={visible.length}
+          total={capped ? results.length : undefined}
+          limit={limit}
+          onLimit={changeLimit}
+          showLimit={isDefaultView}
           active={active}
           onRemoveFilter={tag => toggle(setActive, tag)}
           onClearAll={() => setActive(new Set())}
@@ -165,7 +202,7 @@ export function Component() {
 
         {/* Virtualized feed */}
         <main className="oj-feed" ref={feedRef}>
-          {results.length === 0 ? (
+          {visible.length === 0 ? (
             <div className="oj-empty">
               <p>No incidents match that filter yet.</p>
               <button onClick={() => { setActive(new Set()); setQuery('') }}>Reset</button>
@@ -173,7 +210,7 @@ export function Component() {
           ) : (
             <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
               {virtualItems.map(vItem => {
-                const incident = results[vItem.index]
+                const incident = visible[vItem.index]
                 return (
                   <div
                     key={vItem.key}
@@ -197,6 +234,14 @@ export function Component() {
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {capped && (
+            <div className="oj-showall">
+              <button onClick={() => changeLimit('all')}>
+                Show all {results.length} incidents
+              </button>
             </div>
           )}
         </main>
