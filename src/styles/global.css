@@ -1,274 +1,492 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Self-hosted fonts — Archivo (display), Public Sans (body), IBM Plex Mono (data) */
+@import '@fontsource/archivo/600.css';
+@import '@fontsource/archivo/700.css';
+@import '@fontsource/archivo/800.css';
+@import '@fontsource/public-sans/400.css';
+@import '@fontsource/public-sans/500.css';
+@import '@fontsource/public-sans/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/ibm-plex-mono/600.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design tokens & reset ─────────────────────────────────────────────── */
+/* ─── Design tokens ──────────────────────────────────────────────────────────
+   The status page, inverted: a permanent record of the days the bars went red.
+   Cool clinical light surfaces; status-green and incident-red carry meaning. */
 
 .oj-root{
-  --ink:#0C1014; --panel:#12171E; --panel2:#171E27; --line:#262E39;
-  --text:#E6EDF3; --muted:#8B95A3; --muted2:#6B7480; --amber:#E8A33D;
-  background:var(--ink); color:var(--text);
-  font-family:'Inter',system-ui,sans-serif;
-  min-height:100vh; padding:0 20px 80px;
+  --paper:#F2F4F6;      /* page */
+  --card:#FFFFFF;       /* surfaces */
+  --ink:#141A21;        /* primary text */
+  --muted:#57626E;      /* secondary text */
+  --faint:#8B96A2;      /* tertiary / metadata */
+  --line:#DFE4E9;       /* hairlines */
+  --line2:#CDD4DB;      /* stronger borders */
+  --ok:#189A50;         /* operational green */
+  --ok-dim:#BFD9C8;     /* green ticks at rest */
+  --down:#E0343F;       /* incident red */
+  --down-ink:#B8232D;   /* red for text on light */
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Public Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  background:var(--paper); color:var(--ink);
+  font-family:var(--body);
+  min-height:100vh; padding:0 20px 72px;
   -webkit-font-smoothing:antialiased;
 }
 .oj-root *{box-sizing:border-box}
 .oj-root a{color:inherit}
+.oj-root ::selection{background:color-mix(in srgb,var(--down) 22%,var(--paper))}
+
+/* Dark: the same status page after hours — cool slate, never pure black.
+   Meaning stays in the green/red; every mix below inherits these tokens. */
+html[data-theme='dark'] .oj-root{
+  --paper:#141920;
+  --card:#1B222B;
+  --ink:#E7ECF1;
+  --muted:#9AA5B1;
+  --faint:#69747F;
+  --line:#28313C;
+  --line2:#36414E;
+  --ok:#2EB268;
+  --ok-dim:#2E4A39;
+  --down:#E8515C;
+  --down-ink:#F1737C;
+}
+html[data-theme='dark'] .oj-intro-panel{box-shadow:0 12px 40px -18px rgba(0,0,0,.5)}
+html[data-theme='dark'] .oj-share-btn.primary:hover{background:var(--ink); opacity:.88}
+
+/* ─── Intro: the status page dying ──────────────────────────────────────── */
+
+.oj-intro{
+  position:fixed; inset:0; z-index:100; background:var(--paper);
+  display:grid; place-items:center;
+  animation:oj-intro-lift .55s cubic-bezier(.7,0,.3,1) 1.9s forwards;
+}
+.oj-intro-panel{
+  width:min(560px,calc(100vw - 48px));
+  background:var(--card); border:1px solid var(--line2); border-radius:10px;
+  padding:26px 28px 24px;
+  box-shadow:0 12px 40px -18px rgba(20,26,33,.18);
+}
+.oj-intro-status{position:relative; height:26px; margin-bottom:18px}
+.oj-intro-label{
+  position:absolute; inset:0; display:flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.oj-intro-label.ok{color:var(--ok); animation:oj-fade-out .12s linear 1.15s forwards}
+.oj-intro-label.down{color:var(--down); opacity:0; animation:oj-fade-in .12s linear 1.15s forwards}
+.oj-intro-dot{
+  width:10px; height:10px; border-radius:50%; background:currentColor; flex:none;
+  animation:oj-pulse 1s ease infinite;
+}
+.oj-intro-label.down .oj-intro-dot{animation:none}
+.oj-intro-strip{display:flex; gap:3px}
+.oj-intro-strip i{
+  flex:1; height:30px; border-radius:1.5px; background:var(--ok-dim);
+  animation:oj-tick-fail .12s ease forwards;
+  animation-delay:var(--d);
+}
+.oj-intro-sub{
+  margin:16px 0 0; font-family:var(--mono); font-size:12px; color:var(--faint);
+  opacity:0; animation:oj-fade-in .3s ease 1.35s forwards;
+}
+@keyframes oj-tick-fail{to{background:var(--down)}}
+@keyframes oj-fade-out{to{opacity:0}}
+@keyframes oj-fade-in{to{opacity:1}}
+@keyframes oj-pulse{50%{opacity:.35}}
+@keyframes oj-intro-lift{to{transform:translateY(-100%); visibility:hidden}}
 
 /* ─── Masthead ───────────────────────────────────────────────────────────── */
 
 .oj-mast{
-  max-width:1080px; margin:0 auto; display:flex; align-items:center;
-  justify-content:space-between; padding:22px 0 0; gap:16px; flex-wrap:wrap;
+  max-width:1060px; margin:0 auto; display:flex; align-items:center;
+  justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding:18px 0; border-bottom:1px solid var(--line2);
 }
 .oj-wordmark{
-  font-family:'JetBrains Mono',monospace; font-weight:600; font-size:18px;
-  letter-spacing:-.02em; text-decoration:none;
+  font-family:var(--display); font-weight:800; font-size:17px;
+  letter-spacing:.01em; text-transform:uppercase; text-decoration:none;
+  display:flex; align-items:center; gap:9px;
 }
-.oj-wordmark span{color:var(--amber)}
+.oj-logo{flex:none}
+.oj-logo rect{fill:color-mix(in srgb,var(--ok) 42%,var(--paper))}
+.oj-logo rect.hit{fill:var(--down)}
+.oj-wordmark small{font-weight:600; color:var(--faint); font-size:inherit}
 .oj-mast-meta{
-  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted2);
-  display:flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:12px; color:var(--muted);
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
 }
-.oj-dot{width:3px;height:3px;border-radius:50%;background:var(--line)}
+.oj-dot{width:3px; height:3px; border-radius:50%; background:var(--line2)}
+.oj-mast-meta a{color:inherit}
+.oj-theme{
+  background:var(--card); border:1px solid var(--line2); border-radius:999px;
+  color:var(--muted); font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.05em; text-transform:uppercase; padding:5px 12px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:7px; transition:border-color .14s;
+}
+.oj-theme:hover{border-color:var(--muted); color:var(--ink)}
+.oj-theme i{width:8px; height:8px; border-radius:50%; background:var(--ok)}
+html[data-theme='dark'] .oj-theme i{background:var(--down)}
 
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
 
-.oj-hero{max-width:1080px;margin:0 auto;padding:54px 0 40px}
+.oj-hero{max-width:1060px; margin:0 auto; padding:56px 0 36px}
 .oj-eyebrow{
-  font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.04em;
-  text-transform:uppercase; color:var(--amber); margin:0 0 18px;
+  font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--down-ink); margin:0 0 16px;
+  display:flex; align-items:center; gap:9px;
 }
+.oj-eyebrow::before{content:''; width:10px; height:10px; border-radius:50%; background:var(--down)}
 .oj-h1{
-  font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:46px;
-  line-height:1.06; letter-spacing:-.025em; margin:0 0 22px; max-width:18ch;
+  font-family:var(--display); font-weight:800; font-size:52px;
+  line-height:1.02; letter-spacing:-.028em; margin:0 0 20px; max-width:21ch;
 }
-.oj-h1 em{font-style:normal; color:var(--amber)}
-.oj-lede{
-  font-size:16.5px; line-height:1.62; color:var(--muted); max-width:62ch; margin:0;
-}
-.oj-lede strong{color:var(--text); font-weight:600}
+.oj-h1 em{font-style:normal; color:var(--down-ink)}
+.oj-lede{font-size:16.5px; line-height:1.6; color:var(--muted); max-width:60ch; margin:0}
+.oj-lede strong{color:var(--ink); font-weight:600}
 
-/* ─── Failure-class board ────────────────────────────────────────────────── */
+/* ─── Master strip: 2010 → now, every red tick a real incident ───────────── */
+
+.oj-master{max-width:1060px; margin:0 auto 44px}
+.oj-master-strip{display:flex; gap:2px; align-items:stretch}
+.oj-master-strip .oj-mtick{
+  flex:1; height:34px; border-radius:1.5px; background:var(--ok-dim); min-width:2px;
+}
+.oj-master-strip a.oj-mtick{
+  background:var(--down); position:relative; transition:transform .12s ease;
+  animation:oj-siren 3s ease-in-out infinite;
+}
+/* The siren: a soft red halo that slowly breathes */
+@keyframes oj-siren{
+  0%,100%{box-shadow:0 0 4px color-mix(in srgb,var(--down) 30%,transparent)}
+  50%{box-shadow:0 0 11px color-mix(in srgb,var(--down) 70%,transparent)}
+}
+.oj-master-strip a.oj-mtick:hover{transform:scaleY(1.25); background:var(--down-ink)}
+.oj-master-legend{
+  display:flex; justify-content:space-between; margin-top:8px;
+  font-family:var(--mono); font-size:11.5px; color:var(--faint);
+}
+.oj-master-legend b{font-weight:500; color:var(--muted)}
+
+/* ─── Component board (failure classes as status-page components) ────────── */
 
 .oj-board{
-  max-width:1080px; margin:0 auto 34px;
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:10px;
+  max-width:1060px; margin:0 auto 36px;
+  border:1px solid var(--line2); border-radius:10px; background:var(--card);
+  overflow:hidden;
 }
-.oj-board-hd{grid-column:1/-1;margin-bottom:14px}
+.oj-board-hd{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  padding:13px 18px; border-bottom:1px solid var(--line);
+}
 .oj-board-eyebrow{
-  font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600;
-  letter-spacing:-.01em; color:var(--text); margin:0;
+  font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--muted); margin:0;
 }
-
+.oj-board-hint{font-family:var(--mono); font-size:11.5px; color:var(--faint)}
+.oj-board-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+}
 .oj-tile{
-  --c:#888; text-align:left; background:var(--panel); border:1px solid var(--line);
-  border-radius:10px; padding:14px 14px 15px; cursor:pointer; color:var(--text);
-  display:flex; flex-direction:column; gap:8px; transition:.16s ease;
-  font-family:inherit;
+  --c:#888; text-align:left; background:transparent; border:0; cursor:pointer;
+  color:var(--ink); font-family:inherit; padding:14px 18px 15px;
+  display:flex; flex-direction:column; gap:6px;
+  border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+  margin-right:-1px; margin-bottom:-1px;
+  transition:background .14s ease;
 }
-.oj-tile:hover{border-color:color-mix(in srgb,var(--c) 55%,var(--line)); transform:translateY(-1px)}
+.oj-tile:hover{background:color-mix(in srgb,var(--c) 6%,var(--card))}
 .oj-tile.on{
-  border-color:var(--c); background:color-mix(in srgb,var(--c) 12%,var(--panel));
-  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent);
+  background:color-mix(in srgb,var(--c) 12%,var(--card));
+  box-shadow:inset 3px 0 0 color-mix(in srgb,var(--c) 60%,var(--ink));
 }
-.oj-tile-top{display:flex;align-items:center;justify-content:space-between}
-.oj-swatch{width:11px;height:11px;border-radius:3px;background:var(--c)}
-.oj-tile-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted2)}
-.oj-tile.on .oj-tile-count{color:var(--c)}
-.oj-tile-label{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;letter-spacing:-.01em}
-.oj-tile-desc{font-size:12px;line-height:1.45;color:var(--muted2)}
+.oj-tile-top{display:flex; align-items:center; gap:8px}
+.oj-swatch{
+  width:9px; height:9px; border-radius:50%; flex:none;
+  background:color-mix(in srgb,var(--c) 75%,var(--ink));
+}
+.oj-tile-label{
+  font-family:var(--display); font-weight:700; font-size:14px; letter-spacing:-.005em;
+}
+.oj-tile-count{
+  margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--faint);
+}
+.oj-tile.on .oj-tile-count{color:color-mix(in srgb,var(--c) 55%,var(--ink)); font-weight:600}
+.oj-tile-desc{font-size:12px; line-height:1.45; color:var(--muted)}
 
 /* ─── Toolbar ────────────────────────────────────────────────────────────── */
 
 .oj-toolbar{
-  max-width:1080px; margin:0 auto 14px; display:flex; gap:14px;
+  max-width:1060px; margin:0 auto 14px; display:flex; gap:14px;
   align-items:center; justify-content:space-between; flex-wrap:wrap;
 }
 .oj-search{
   position:relative; display:flex; align-items:center; gap:9px; flex:1; min-width:240px;
-  background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:0 12px;
-  color:var(--muted);
+  background:var(--card); border:1px solid var(--line2); border-radius:8px; padding:0 12px;
+  color:var(--faint);
 }
-.oj-search:focus-within{border-color:var(--amber)}
+.oj-search:focus-within{border-color:var(--ink)}
 .oj-search input{
-  flex:1; background:transparent; border:0; outline:0; color:var(--text);
-  font-family:inherit; font-size:14px; padding:11px 0;
+  flex:1; background:transparent; border:0; outline:0; color:var(--ink);
+  font-family:var(--mono); font-size:13.5px; padding:11px 0;
 }
-.oj-search input:focus-visible{outline:none}
-.oj-search input::placeholder{color:var(--muted2)}
-.oj-clear{background:0;border:0;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
-.oj-toolbar-right{display:flex;align-items:center;gap:14px}
-.oj-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted2)}
-.oj-sort{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.oj-search input::placeholder{color:var(--faint)}
+.oj-clear{background:0; border:0; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; padding:0 2px}
+.oj-toolbar-right{display:flex; align-items:center; gap:14px}
+.oj-count{font-family:var(--mono); font-size:12px; color:var(--faint)}
+.oj-sort{display:flex; background:var(--card); border:1px solid var(--line2); border-radius:8px; overflow:hidden}
 .oj-sort button{
-  background:0;border:0;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;
-  padding:8px 12px;cursor:pointer;
+  background:0; border:0; color:var(--muted); font-family:var(--mono); font-size:12px;
+  padding:8px 13px; cursor:pointer;
 }
-.oj-sort button.on{background:var(--panel2);color:var(--text)}
+.oj-sort button.on{background:var(--ink); color:var(--card)}
 
 /* ─── Active filter pills ────────────────────────────────────────────────── */
 
-.oj-active{max-width:1080px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.oj-active{max-width:1060px; margin:0 auto 18px; display:flex; flex-wrap:wrap; gap:8px; align-items:center}
 .oj-pill{
-  --c:#888; background:color-mix(in srgb,var(--c) 14%,var(--panel));
-  border:1px solid color-mix(in srgb,var(--c) 45%,transparent); color:var(--text);
-  border-radius:999px; padding:5px 11px; font-size:12.5px; cursor:pointer; font-family:inherit;
+  --c:#888; background:color-mix(in srgb,var(--c) 14%,var(--card));
+  border:1px solid color-mix(in srgb,var(--c) 45%,var(--line));
+  color:color-mix(in srgb,var(--c) 40%,var(--ink));
+  border-radius:999px; padding:5px 12px; font-size:12.5px; font-weight:500;
+  cursor:pointer; font-family:inherit;
 }
-.oj-pill .oj-x{color:var(--muted);margin-left:3px}
-.oj-clear-all{background:0;border:0;color:var(--muted2);font-size:12.5px;cursor:pointer;text-decoration:underline;font-family:inherit}
+.oj-pill .oj-x{opacity:.55; margin-left:3px}
+.oj-clear-all{background:0; border:0; color:var(--faint); font-size:12.5px; cursor:pointer; text-decoration:underline; font-family:inherit}
 
-/* ─── Feed ───────────────────────────────────────────────────────────────── */
+/* ─── Feed cards ─────────────────────────────────────────────────────────── */
 
-.oj-feed{max-width:1080px;margin:0 auto}
+.oj-feed{max-width:1060px; margin:0 auto}
 .oj-card{
-  --spine:#888; display:flex; background:var(--panel); border:1px solid var(--line);
-  border-radius:12px; overflow:hidden; animation:rise .3s ease both;
+  background:var(--card); border:1px solid var(--line2); border-radius:10px;
+  overflow:hidden; animation:oj-rise .3s ease both;
 }
-@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.oj-spine{width:3px;background:var(--spine);flex:none}
-.oj-card-body{padding:18px 20px 16px;flex:1;min-width:0}
-.oj-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-.oj-company{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.oj-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted2);display:flex;gap:7px;white-space:nowrap}
-.oj-sep{color:var(--line)}
-.oj-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.02em;margin:7px 0 12px;line-height:1.2}
-.oj-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px}
+@keyframes oj-rise{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+.oj-card-body{padding:15px 20px 16px}
+.oj-card-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-top:10px}
+.oj-company{
+  font-family:var(--mono); font-size:12.5px; font-weight:600; color:var(--ink);
+  text-transform:uppercase; letter-spacing:.06em;
+}
+.oj-meta{font-family:var(--mono); font-size:12px; color:var(--faint); display:flex; gap:7px; white-space:nowrap}
+.oj-sep{color:var(--line2)}
+.oj-title{
+  font-family:var(--display); font-weight:700; font-size:21px;
+  letter-spacing:-.018em; margin:6px 0 11px; line-height:1.18;
+}
+.oj-title a:hover{color:var(--down-ink)}
+.oj-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
 .oj-chip{
-  --c:#888; background:color-mix(in srgb,var(--c) 13%,transparent);
-  border:1px solid color-mix(in srgb,var(--c) 36%,transparent);
-  color:color-mix(in srgb,var(--c) 72%,#fff); border-radius:6px;
-  padding:3px 9px; font-size:11.5px; font-weight:500; cursor:pointer; font-family:inherit;
-  transition:.14s;
+  --c:#888; background:color-mix(in srgb,var(--c) 12%,var(--card));
+  border:1px solid color-mix(in srgb,var(--c) 38%,var(--line));
+  color:color-mix(in srgb,var(--c) 42%,var(--ink)); border-radius:6px;
+  padding:3px 9px; font-size:11.5px; font-weight:600; cursor:pointer; font-family:inherit;
+  transition:background .14s;
 }
-.oj-chip:hover{background:color-mix(in srgb,var(--c) 22%,transparent)}
-.oj-impact{font-size:14.5px;line-height:1.55;color:var(--muted);margin:0 0 14px}
+.oj-chip:hover{background:color-mix(in srgb,var(--c) 22%,var(--card))}
+.oj-impact{font-size:15.5px; line-height:1.58; color:var(--ink); margin:0 0 13px; max-width:72ch}
+.oj-metric{
+  font-style:normal; font-family:var(--mono); font-weight:600;
+  font-size:.94em; color:var(--down-ink); letter-spacing:-.01em;
+}
 .oj-lesson{
-  display:flex; gap:11px; background:color-mix(in srgb,var(--amber) 7%,var(--panel2));
-  border:1px solid color-mix(in srgb,var(--amber) 22%,var(--line));
-  border-radius:8px; padding:11px 13px;
+  display:flex; gap:11px;
+  background:color-mix(in srgb,var(--down) 5%,var(--card));
+  border-left:3px solid var(--down);
+  border-radius:0 8px 8px 0; padding:11px 13px;
 }
 .oj-lesson-tag{
-  font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600;
-  text-transform:uppercase; letter-spacing:.06em; color:var(--amber);
+  font-family:var(--mono); font-size:10.5px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.07em; color:var(--down-ink);
   padding-top:2px; flex:none;
 }
-.oj-lesson p{margin:0;font-size:14px;line-height:1.55;color:var(--text)}
+.oj-lesson p{margin:0; font-size:14px; line-height:1.55; color:var(--ink)}
+
+/* ─── Uptime strip (per-card / per-incident, one year) ───────────────────── */
+
+.oj-ustrip{display:flex; gap:2px; align-items:center}
+.oj-ustrip i{flex:1; height:5px; border-radius:1px; background:var(--ok-dim); min-width:2px}
+.oj-ustrip i.hit{
+  background:var(--down); height:9px;
+  box-shadow:0 0 5px color-mix(in srgb,var(--down) 55%,transparent);
+}
+.oj-ustrip-lg i{height:8px}
+.oj-ustrip-lg i.hit{height:15px}
 
 /* ─── Expandable detail ──────────────────────────────────────────────────── */
 
-.oj-detail{margin-top:15px;border-top:1px solid var(--line);padding-top:15px;display:flex;flex-direction:column;gap:14px}
+.oj-detail{margin-top:14px; border-top:1px solid var(--line); padding-top:14px; display:flex; flex-direction:column; gap:13px}
 .oj-row p,.oj-patterns{margin:0}
 .oj-detail-label{
-  display:block; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600;
-  text-transform:uppercase; letter-spacing:.06em; color:var(--muted2); margin-bottom:5px;
+  display:block; font-family:var(--mono); font-size:10.5px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.07em; color:var(--faint); margin-bottom:5px;
 }
-.oj-row p{font-size:14px;line-height:1.6;color:var(--muted)}
-.oj-row.accent p{color:var(--text)}
-.oj-row.accent .oj-detail-label{color:var(--amber)}
-.oj-pattern-tags{display:flex;flex-wrap:wrap;gap:6px}
+.oj-row p{font-size:14px; line-height:1.6; color:var(--muted)}
+.oj-row.accent p{color:var(--ink)}
+.oj-row.accent .oj-detail-label{color:var(--down-ink)}
+.oj-pattern-tags{display:flex; flex-wrap:wrap; gap:6px}
 .oj-pattern{
-  font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
-  background:var(--panel2); border:1px solid var(--line); border-radius:5px;
-  padding:3px 8px; cursor:pointer; font-family:inherit;
+  font-family:var(--mono); font-size:11px; color:var(--muted);
+  background:var(--paper); border:1px solid var(--line2); border-radius:5px;
+  padding:3px 8px; cursor:pointer;
 }
-.oj-pattern:hover{border-color:var(--muted2);color:var(--text)}
+.oj-pattern:hover{border-color:var(--muted); color:var(--ink)}
 
 /* ─── Card footer ────────────────────────────────────────────────────────── */
 
-.oj-card-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px}
+.oj-card-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:14px}
 .oj-expand{
-  background:0;border:0;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;
-  cursor:pointer;display:flex;align-items:center;gap:6px;padding:0;
+  background:0; border:0; color:var(--muted); font-family:var(--mono); font-size:12px;
+  cursor:pointer; display:flex; align-items:center; gap:6px; padding:0;
 }
-.oj-expand:hover{color:var(--text)}
+.oj-expand:hover{color:var(--ink)}
 .oj-caret{transition:transform .18s}.oj-caret.up{transform:rotate(180deg)}
 .oj-source{
-  font-size:13px; font-weight:500; color:var(--amber); text-decoration:none;
+  font-size:13px; font-weight:600; color:var(--down-ink); text-decoration:none;
   display:flex; align-items:center; gap:5px;
 }
 .oj-source:hover{text-decoration:underline}
 
 /* ─── Empty state + footer ───────────────────────────────────────────────── */
 
-.oj-empty{text-align:center;padding:60px 0;color:var(--muted)}
-.oj-empty button{margin-top:12px;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 18px;cursor:pointer;font-family:inherit}
-.oj-footer{max-width:1080px;margin:46px auto 0;border-top:1px solid var(--line);padding-top:22px}
-.oj-footer p{font-size:13px;line-height:1.6;color:var(--muted2);margin:0 0 8px;max-width:74ch}
-.oj-footer a{color:var(--muted);text-decoration:underline}
+.oj-empty{
+  text-align:center; padding:52px 0; color:var(--muted);
+  background:var(--card); border:1px dashed var(--line2); border-radius:10px;
+}
+.oj-empty button{
+  margin-top:12px; background:var(--ink); border:0; color:var(--card);
+  border-radius:8px; padding:8px 18px; cursor:pointer; font-family:var(--mono); font-size:12.5px;
+}
+.oj-footer{max-width:1060px; margin:52px auto 0; border-top:1px solid var(--line2); padding-top:22px}
+.oj-footer p{font-size:13px; line-height:1.6; color:var(--faint); margin:0 0 8px; max-width:74ch}
+.oj-footer a{color:var(--muted); text-decoration:underline}
 .oj-foot-cta{color:var(--muted)!important}
-.oj-foot-by{color:var(--muted2)!important;font-size:12px!important;margin-top:14px!important}
+.oj-foot-by{color:var(--faint)!important; font-size:12px!important; margin-top:14px!important}
 
-/* ─── Per-incident detail page ───────────────────────────────────────────── */
+/* ─── Incident report page ───────────────────────────────────────────────── */
 
-.oj-detail-page{max-width:1080px;margin:0 auto;padding:40px 0 80px}
+.oj-detail-page{max-width:780px; margin:0 auto; padding:36px 0 72px}
 .oj-back{
-  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted2);
-  text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:32px;
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+  text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:28px;
 }
-.oj-back:hover{color:var(--text)}
-.oj-incident-head{margin-bottom:28px}
-.oj-incident-company{
-  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:500;
-  color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px;
-  display:flex; align-items:center; gap:10px;
+.oj-back:hover{color:var(--ink)}
+.oj-report{
+  background:var(--card); border:1px solid var(--line2); border-radius:12px;
+  overflow:hidden;
 }
+.oj-report-bar{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding:12px 26px; border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--down) 4%,var(--card));
+}
+.oj-report-kind{
+  font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--down-ink);
+  display:flex; align-items:center; gap:8px;
+}
+.oj-report-kind::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--down)}
+.oj-report-body{padding:26px 26px 24px}
 .oj-verified-badge{
-  font-size:10px; letter-spacing:.05em; padding:2px 7px; border-radius:999px;
-  background:color-mix(in srgb,#4ADE80 14%,transparent);
-  border:1px solid color-mix(in srgb,#4ADE80 40%,transparent);
-  color:#4ADE80;
+  font-family:var(--mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px;
+  background:color-mix(in srgb,var(--ok) 10%,var(--card));
+  border:1px solid color-mix(in srgb,var(--ok) 40%,var(--line));
+  color:var(--ok);
+}
+.oj-incident-company{
+  font-family:var(--mono); font-size:12.5px; font-weight:500;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
 }
 .oj-incident-title{
-  font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:36px;
-  line-height:1.1; letter-spacing:-.025em; margin:0 0 18px;
+  font-family:var(--display); font-weight:800; font-size:34px;
+  line-height:1.08; letter-spacing:-.025em; margin:0 0 16px; color:var(--ink);
 }
-.oj-incident-impact{
-  font-size:17px; line-height:1.6; color:var(--muted); margin:0 0 28px;
-  max-width:68ch;
+.oj-incident-impact{font-size:16.5px; line-height:1.6; color:var(--ink); margin:0 0 24px; max-width:64ch}
+.oj-report-strip{margin:0 0 24px}
+.oj-report-strip-legend{
+  display:flex; justify-content:space-between; margin-top:6px;
+  font-family:var(--mono); font-size:11px; color:var(--faint);
 }
-.oj-section{margin-bottom:24px}
+.oj-section{margin-bottom:22px}
 .oj-section-label{
-  font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600;
-  text-transform:uppercase; letter-spacing:.06em; color:var(--muted2); margin-bottom:8px;
+  font-family:var(--mono); font-size:10.5px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.07em; color:var(--faint); margin-bottom:7px;
 }
-.oj-section-body{font-size:15px;line-height:1.65;color:var(--muted)}
-.oj-section.accent .oj-section-label{color:var(--amber)}
-.oj-section.accent .oj-section-body{color:var(--text)}
+.oj-section-body{font-size:15px; line-height:1.65; color:var(--muted); margin:0}
+.oj-section.accent .oj-section-label{color:var(--down-ink)}
+.oj-section.accent .oj-section-body{color:var(--ink)}
 .oj-incident-lesson{
   display:flex; gap:14px;
-  background:color-mix(in srgb,var(--amber) 7%,var(--panel2));
-  border:1px solid color-mix(in srgb,var(--amber) 22%,var(--line));
-  border-radius:10px; padding:16px 18px; margin:28px 0;
+  background:color-mix(in srgb,var(--down) 5%,var(--card));
+  border-left:3px solid var(--down);
+  border-radius:0 8px 8px 0; padding:15px 17px; margin:26px 0;
 }
 .oj-incident-lesson .oj-lesson-tag{padding-top:3px}
-.oj-incident-lesson p{margin:0;font-size:15px;line-height:1.6;color:var(--text)}
+.oj-incident-lesson p{margin:0; font-size:15px; line-height:1.6; color:var(--ink)}
 .oj-incident-footer{
   display:flex; align-items:center; justify-content:space-between;
-  gap:12px; margin-top:36px; padding-top:20px;
+  gap:12px; margin-top:30px; padding-top:20px;
   border-top:1px solid var(--line); flex-wrap:wrap;
 }
 
-/* ─── Accessibility ──────────────────────────────────────────────────────── */
+/* ─── Share row ──────────────────────────────────────────────────────────── */
 
-.oj-root :focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:6px}
+.oj-share{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin-top:26px; padding-top:20px; border-top:1px solid var(--line);
+}
+.oj-share-label{
+  font-family:var(--mono); font-size:10.5px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.07em; color:var(--faint); margin-right:4px;
+}
+.oj-share-btn{
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--card); border:1px solid var(--line2); border-radius:8px;
+  padding:7px 13px; font-family:var(--mono); font-size:12px; font-weight:500;
+  color:var(--ink); cursor:pointer; text-decoration:none; transition:border-color .14s;
+}
+.oj-share-btn:hover{border-color:var(--ink)}
+.oj-share-btn.primary{background:var(--ink); border-color:var(--ink); color:var(--card)}
+.oj-share-btn.primary:hover{background:#000}
 
-/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+/* ─── Accessibility & reduced motion ─────────────────────────────────────── */
+
+.oj-root :focus-visible{outline:2px solid var(--down); outline-offset:2px; border-radius:4px}
 
 @media (prefers-reduced-motion:reduce){
   .oj-card{animation:none}
-  .oj-tile,.oj-caret{transition:none}
+  .oj-master-strip a.oj-mtick{
+    animation:none;
+    box-shadow:0 0 6px color-mix(in srgb,var(--down) 45%,transparent);
+  }
+  .oj-tile,.oj-caret,.oj-mtick{transition:none!important}
+  .oj-intro,.oj-intro *{animation:none!important}
+  .oj-intro{display:none}
 }
 
 /* ─── Mobile ─────────────────────────────────────────────────────────────── */
 
 @media (max-width:640px){
-  .oj-h1{font-size:34px}
-  .oj-hero{padding:40px 0 30px}
-  .oj-board{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-  .oj-toolbar{flex-direction:column;align-items:stretch}
+  .oj-h1{font-size:36px}
+  .oj-hero{padding:38px 0 26px}
+  .oj-master{margin-bottom:32px}
+  .oj-master-strip .oj-mtick{height:26px}
+  .oj-master-legend b{display:none}
+  .oj-card-head{flex-wrap:wrap}
+  .oj-meta{white-space:normal}
+  .oj-board-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .oj-toolbar{flex-direction:column; align-items:stretch}
   .oj-toolbar-right{justify-content:space-between}
-  .oj-incident-title{font-size:28px}
+  .oj-incident-title{font-size:26px}
+  .oj-report-body{padding:20px 18px}
+  .oj-report-bar{padding:11px 18px}
 }

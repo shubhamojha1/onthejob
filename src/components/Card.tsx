@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FAILURE_CLASSES } from '../../content/taxonomy'
+import { UptimeStrip } from './TickStrip'
+import { ImpactText } from './ImpactText'
 import type { Incident } from '../schema/incident'
 
 interface Props {
@@ -10,15 +12,14 @@ interface Props {
 }
 
 export function Card({ incident: i, open, onToggleOpen, onTag }: Props) {
-  const primary = FAILURE_CLASSES[i.classes[0]]
   return (
-    <article className="oj-card" style={{ '--spine': primary.color } as React.CSSProperties}>
-      <div className="oj-spine" />
+    <article className="oj-card">
       <div className="oj-card-body">
+        <UptimeStrip incident={i} />
         <div className="oj-card-head">
           <span className="oj-company">{i.company}</span>
           <span className="oj-meta">
-            <span>{i.year}</span>
+            <span>{i.date}</span>
             <span className="oj-sep">/</span>
             <span className="oj-dur">{i.duration}</span>
           </span>
@@ -47,7 +48,7 @@ export function Card({ incident: i, open, onToggleOpen, onTag }: Props) {
           ))}
         </div>
 
-        <p className="oj-impact">{i.impact}</p>
+        <p className="oj-impact"><ImpactText text={i.impact} /></p>
 
         <div className="oj-lesson">
           <span className="oj-lesson-tag">Lesson</span>

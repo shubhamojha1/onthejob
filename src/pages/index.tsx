@@ -6,6 +6,8 @@ import { FailureBoard } from '../components/FailureBoard'
 import { Card } from '../components/Card'
 import { Toolbar } from '../components/Toolbar'
 import { Masthead } from '../components/Masthead'
+import { Intro } from '../components/Intro'
+import { MasterStrip } from '../components/TickStrip'
 import { getSearchIndex, searchIds } from '../lib/search'
 import type { Incident } from '../schema/incident'
 import incidentsData from '../generated/incidents-index.json'
@@ -104,21 +106,26 @@ export function Component() {
           <meta name="twitter:image" content="https://systemsfailed.vercel.app/og-image.png" />
         </Head>
 
+        <Intro incidentCount={incidents.length} />
         <Masthead />
 
         {/* Hero */}
         <section className="oj-hero">
-          <p className="oj-eyebrow">Postmortems, indexed by how things break</p>
+          <p className="oj-eyebrow">The record of the red bars</p>
           <h1 className="oj-h1">
-            Engineers learn more from <em>failures</em><br />than from clean diagrams.
+            Every status page turns green again.<br />
+            <em>This one doesn't.</em>
           </h1>
           <p className="oj-lede">
-            A curated index of public engineering postmortems — not another list of links,
-            but a map of <strong>how systems actually fail</strong>. Pick a failure class
-            and see who it bit, why it spread, and the one transferable lesson.
-            Every entry links to the original writeup.
+            {incidents.length} public engineering postmortems, kept on permanent record and
+            indexed by <strong>how the system broke</strong> — not who it embarrassed.
+            Pick a failure class; see who it bit, how it spread, and the one lesson
+            worth stealing. Every entry links to the original writeup.
           </p>
         </section>
+
+        {/* Master timeline strip */}
+        <MasterStrip incidents={incidents} />
 
         {/* Failure-class board */}
         <FailureBoard

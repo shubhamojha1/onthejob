@@ -1,4 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0C1014"/>
-  <text x="16" y="23" font-family="system-ui, sans-serif" font-size="22" font-weight="700" text-anchor="middle" fill="#E8A33D">✕</text>
+  <style>
+    .tile{fill:#FFFFFF}.edge{stroke:#CDD4DB}.ok{fill:#8FBC9F}
+    @media (prefers-color-scheme:dark){
+      .tile{fill:#1B222B}.edge{stroke:#36414E}.ok{fill:#2E4A39}
+    }
+  </style>
+  <rect class="tile edge" x=".5" y=".5" width="31" height="31" rx="7" stroke-width="1"/>
+  <rect class="ok" x="5.5" y="10" width="3" height="12" rx="1"/>
+  <rect class="ok" x="10" y="10" width="3" height="12" rx="1"/>
+  <rect class="ok" x="14.5" y="10" width="3" height="12" rx="1"/>
+  <rect x="19" y="7" width="3" height="18" rx="1" fill="#E0343F"/>
+  <rect class="ok" x="23.5" y="10" width="3" height="12" rx="1"/>
 </svg>

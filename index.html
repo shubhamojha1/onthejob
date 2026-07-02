@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <title>Systems Failed</title>
-    <meta name="description" content="A curated index of public engineering postmortems, organized by how systems fail — not by company." />
-    <meta property="og:title" content="Systems Failed — Engineering postmortems by failure class" />
-    <meta property="og:description" content="Pick a way systems break and see who it bit, why it spread, and the transferable lesson." />
+    <meta name="description" content="Every status page turns green again. This one doesn't. Real engineering postmortems on permanent record, indexed by failure class." />
+    <meta property="og:title" content="Systems Failed — the record of the red bars" />
+    <meta property="og:description" content="Every status page turns green again. This one doesn't. Real engineering postmortems on permanent record, indexed by failure class — see who it bit, how it spread, and the lesson worth stealing." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://systemsfailed.vercel.app" />
     <meta property="og:image" content="https://systemsfailed.vercel.app/og-image.png" />
@@ -15,6 +15,17 @@
     <meta name="twitter:image" content="https://systemsfailed.vercel.app/og-image.png" />
   </head>
   <body>
+    <script>
+      // Resolve theme before first paint: stored choice, else OS preference
+      try {
+        var q = new URLSearchParams(location.search).get('theme')
+        var t = q === 'light' || q === 'dark' ? q : localStorage.getItem('sf-theme')
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        document.documentElement.dataset.theme = t
+      } catch (e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

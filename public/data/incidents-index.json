@@ -31,6 +31,37 @@
     "verified": false
   },
   {
+    "id": "incident-io-2025-aws-outage-cascade",
+    "company": "incident.io",
+    "title": "AWS us-east-1 outage cascaded through four hidden third-party dependencies",
+    "year": 2025,
+    "date": "2025-10-20",
+    "duration": "~10h 30min (07:11–17:37 UTC, multiple services)",
+    "classes": [
+      "dependency",
+      "cascade"
+    ],
+    "patterns": [
+      "hidden-third-party-dependency",
+      "shared-queue-capacity",
+      "deployment-pipeline-dependency",
+      "dead-tuple-index-bloat",
+      "compounding-failures"
+    ],
+    "impact": "incident.io's on-call notifications were delayed for over two hours, SAML authentication was intermittently unavailable, Scribe's AI note-taker was offline for ~5 hours, and the deployment pipeline was blocked — all driven by AWS us-east-1 dependency propagation through their telecom provider, auth provider, transcription provider, and Docker Hub.",
+    "trigger": "AWS us-east-1 experienced a major outage at 07:11 UTC, taking down the telecom provider incident.io relied on for SMS and phone call delivery of on-call notifications.",
+    "mechanism": "Telecom provider failure → SMS/phone notification requests started timing out after retries → notifications shared queue capacity with Email, Slack, and push channels, so all delivery types backed up → team tried to deploy code fixes but their build pipeline implicitly depended on Docker Hub, which runs on AWS and was also down → deployment blocked; in parallel, the escalation worker's Postgres index filled with dead tuples from the burst of activity, making more workers counterproductive rather than helpful.",
+    "lesson": "Third-party provider risk runs much deeper than your direct dependencies — audit not just which services you integrate with but which cloud provider each one runs on, and verify that your deployment pipeline itself has no implicit dependencies on the same failing infrastructure you need to fix.",
+    "interview": "Design an on-call notification system that remains operable when both your telecom provider and your deployment pipeline are simultaneously unavailable — what redundancy and pre-baked fallback mechanisms would you build in?",
+    "source": "https://incident.io/blog/service-disruption-october-20th-2025",
+    "sourceLabel": "incident.io Engineering Blog",
+    "source_quote": "It was immediately clear the failing telecom requests, combined with our client retry mechanisms were resulting in notification jobs taking up to 30s to process.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
+    "verified": false
+  },
+  {
     "id": "github-2024-database-config-outage",
     "company": "GitHub",
     "title": "Config change silenced database health checks for 36 minutes",
@@ -58,6 +89,67 @@
     "archive_url": "",
     "date_added": "2026-06-26",
     "last_verified": "2026-06-26",
+    "verified": false
+  },
+  {
+    "id": "incident-io-2023-connection-pool-exhaustion",
+    "company": "incident.io",
+    "title": "Unnecessary Slack transactions starved database connection pool",
+    "year": 2023,
+    "date": "2023-02-01",
+    "duration": "~2 weeks of intermittent timeouts",
+    "classes": [
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "connection-pool-starvation",
+      "unnecessary-transaction-scope",
+      "slow-investigation-without-observability",
+      "whack-a-mole-debugging",
+      "intermittent-hard-to-reproduce"
+    ],
+    "impact": "incident.io's API experienced intermittent 20-second timeouts over two weeks in early 2023, causing customers to see request failures whenever connection pool slots were fully occupied.",
+    "trigger": "Every submission of a Slack modal (the /inc slash command confirmation) was silently opening a database transaction for the full duration of the request, holding a connection pool slot even when no transactional guarantees were needed.",
+    "mechanism": "High volumes of concurrent Slack modal submissions each held a connection pool slot for their full duration → all available connections were consumed → other API requests queued waiting for a connection → requests hit the 20-second timeout and failed; the intermittent nature made root cause identification difficult across 24 separate fix attempts over two weeks.",
+    "lesson": "Instrument your database connection pool with per-operation duration metrics before an incident forces you to — connection pool exhaustion from many unnecessary short transactions is invisible without that data, and the root cause will look like a general slowdown with no obvious culprit.",
+    "interview": "How would you design observability for a shared database connection pool to identify which endpoints hold connections the longest and set meaningful exhaustion alerts?",
+    "source": "https://incident.io/blog/database-performance",
+    "sourceLabel": "incident.io Engineering Blog",
+    "source_quote": "It was many short transactions that, when added together, caused us some real problems.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
+    "verified": false
+  },
+  {
+    "id": "incident-io-2023-gke-dataplane-tcp-storms",
+    "company": "incident.io",
+    "title": "GKE Dataplane V2 CPU starvation from concurrent TCP storms",
+    "year": 2023,
+    "date": "2023-09-19",
+    "duration": "~1 week",
+    "classes": [
+      "cascade",
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "thundering-herd",
+      "runaway-query",
+      "infrastructure-migration-surprise",
+      "wrong-hypothesis-first",
+      "node-level-noisy-neighbor"
+    ],
+    "impact": "incident.io experienced intermittent Postgres and Memcache connection timeouts across production nodes for approximately one week following their migration to GKE, affecting API response reliability for all customers.",
+    "trigger": "After migrating to GKE, the application's connection pool began opening hundreds of new TCP connections per second — a rate high enough to saturate GKE Dataplane V2's (anetd) connection-tracking CPU budget and drop packets node-wide.",
+    "mechanism": "Post-migration connection pool churn (hundreds of new connections/s) → GKE Dataplane V2 (anetd) consumed 2–3 vCPUs per node on connection tracking → node-level CPU saturation dropped TCP packets → Postgres and Memcache connections on that node timed out simultaneously, mimicking unrelated failures; a separate runaway query (accidental duplicate joins to an external API) later amplified the churn and prevented the residual timeouts from resolving even after initial pool fixes.",
+    "lesson": "After migrating to a new cloud platform, probe for hidden per-node networking behaviors (like Dataplane V2 CPU amplification on connection churn) before blaming application-layer connection pools — node-level packet drops can mimic dozens of unrelated app failures at once.",
+    "interview": "When a distributed system shows simultaneous timeouts to unrelated backends (database and cache) on the same node but not others, what host-level and network-level signals would you examine to distinguish a bad deployment from a platform networking issue?",
+    "source": "https://incident.io/blog/clouds-caches-and-connection-conundrums",
+    "sourceLabel": "incident.io Engineering Blog",
+    "source_quote": "Thanks to an accidental database join, we'd been making thousands of duplicate network calls to an external third party.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
     "verified": false
   },
   {
@@ -141,6 +233,37 @@
     "source_quote": "",
     "archive_url": "",
     "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "incident-io-2021-postgres-sequence-skip",
+    "company": "incident.io",
+    "title": "Database upgrade made incident IDs skip 32 numbers",
+    "year": 2021,
+    "date": "2021-07-12",
+    "duration": "< 1 day (investigation and fix)",
+    "classes": [
+      "bad-deploy",
+      "automation-misfire"
+    ],
+    "patterns": [
+      "follower-promotion-state-divergence",
+      "wal-preallocation-surprise",
+      "user-visible-internal-counter",
+      "missing-upgrade-validation",
+      "implicit-guarantee-mismatch"
+    ],
+    "impact": "Multiple customer organizations saw their incident identifiers jump by up to 32 (e.g. from #INC-20 to #INC-52), eroding trust in the numbering system, though no data was lost or misattributed.",
+    "trigger": "A routine database upgrade that spun up a follower node and promoted it to primary — the follower was carrying Postgres sequence values up to 32 ahead of the old primary, because Postgres pre-allocates 32 sequence values before writing them to the WAL.",
+    "mechanism": "Postgres pre-logs 32 sequence values in advance to avoid logging every single increment → follower nodes always track a state up to 32 ahead of the current committed value → promoting the follower as the new primary during the upgrade made all per-organization incident sequences jump by up to 32 → customers saw large unexpected gaps in their incident numbering.",
+    "lesson": "Never expose raw Postgres sequences as meaningful user-facing identifiers — sequences do not guarantee gap-free increments and any failover, crash, or upgrade can silently advance them by up to 32; use an explicit MAX+1 approach instead.",
+    "interview": "How would you implement a per-organization counter that guarantees sequential, gap-free identifiers even across database failovers, follower promotions, and transaction rollbacks?",
+    "source": "https://incident.io/blog/one-two-skip-a-few",
+    "sourceLabel": "incident.io Engineering Blog",
+    "source_quote": "We don't want to log each fetching of a value from a sequence, so we pre-log a few fetches in advance. In the event of crash we can lose (skip over) as many values as we pre-logged.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
     "verified": false
   },
   {
@@ -228,6 +351,37 @@
     "verified": false
   },
   {
+    "id": "datadog-2020-service-discovery-thundering-herd",
+    "company": "Datadog",
+    "title": "Service discovery collapse took down all systems for 10 hours",
+    "year": 2020,
+    "date": "2020-09-24",
+    "duration": "~10 h",
+    "classes": [
+      "thundering-herd",
+      "cascade"
+    ],
+    "patterns": [
+      "uncached-nxdomain-amplification",
+      "control-plane-as-spof",
+      "hidden-coupling-through-migration",
+      "no-break-glass-automation",
+      "quorum-loss-from-overload"
+    ],
+    "impact": "The US region of Datadog was degraded for roughly 10 hours on September 24–25, 2020, with the web tier hitting 60–90% error rates, leaving customers unable to reliably access dashboards, alerts, APM, or infrastructure monitoring.",
+    "trigger": "A routine recycling of a small latency-measuring cluster caused its service discovery entries to disappear, prompting the intake cluster — which had been silently misconfigured a month earlier to use the local DNS resolver instead of a static file — to flood service discovery with non-cached NXDOMAIN queries at 10× normal volume within seconds.",
+    "mechanism": "The NXDOMAIN flood overwhelmed the service discovery cluster, which lost quorum → once node-level DNS caches expired, every service across the platform joined a thundering herd hammering the same broken cluster → service discovery could no longer register services or answer queries → services failed to locate dependencies or load runtime config at startup → the web tier sustained 60–90% error rates; recovery required manually isolating the cluster, controlling re-admission, and iteratively removing hard dependencies service by service.",
+    "lesson": "Service discovery and configuration systems must serve stale data gracefully when overloaded rather than failing hard — any system that grapples for a central dependency at startup turns a localized failure into a platform-wide thundering herd.",
+    "interview": "How would you design a service discovery system so that a thundering herd of reconnecting clients after an outage cannot cause the discovery cluster itself to lose quorum and extend the outage?",
+    "source": "https://www.datadoghq.com/blog/2020-09-25-infrastructure-connectivity-issue/",
+    "sourceLabel": "Datadog Engineering Blog",
+    "source_quote": "NXDOMAIN answers are not cached by the resolver to quickly propagate service deregistration throughout the infrastructure.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
+    "verified": false
+  },
+  {
     "id": "discord-redis-failover",
     "company": "Discord",
     "title": "A cloud live-migration tipped over Redis",
@@ -253,6 +407,37 @@
     "source_quote": "",
     "archive_url": "",
     "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "github-2020-proxysql-file-descriptor-exhaustion",
+    "company": "GitHub",
+    "title": "ProxySQL file descriptor limit silently capped by system process manager",
+    "year": 2020,
+    "date": "2020-02-19",
+    "duration": "8h 14min total across 4 events (Feb 19–27)",
+    "classes": [
+      "resource-exhaustion",
+      "config-change"
+    ],
+    "patterns": [
+      "silent-config-downgrade",
+      "connection-pool-overload",
+      "master-database-hotspot",
+      "read-replica-misrouting",
+      "no-realistic-load-testing"
+    ],
+    "impact": "GitHub.com experienced degraded service for a combined 8 hours 14 minutes across four events in late February 2020, with stalled writes on the mysql1 cluster affecting all authentication and core services that depended on it.",
+    "trigger": "An unexpectedly resource-intensive query was routed to the mysql1 master instead of the read replica pool, spiking load on ProxySQL beyond its effective connection limit — a limit far lower than the team realized.",
+    "mechanism": "Four distinct events, each with a different proximate trigger, all converged on the same bottleneck: ProxySQL breaking under connection load because its file descriptor limit was silently reduced from 1,073,741,824 to 65,536 by the system process manager. Event 1 (Feb 19): resource-heavy query misrouted to master overloaded ProxySQL. Event 2 (Feb 20): planned master promotion caused unexpected load spike. Event 3 (Feb 25): connections crossed the 65,536 ceiling and the silent capping was finally discovered. Event 4 (Feb 27): application query changes spiked master load again before the fix was fully in place.",
+    "lesson": "Your process manager may silently cap OS resource limits like LimitNOFILE to a value orders of magnitude below what you configured — always check the actual ulimits live in production processes, not just the config files.",
+    "interview": "You find ProxySQL failing under load but your config sets LimitNOFILE to 1 billion — where would you look to find what the actual running file descriptor limit is, and how would you reliably verify it won't silently change after a restart?",
+    "source": "https://github.blog/news-insights/company-news/february-service-disruptions-post-incident-analysis/",
+    "sourceLabel": "GitHub Blog",
+    "source_quote": "Because of a system-level limit of 1048576, our process manager silently reduced our LimitNOFILE setting from 1073741824 to 65536.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
     "verified": false
   },
   {
@@ -309,6 +494,36 @@
     "archive_url": "",
     "date_added": "2026-06-23",
     "verified": true
+  },
+  {
+    "id": "aws-2018-seoul-dns-resolver",
+    "company": "AWS",
+    "title": "Config change killed Seoul region DNS for 84 minutes",
+    "year": 2018,
+    "date": "2018-11-22",
+    "duration": "1 h 24 min",
+    "classes": [
+      "config-change",
+      "dns-bgp"
+    ],
+    "patterns": [
+      "missing-config-validation",
+      "no-minimum-capacity-guardrail",
+      "missing-removal-throttle",
+      "regional-blast-radius"
+    ],
+    "impact": "EC2 instances in the AWS AP-NORTHEAST-2 (Seoul) region were unable to resolve DNS for 84 minutes, affecting all customers running workloads in that region.",
+    "trigger": "A configuration update to the EC2 DNS resolver fleet incorrectly removed the setting specifying the minimum number of healthy hosts, causing the system to fall back to a dangerously low default value.",
+    "mechanism": "With the minimum healthy hosts threshold effectively zeroed out, the fleet shed healthy hosts below the capacity needed to serve queries → DNS resolution from within EC2 instances began failing across the entire Seoul region; recovery required manually stopping further host removal and then restoring fleet capacity to prior levels.",
+    "lesson": "Configuration parameters that control minimum capacity thresholds must have semantic validation — silently defaulting to zero when a floor setting is removed is a single config push away from a regional outage.",
+    "interview": "How would you design a configuration management system for a critical DNS resolver fleet so that removing or zeroing a minimum-capacity setting requires explicit confirmation rather than silently adopting a dangerous default?",
+    "source": "https://aws.amazon.com/message/74876-2/",
+    "sourceLabel": "AWS Post-Event Summary",
+    "source_quote": "The root cause of DNS resolution issues was a configuration update which incorrectly removed the setting that specifies the minimum healthy hosts for the EC2 DNS resolver fleet in the AP-NORTHEAST-2 Region.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
+    "verified": false
   },
   {
     "id": "github-2018-splitbrain",
@@ -476,6 +691,38 @@
     "source_quote": "",
     "archive_url": "",
     "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "github-2014-dns-puppet-cascade",
+    "company": "GitHub",
+    "title": "Puppet bug corrupted DNS and cascaded into fileserver exhaustion",
+    "year": 2014,
+    "date": "2014-01-08",
+    "duration": "42 min full outage + 1 h 35 min partial",
+    "classes": [
+      "dns-bgp",
+      "cascade",
+      "bad-deploy"
+    ],
+    "patterns": [
+      "config-management-partial-restart",
+      "circular-dns-dependency",
+      "unsanitized-api-output-to-zone-file",
+      "resource-exhaustion-backpressure",
+      "no-full-validation-between-deploys"
+    ],
+    "impact": "GitHub.com was fully unavailable for 42 minutes on January 8, 2014, with an additional 95 minutes of degraded access for a subset of repositories while fileservers were triaged and restored.",
+    "trigger": "A Puppet manifest bug caused only the authoritative name server to restart after a firewall and DNS config change, leaving the caching name server querying an IP that was no longer serving DNS.",
+    "mechanism": "Caching name server timed out on DNS queries → a triggered deployment attempted to rebuild the zone file via an API call that itself required working DNS → the broken DNS caused the API to return partial data → the zone file was generated with records stripped → mass NXDOMAIN responses; simultaneously the DNS outage caused a process storm on fileservers → memory exhaustion → routing layer back-pressure blocked access to healthy fileservers too.",
+    "lesson": "Deployment systems that regenerate critical infrastructure config (like DNS zone files) must validate API responses for completeness before applying them — and must never depend on the very service they are rebuilding.",
+    "interview": "How would you design a DNS zone file generation pipeline to be safe when the DNS infrastructure it depends on is partially degraded?",
+    "source": "https://github.blog/news-insights/the-library/dns-outage-post-mortem/",
+    "sourceLabel": "GitHub Blog",
+    "source_quote": "Both name servers received the appropriate configuration changes, but only the authoritative name server was restarted due to a bug in our Puppet manifests.",
+    "archive_url": "",
+    "date_added": "2026-06-27",
+    "last_verified": "2026-06-27",
     "verified": false
   },
   {
