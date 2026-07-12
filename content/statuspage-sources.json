@@ -1,0 +1,10 @@
+[
+  { "name": "github",     "api": "https://www.githubstatus.com/api/v2/incidents.json" },
+  { "name": "cloudflare", "api": "https://www.cloudflarestatus.com/api/v2/incidents.json" },
+  { "name": "discord",    "api": "https://discordstatus.com/api/v2/incidents.json" },
+  { "name": "reddit",     "api": "https://www.redditstatus.com/api/v2/incidents.json" },
+  { "name": "dropbox",    "api": "https://status.dropbox.com/api/v2/incidents.json" },
+  { "name": "twilio",     "api": "https://status.twilio.com/api/v2/incidents.json" },
+  { "name": "coinbase",   "api": "https://status.coinbase.com/api/v2/incidents.json" },
+  { "name": "figma",      "api": "https://status.figma.com/api/v2/incidents.json" }
+]

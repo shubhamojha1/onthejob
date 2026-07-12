@@ -4,7 +4,7 @@
     "discovered_title": "Basecamp",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://signalvnoise.com/posts/3728-basecamp-was-under-network-attack-this-morning",
@@ -18,7 +18,7 @@
     "discovered_title": "Basecamp",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://web.archive.org/web/20220530044506/https://m.signalvnoise.com/update-on-basecamp-3-being-stuck-in-read-only-as-of-nov-8-922am-cst/",
@@ -39,7 +39,7 @@
     "discovered_title": "CircleCI",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://discuss.circleci.com/t/post-incident-report-april-4-2025-circleci-ui-loading-build-triggering-issues/53208",
@@ -53,14 +53,14 @@
     "discovered_title": "Datadog",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://github.blog/news-insights/the-library/dns-outage-post-mortem/",
     "discovered_title": "GitHub",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://github.blog/news-insights/company-news/github-availability-report-august-2024/",
@@ -116,14 +116,14 @@
     "discovered_title": "incident.io",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://status.circleci.com/incidents/8rklh3qqckp1",
     "discovered_title": "CircleCI",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://discuss.circleci.com/t/post-incident-report-april-4-2025-delays-in-starting-workflows/53113",
@@ -144,7 +144,7 @@
     "discovered_title": "GitHub",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://github.blog/news-insights/company-news/github-availability-report-may-2021/",
@@ -186,7 +186,7 @@
     "discovered_title": "incident.io",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://status.incident.io/incidents/01JRDFKAGE07YYDY0KZR137BX3/write-up",
@@ -284,28 +284,28 @@
     "discovered_title": "incident.io",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://incident.io/blog/service-disruption-october-20th-2025",
     "discovered_title": "incident.io",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://launchdarkly.com/blog/what-happened-what-we-learned-and-how-were-improving/",
     "discovered_title": "Launchdarkly",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://web.archive.org/web/20211019062735/https://www.pagerduty.com/blog/outage-post-mortem-april-13-2013/",
     "discovered_title": "PagerDuty",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://web.archive.org/web/20180830181639/https://paritytech.io/the-multi-sig-hack-a-postmortem/",

@@ -16,6 +16,8 @@
     "discover": "tsx scripts/discovery.ts",
     "queue": "tsx scripts/queue.ts",
     "ingest": "tsx scripts/ingest.ts",
+    "ground": "tsx scripts/grounding.ts",
+    "statuspage-worker": "tsx scripts/statuspage-worker.ts",
     "ingest-prep": "tsx scripts/ingest-prep.ts",
     "ingest-apply": "tsx scripts/ingest-apply.ts"
   },
