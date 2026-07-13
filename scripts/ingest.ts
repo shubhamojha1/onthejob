@@ -67,7 +67,7 @@ try {
 
   // ── LLM extraction ────────────────────────────────────────────────────────
   console.log(`\nExtracting via ${backend === 'sdk' ? `SDK (${process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6'})` : 'claude CLI'} ...`)
-  const { extracted, confidence } = await extractIncident(url, pageText, backend)
+  const { extracted, confidence, tweet } = await extractIncident(url, pageText, backend)
 
   // ── Zod validation ────────────────────────────────────────────────────────
   const incident = validateIncident(extracted, url)
@@ -93,7 +93,7 @@ try {
   console.log(`\nWrote ${mdPath}`)
 
   console.log('\nCreating draft PR ...')
-  const prUrl = createDraftPr(incident, confidence, url, grounding)
+  const prUrl = createDraftPr(incident, confidence, url, grounding, tweet)
   console.log(`  ✓ ${prUrl}`)
 
   markQueueDone(url)

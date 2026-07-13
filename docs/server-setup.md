@@ -3,7 +3,9 @@
 One-time setup for running `scripts/statuspage-worker.ts` on a cron from a headless
 Ubuntu machine (the repurposed laptop). The worker polls Statuspage incident APIs,
 extracts via headless Claude Code (`claude -p`, subscription auth — no
-`ANTHROPIC_API_KEY`), and opens draft PRs via `gh`.
+`ANTHROPIC_API_KEY`), and opens draft PRs via `gh`. Each PR includes a suggested
+tweet (drafted by the same extraction call) for announcing the incident — copy it out
+and post manually; the worker does not post to Twitter/X itself.
 
 Deployment model: **git pull at run start**. Push changes to `main` from the dev
 machine; the server picks them up on its next run. Incident PRs flow back through
@@ -68,21 +70,13 @@ git config user.name  "onthejob-worker"
 git config user.email "subham.k.ojha@gmail.com"
 ```
 
-## 4. Keep the laptop awake 24/7
+## 4. Power (no 24/7 requirement)
 
-```bash
-# Ignore lid close (headless):
-sudo sed -i 's/#HandleLidSwitch=.*/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
-sudo sed -i 's/#HandleLidSwitchExternalPower=.*/HandleLidSwitchExternalPower=ignore/' /etc/systemd/logind.conf
-sudo systemctl restart systemd-logind
-
-# Disable suspend/hibernate entirely:
-sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-```
-
-Battery hygiene: if the battery is removable, run on AC without it; otherwise check
-`/sys/class/power_supply/BAT*/charge_control_end_threshold` — many laptops accept
-`echo 80 | sudo tee .../charge_control_end_threshold` to cap charging.
+No always-on setup needed. Cron only fires while the machine is powered on and awake;
+if it's asleep or off at 08:30 UTC, that run is simply skipped. Dedup is stateless
+(derived from the repo, not run history — see "Operations" below), so a missed day is
+harmless and gets picked up the next time cron fires on an awake machine. Leave lid-close
+and suspend behavior at their defaults.
 
 ## 5. Cron
 
@@ -134,6 +128,7 @@ Optional monthly reboot for kernel updates (root crontab):
 | Raise per-run cap (default 3) | `npm run statuspage-worker -- --max 5` (or edit cron wrapper) |
 | Claude auth expired | log shows exit 2 → SSH in, `claude` → `/login` |
 | Failed grounding | PR is opened anyway, labeled `grounding-failed` — review against source before merge |
+| Post the tweet | copy the "Suggested tweet" block from the PR description, post manually — nothing is auto-posted |
 
 Dedup is stateless — derived from merged incident files, open PR bodies, and the
 discovery queue. Deleting a PR **branch without merging** makes the worker re-ingest

@@ -28,6 +28,7 @@ fences, no explanation — the response must be parseable by `JSON.parse()` with
   "source":      "<canonical URL — use the URL provided, do not change it>",
   "sourceLabel": "<Human-readable label, e.g. 'Cloudflare blog' or 'AWS post-event summary'>",
   "source_quote": "<One sentence quoted verbatim from the postmortem that grounds the extraction>",
+  "tweet":       "<Standalone tweet, <=280 chars, announcing this incident writeup>",
   "confidence":  "high" | "medium" | "low"
 }
 ```
@@ -70,6 +71,10 @@ breakers on rule engines."
 
 **source_quote** — exactly one sentence, verbatim from the postmortem text. Choose a sentence
 that best proves the root cause was correctly identified.
+
+**tweet** — a single standalone tweet (<=280 characters, own words, no source URL, no
+hashtags unless one is genuinely apt) that would make an engineer stop scrolling. Lead with
+the company and what broke, land on the one interesting mechanism or lesson. Plain text only.
 
 **confidence** scoring:
 - `high` — date, duration, root cause, and impact are all explicitly stated in the postmortem.

@@ -222,7 +222,7 @@ async function ingestOne(item: WorkItem): Promise<void> {
   }
 
   console.log(`  extracting via ${backend} ...`)
-  const { extracted, confidence } = await extractIncident(item.url, sourceText, backend)
+  const { extracted, confidence, tweet } = await extractIncident(item.url, sourceText, backend)
 
   const incident = validateIncident(extracted, item.url)
   console.log(`  ✓ valid — id: ${incident.id}, confidence: ${confidence}`)
@@ -235,7 +235,7 @@ async function ingestOne(item: WorkItem): Promise<void> {
   const archiveUrl = await saveToArchive(item.url)
   writeIncidentFile(incident, archiveUrl)
 
-  const prUrl = createDraftPr(incident, confidence, item.url, grounding)
+  const prUrl = createDraftPr(incident, confidence, item.url, grounding, tweet)
   console.log(`  ✓ PR: ${prUrl}${grounding.pass ? '' : '  (flagged grounding-failed)'}`)
 }
 

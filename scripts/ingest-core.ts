@@ -36,6 +36,7 @@ export class IngestError extends Error {
 export interface ExtractionResult {
   extracted: Record<string, unknown>
   confidence: string
+  tweet: string
 }
 
 // ── Dedup helpers ─────────────────────────────────────────────────────────────
@@ -163,7 +164,9 @@ export async function extractIncident(
 
   const confidence = (extracted.confidence as string) ?? 'low'
   delete extracted.confidence // not in Zod schema
-  return { extracted, confidence }
+  const tweet = (extracted.tweet as string) ?? ''
+  delete extracted.tweet // not in Zod schema — PR-only, not persisted with the incident
+  return { extracted, confidence, tweet }
 }
 
 // ── Zod validation ────────────────────────────────────────────────────────────
@@ -255,10 +258,11 @@ export function createDraftPr(
   confidence: string,
   url: string,
   grounding?: GroundingReport,
+  tweet?: string,
 ): string {
   const branch  = `draft/incident-${incident.id}`
   const prTitle = `Draft incident: ${incident.company} ${incident.year}`
-  const prBody  = buildPrBody(incident, confidence, url, grounding)
+  const prBody  = buildPrBody(incident, confidence, url, grounding, tweet)
 
   // Write PR body to temp file to avoid shell quoting issues on all platforms
   const tmpBody = join(tmpdir(), `onthejob-pr-${Date.now()}.md`)
@@ -317,7 +321,7 @@ export function markQueueDone(url: string): void {
 
 // ── PR body ───────────────────────────────────────────────────────────────────
 
-function buildPrBody(i: Incident, confidence: string, sourceUrl: string, grounding?: GroundingReport): string {
+function buildPrBody(i: Incident, confidence: string, sourceUrl: string, grounding?: GroundingReport, tweet?: string): string {
   const badge = confidence === 'high' ? '🟢 high' : confidence === 'medium' ? '🟡 medium' : '🔴 low'
   const warning = confidence === 'low'
     ? '\n> ⚠️ **Low confidence** — verify all fields carefully against the original before merging.\n'
@@ -339,6 +343,16 @@ ${header}
 ${rows}
 `
   }
+
+  const tweetSection = tweet
+    ? `
+### Suggested tweet (${tweet.length}/280 chars)
+
+\`\`\`
+${tweet}
+\`\`\`
+`
+    : ''
 
   return `## Draft incident: ${i.company} ${i.year}
 
@@ -366,7 +380,7 @@ ${i.interview}
 
 ### Source grounding
 > ${i.source_quote ?? '_No source quote extracted._'}
-
+${tweetSection}
 ---
 
 <details>
