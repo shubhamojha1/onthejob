@@ -633,14 +633,34 @@ html[data-theme='dark'] .oj-root{
 .oj-hero-stats span{font-family:var(--mono); font-size:10px; color:var(--faint); text-transform:uppercase; letter-spacing:.06em}
 
 .oj-signal-card{
+  position:relative;
+}
+.oj-signal-shell{
   position:relative; overflow:hidden; border:1px solid var(--line2); border-radius:14px;
   background:color-mix(in srgb,var(--card) 94%,transparent);
   box-shadow:0 28px 70px -40px color-mix(in srgb,var(--ink) 45%,transparent),0 0 0 6px color-mix(in srgb,var(--card) 38%,transparent);
   transform:rotate(1deg);
+  transform-style:preserve-3d;
+  transition:transform .16s cubic-bezier(.2,.8,.2,1),box-shadow .2s ease,border-color .2s ease;
 }
-.oj-signal-card::after{
-  content:''; position:absolute; left:0; right:0; bottom:0; height:4px;
+.oj-signal-shell::before{
+  content:''; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0;
+  background:radial-gradient(circle at var(--glow-x,50%) var(--glow-y,50%),color-mix(in srgb,var(--down) 12%,transparent),transparent 42%);
+  transition:opacity .2s ease;
+}
+.oj-signal-shell::after{
+  content:''; position:absolute; z-index:3; left:0; right:0; bottom:0; height:4px;
   background:linear-gradient(90deg,var(--ok) 0 22%,var(--down) 22% 29%,var(--ok) 29% 48%,var(--down) 48% 55%,var(--ok) 55% 83%,var(--down) 83% 88%,var(--ok) 88%);
+}
+.oj-signal-shell>*{position:relative; z-index:2}
+@media (hover:hover) and (pointer:fine){
+  .oj-signal-shell{will-change:transform}
+  .oj-signal-card:hover .oj-signal-shell{
+    transform:perspective(900px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) translateY(-8px) scale(1.015);
+    border-color:color-mix(in srgb,var(--down) 38%,var(--line2));
+    box-shadow:0 38px 80px -38px color-mix(in srgb,var(--ink) 55%,transparent),0 0 0 6px color-mix(in srgb,var(--down) 7%,transparent);
+  }
+  .oj-signal-card:hover .oj-signal-shell::before{opacity:1}
 }
 .oj-signal-topbar{
   display:flex; align-items:center; justify-content:space-between; gap:12px;
@@ -730,7 +750,8 @@ html[data-theme='dark'] .oj-root{
   .oj-hero{grid-template-columns:1fr; gap:44px; padding-top:58px}
   .oj-hero-copy{max-width:720px}
   .oj-h1{max-width:13ch}
-  .oj-signal-card{max-width:620px; transform:none}
+  .oj-signal-card{max-width:620px}
+  .oj-signal-shell{transform:none}
 }
 
 @media (max-width:640px){
@@ -798,8 +819,9 @@ html[data-theme='dark'] .oj-root{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .oj-primary-action,.oj-secondary-action,.oj-card,.oj-nav-link,.oj-nav-share{
+  .oj-primary-action,.oj-secondary-action,.oj-card,.oj-nav-link,.oj-nav-share,.oj-signal-shell,.oj-signal-shell::before{
     transition:none!important;
   }
-  .oj-primary-action:hover,.oj-secondary-action:hover,.oj-card:hover{transform:none}
+  .oj-primary-action:hover,.oj-secondary-action:hover,.oj-card:hover,.oj-signal-card:hover .oj-signal-shell{transform:none}
+  .oj-signal-card:hover .oj-signal-shell::before{opacity:0}
 }

@@ -45,10 +45,17 @@ export function Component() {
   const [limit, setLimit]   = useState<number | 'all'>(10)
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [searchIndex, setSearchIndex] = useState<MiniSearch | null>(null)
+  const signalBoundsRef = useRef<DOMRect | null>(null)
+  const signalFrameRef = useRef<number | null>(null)
+  const signalPointerRef = useRef<{ card: HTMLElement; x: number; y: number } | null>(null)
 
   // Load search index asynchronously — only runs in the browser
   useEffect(() => {
     getSearchIndex().then(setSearchIndex).catch(console.error)
+  }, [])
+
+  useEffect(() => () => {
+    if (signalFrameRef.current !== null) cancelAnimationFrame(signalFrameRef.current)
   }, [])
 
   // Restore the user's feed-size choice after mount (SSG markup uses the default)
@@ -76,6 +83,43 @@ export function Component() {
   function toggleFilter(key: string) {
     scrollToFeedRef.current = !active.has(key)
     toggle(setActive, key)
+  }
+
+  function tiltSignalCard(event: React.MouseEvent<HTMLElement>) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const card = event.currentTarget
+    const bounds = signalBoundsRef.current ?? card.getBoundingClientRect()
+    const x = (event.clientX - bounds.left) / bounds.width
+    const y = (event.clientY - bounds.top) / bounds.height
+    signalPointerRef.current = { card, x, y }
+    if (signalFrameRef.current !== null) return
+    signalFrameRef.current = requestAnimationFrame(() => {
+      const pointer = signalPointerRef.current
+      if (pointer) {
+        pointer.card.style.setProperty('--tilt-x', `${(0.5 - pointer.y) * 7}deg`)
+        pointer.card.style.setProperty('--tilt-y', `${(pointer.x - 0.5) * 9}deg`)
+        pointer.card.style.setProperty('--glow-x', `${pointer.x * 100}%`)
+        pointer.card.style.setProperty('--glow-y', `${pointer.y * 100}%`)
+      }
+      signalFrameRef.current = null
+    })
+  }
+
+  function primeSignalCard(event: React.MouseEvent<HTMLElement>) {
+    signalBoundsRef.current = event.currentTarget.getBoundingClientRect()
+    tiltSignalCard(event)
+  }
+
+  function resetSignalCard(event: React.MouseEvent<HTMLElement>) {
+    const card = event.currentTarget
+    if (signalFrameRef.current !== null) cancelAnimationFrame(signalFrameRef.current)
+    signalFrameRef.current = null
+    signalBoundsRef.current = null
+    signalPointerRef.current = null
+    card.style.removeProperty('--tilt-x')
+    card.style.removeProperty('--tilt-y')
+    card.style.removeProperty('--glow-x')
+    card.style.removeProperty('--glow-y')
   }
 
   const results = useMemo(() => {
@@ -198,27 +242,35 @@ export function Component() {
             </div>
           </div>
 
-          <aside className="oj-signal-card" aria-label="How to read an incident">
-            <div className="oj-signal-topbar">
-              <span><i /> Archive signal</span>
-              <span>Permanent record</span>
-            </div>
-            <div className="oj-signal-body">
-              <div className="oj-signal-heading">
-                <span>Latest case file</span>
-                <b>{latestIncident.date}</b>
+          <aside
+            className="oj-signal-card"
+            aria-label="How to read an incident"
+            onMouseEnter={primeSignalCard}
+            onMouseMove={tiltSignalCard}
+            onMouseLeave={resetSignalCard}
+          >
+            <div className="oj-signal-shell">
+              <div className="oj-signal-topbar">
+                <span><i /> Archive signal</span>
+                <span>Permanent record</span>
               </div>
-              <h2>{latestIncident.company}</h2>
-              <p>{latestIncident.title}</p>
-              <div className="oj-signal-steps">
-                <span><b>01</b> Trigger</span>
-                <span><b>02</b> Mechanism</span>
-                <span><b>03</b> Impact</span>
-                <span><b>04</b> Lesson</span>
+              <div className="oj-signal-body">
+                <div className="oj-signal-heading">
+                  <span>Latest case file</span>
+                  <b>{latestIncident.date}</b>
+                </div>
+                <h2>{latestIncident.company}</h2>
+                <p>{latestIncident.title}</p>
+                <div className="oj-signal-steps">
+                  <span><b>01</b> Trigger</span>
+                  <span><b>02</b> Mechanism</span>
+                  <span><b>03</b> Impact</span>
+                  <span><b>04</b> Lesson</span>
+                </div>
+                <a href={`/incident/${latestIncident.id}`}>
+                  Open the latest report <span aria-hidden>→</span>
+                </a>
               </div>
-              <a href={`/incident/${latestIncident.id}`}>
-                Open the latest report <span aria-hidden>→</span>
-              </a>
             </div>
           </aside>
         </section>
