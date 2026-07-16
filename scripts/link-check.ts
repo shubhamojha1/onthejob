@@ -29,7 +29,7 @@ for (const file of files) {
       method: 'HEAD',
       redirect: 'follow',
       signal: AbortSignal.timeout(15_000),
-      headers: { 'User-Agent': 'onthejob-link-check/1.0' },
+      headers: { 'User-Agent': 'systemsfailed-link-check/1.0' },
     })
     results.push({ id, url, status: res.status })
     console.log(res.status >= 400 ? `FAIL [${res.status}]` : `OK [${res.status}]`)

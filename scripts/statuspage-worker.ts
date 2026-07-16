@@ -170,7 +170,7 @@ async function pollSource(source: StatuspageSource, seen: Set<string>): Promise<
   let data: StatuspageResponse
   try {
     const res = await fetch(source.api, {
-      headers: { 'User-Agent': 'onthejob-statuspage-worker/1.0 (+https://onthejob.dev)' },
+      headers: { 'User-Agent': 'systemsfailed-statuspage-worker/1.0 (+https://systemsfailed.dev)' },
       signal: AbortSignal.timeout(15_000),
     })
     if (!res.ok) {
@@ -242,7 +242,7 @@ async function ingestOne(item: WorkItem): Promise<void> {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  console.log(`onthejob statuspage worker — ${new Date().toISOString()}${DRY_RUN ? ' (dry run)' : ''}\n`)
+  console.log(`systemsfailed statuspage worker — ${new Date().toISOString()}${DRY_RUN ? ' (dry run)' : ''}\n`)
 
   if (!existsSync(SOURCES_FILE)) {
     console.error(`Missing ${SOURCES_FILE}`)

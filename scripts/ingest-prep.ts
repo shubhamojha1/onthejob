@@ -43,7 +43,7 @@ if (alreadyIn) {
 console.log(`Fetching ${url} ...`)
 const html = await fetch(url, {
   headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; onthejob-bot/1.0)',
+    'User-Agent': 'Mozilla/5.0 (compatible; systemsfailed-bot/1.0)',
     Accept: 'text/html,application/xhtml+xml',
   },
   signal: AbortSignal.timeout(20_000),

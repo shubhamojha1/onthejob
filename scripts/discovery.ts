@@ -139,7 +139,7 @@ async function ghFetch(url: string, accept = 'application/vnd.github.v3+json'): 
   return fetch(url, {
     headers: {
       Accept: accept,
-      'User-Agent': 'onthejob-discovery-bot',
+      'User-Agent': 'systemsfailed-discovery-bot',
       ...(GITHUB_TOKEN ? { Authorization: `Bearer ${GITHUB_TOKEN}` } : {}),
     },
   })
@@ -259,7 +259,7 @@ async function pollRSS(
   let xml: string
   try {
     const res = await fetch(feedUrl, {
-      headers: { 'User-Agent': 'onthejob-discovery-bot' },
+      headers: { 'User-Agent': 'systemsfailed-discovery-bot' },
       signal: AbortSignal.timeout(12_000),
     })
     if (!res.ok) {
@@ -318,7 +318,7 @@ async function pollRSS(
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  console.log('onthejob discovery bot\n')
+  console.log('systemsfailed discovery bot\n')
 
   const state    = loadState()
   const existing = loadCandidates()

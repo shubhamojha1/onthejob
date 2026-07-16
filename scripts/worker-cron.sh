@@ -14,7 +14,7 @@ export HOME="${HOME:-/home/$(whoami)}"
 export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LOG_FILE="$HOME/onthejob-worker.log"
+LOG_FILE="$HOME/systemsfailed-worker.log"
 
 log() { echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] $*" >> "$LOG_FILE"; }
 
@@ -39,7 +39,7 @@ git checkout -q main               >> "$LOG_FILE" 2>&1 || fail "git checkout mai
 git pull --ff-only -q origin main  >> "$LOG_FILE" 2>&1 || fail "git pull failed"
 
 # Reinstall deps only when the lockfile changed since last run
-LOCK_HASH_FILE="$HOME/.onthejob-lock-hash"
+LOCK_HASH_FILE="$HOME/.systemsfailed-lock-hash"
 LOCK_HASH="$(sha256sum package-lock.json | cut -d' ' -f1)"
 if [ ! -f "$LOCK_HASH_FILE" ] || [ "$(cat "$LOCK_HASH_FILE")" != "$LOCK_HASH" ]; then
   log "package-lock.json changed — npm ci"

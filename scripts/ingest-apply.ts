@@ -130,7 +130,7 @@ const branch  = `draft/incident-${incident.id}`
 const prTitle = `Draft incident: ${incident.company} ${incident.year}`
 const prBody  = buildPrBody(incident, confidence)
 
-const tmpBody = joinPath(tmpdir(), `onthejob-pr-${Date.now()}.md`)
+const tmpBody = joinPath(tmpdir(), `systemsfailed-pr-${Date.now()}.md`)
 writeFileSync(tmpBody, prBody)
 
 function exec(cmd: string): string {

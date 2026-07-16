@@ -72,7 +72,7 @@ export function extractText(html: string): string {
 export async function fetchPageText(url: string): Promise<string> {
   const html = await fetch(url, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; onthejob-bot/1.0; +https://onthejob.dev)',
+      'User-Agent': 'Mozilla/5.0 (compatible; systemsfailed-bot/1.0; +https://systemsfailed.dev)',
       Accept: 'text/html,application/xhtml+xml',
     },
     signal: AbortSignal.timeout(20_000),
@@ -265,7 +265,7 @@ export function createDraftPr(
   const prBody  = buildPrBody(incident, confidence, url, grounding, tweet)
 
   // Write PR body to temp file to avoid shell quoting issues on all platforms
-  const tmpBody = join(tmpdir(), `onthejob-pr-${Date.now()}.md`)
+  const tmpBody = join(tmpdir(), `systemsfailed-pr-${Date.now()}.md`)
   writeFileSync(tmpBody, prBody)
 
   let branchCreated = false

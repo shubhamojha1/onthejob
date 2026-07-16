@@ -1,5 +1,34 @@
 [
   {
+    "id": "github-2026-abusive-traffic-504",
+    "company": "GitHub",
+    "title": "Public endpoints overwhelmed by abusive traffic",
+    "year": 2026,
+    "date": "2026-06-08",
+    "duration": "~2 hours",
+    "classes": [
+      "thundering-herd"
+    ],
+    "patterns": [
+      "undetected-traffic-surge",
+      "shared-resource-contention",
+      "request-queueing-cascade",
+      "manual-blocking-required"
+    ],
+    "impact": "Signed-out users experienced 504 errors (peaking at 34% error rate) for pull requests, issues, and releases across GitHub.com for two hours; authenticated users were unaffected.",
+    "trigger": "A significant surge in abusive traffic targeting specific GitHub.com endpoints used by unauthenticated users.",
+    "mechanism": "Abusive traffic to public endpoints overwhelmed request processing capacity, causing legitimate requests to queue beyond timeout thresholds and return gateway timeout errors, degrading service availability for signed-out users across multiple GitHub services.",
+    "lesson": "Isolate unauthenticated traffic to separate backend resources or rate-limit public endpoints independently to prevent malicious traffic surges from degrading service for authenticated users.",
+    "interview": "How would you architect public and private request paths to ensure that a traffic surge targeting public endpoints cannot degrade service for authenticated users?",
+    "source": "https://www.githubstatus.com/incidents/m7n7sm0sr1pz",
+    "sourceLabel": "GitHub Status Page",
+    "source_quote": "This degraded our ability to respond to unauthenticated requests, causing requests to queue beyond timeout thresholds and return gateway timeout errors.",
+    "archive_url": "",
+    "date_added": "2026-07-14",
+    "last_verified": "2026-07-14",
+    "verified": false
+  },
+  {
     "id": "cloudflare-2025-tenant-api-thundering-herd",
     "company": "Cloudflare",
     "title": "Dashboard bug overwhelmed auth API for 75 minutes",
@@ -59,6 +88,38 @@
     "archive_url": "",
     "date_added": "2026-06-27",
     "last_verified": "2026-06-27",
+    "verified": false
+  },
+  {
+    "id": "aws-2024-kinesis-cell-management-shard-storm",
+    "company": "AWS",
+    "title": "Kinesis cell manager mistakes healthy hosts for dead",
+    "year": 2024,
+    "date": "2024-07-30",
+    "duration": "~7 h",
+    "classes": [
+      "automation-misfire",
+      "cascade",
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "health-check-false-positive",
+      "workload-profile-blind-spot",
+      "control-plane-overload",
+      "shared-internal-dependency",
+      "load-shedding-as-mitigation"
+    ],
+    "impact": "For nearly seven hours in US-EAST-1, an internal Kinesis Data Streams cell degraded, raising latencies and error rates across CloudWatch Logs, S3 event delivery, Data Firehose, ECS, Lambda, Redshift, and Glue, with log backlogs taking until the next day to clear.",
+    "trigger": "A routine single-AZ deployment cycled hosts in and out of service on a recently migrated Kinesis cell whose workload — a huge number of very low-throughput shards — the new cell management system had never balanced before.",
+    "mechanism": "The cell manager balanced shards by throughput, so it packed the many low-throughput shards onto a few hosts; those hosts' periodic status messages grew so large they could not be processed in time, the manager falsely declared healthy hosts unhealthy and mass-redistributed their shards, and the redistribution spike overloaded the subsystem that provisions secure data-plane connections, impairing the whole cell.",
+    "lesson": "An automated placement or failover system validated against typical workloads can still misbehave on a skewed profile — test cluster-management automation against shard-count extremes, not just throughput extremes, and cap its reaction rate so a false health signal cannot trigger a redistribution storm.",
+    "interview": "When asked to design a health-checking control plane for a sharded data service, discuss how oversized or delayed heartbeats can masquerade as host failure and why remediation actions need rate limits and blast-radius caps.",
+    "source": "https://aws.amazon.com/message/073024/",
+    "sourceLabel": "AWS post-event summary",
+    "source_quote": "When the cell management system did not receive status messages in a timely fashion, the cell management system incorrectly determined that the healthy hosts were unhealthy and began redistributing shards that those hosts had been processing to other hosts.",
+    "archive_url": "",
+    "date_added": "2026-07-10",
+    "last_verified": "2026-07-10",
     "verified": false
   },
   {
@@ -205,6 +266,36 @@
     "source_quote": "",
     "archive_url": "",
     "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "circleci-2021-backwards-incompatible-schema-change",
+    "company": "CircleCI",
+    "title": "Backwards-incompatible schema change stalls all job execution",
+    "year": 2021,
+    "date": "2021-11-08",
+    "duration": "53 min",
+    "classes": [
+      "bad-deploy",
+      "cascade"
+    ],
+    "patterns": [
+      "backwards-incompatible-migration",
+      "rollback-makes-it-worse",
+      "thundering-herd-on-recovery",
+      "slow-node-provisioning"
+    ],
+    "impact": "All job executors were blocked from running customer jobs for roughly 53 minutes, with elevated queue times continuing for machine executors for over an hour longer, affecting all CircleCI customers.",
+    "trigger": "A deploy changed a field type in the distribution service's database schema, and work written before the deploy became unreadable to the new code.",
+    "mechanism": "The schema change made pre-deploy data fail distribution, so the team rolled back — but the rollback then made post-deploy data unreadable instead, keeping errors flowing; a hotfix let the distributor ignore the field, and manual compute scaling to absorb the resulting thundering herd was slowed because new nodes provisioned too slowly, got marked unhealthy, and were terminated before they could help.",
+    "lesson": "A rollback is not automatically safe when a schema or format change has already been written to storage in the new shape — verify backward AND forward read compatibility before treating rollback as the safe default.",
+    "interview": "When asked about safe database migrations, discuss why a schema change must be readable by both old and new code during the rollout window, including during a rollback.",
+    "source": "https://discuss.circleci.com/t/incident-report-november-8-2021-jobs-stuck-in-a-not-running-state/41890",
+    "sourceLabel": "CircleCI Discuss",
+    "source_quote": "Customer jobs were blocked in a \"not running\" state from approximately 18:50 UTC to 19:43 UTC on Monday, November 8, 2021, due to a database schema change that was not backwards compatible.",
+    "archive_url": "",
+    "date_added": "2026-07-04",
+    "last_verified": "2026-07-04",
     "verified": false
   },
   {
@@ -526,6 +617,34 @@
     "verified": false
   },
   {
+    "id": "basecamp-2018-events-table-integer-overflow",
+    "company": "Basecamp",
+    "title": "Primary key overflow on events table forces read-only mode",
+    "year": 2018,
+    "date": "2018-11-09",
+    "duration": "~5 h",
+    "classes": [
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "integer-overflow",
+      "known-fix-not-applied-in-time",
+      "single-hot-table"
+    ],
+    "impact": "Basecamp 3 was fully read-only for almost five hours, blocking all writes across the product — no new messages, todos, files, or edits — while reads continued to work.",
+    "trigger": "The primary key on Basecamp's shared events table, which logs nearly every user action, hit the 32-bit integer ceiling of 2,147,483,647 and could no longer accept new rows.",
+    "mechanism": "A single high-traffic events table tracking nearly all product activity used a 32-bit integer primary key; the team was already mid-migration to widen it but ran out of headroom before finishing, and once the ceiling was hit every write-path action in the app failed simultaneously because it depended on writing to that table.",
+    "lesson": "When a hot, shared table nears a known integer key ceiling, treat the migration as urgent and monitor actual headroom, not just awareness that a fix is 'in progress.'",
+    "interview": "When asked about scaling a high-write table, discuss choosing 64-bit primary keys upfront and monitoring key-space headroom as a first-class production metric.",
+    "source": "https://web.archive.org/web/20220529044310/https://m.signalvnoise.com/postmortem-on-the-read-only-outage-of-basecamp-on-november-9th-2018/",
+    "sourceLabel": "Signal v. Noise (Basecamp blog, archived)",
+    "source_quote": "The root cause was that our database hit the ceiling of 2,147,483,647 on our very busy events table.",
+    "archive_url": "",
+    "date_added": "2026-07-04",
+    "last_verified": "2026-07-04",
+    "verified": false
+  },
+  {
     "id": "github-2018-splitbrain",
     "company": "GitHub",
     "title": "43 seconds that cost 24 hours",
@@ -607,6 +726,36 @@
     "source_quote": "",
     "archive_url": "",
     "date_added": "2026-06-23",
+    "verified": false
+  },
+  {
+    "id": "circleci-2015-database-overload-build-queue-collapse",
+    "company": "CircleCI",
+    "title": "Database contention triggers day-long build queue collapse",
+    "year": 2015,
+    "date": "2015-10-14",
+    "duration": "~17 h",
+    "classes": [
+      "cascade",
+      "resource-exhaustion"
+    ],
+    "patterns": [
+      "shared-database-contention",
+      "missing-operational-tooling",
+      "throttle-misfire",
+      "manual-state-repair"
+    ],
+    "impact": "Linux builds were backed up or completely halted for roughly 17 hours across two days, affecting nearly all CircleCI customers' CI/CD pipelines during peak usage.",
+    "trigger": "Rising build demand at peak traffic exposed database contention that prevented builds from being dequeued, and the standard scaling tools had no effect on the growing backlog.",
+    "mechanism": "Queued database operations backed up faster than mitigation attempts could isolate the cause, forcing a failover to a new primary to kill stuck operations; once builds were flowing again, a separate bug blocked builds from ever reaching the runnable state, and the built-in failure-backoff throttles misfired and slowed recovery further, requiring engineers to build ad hoc tooling live to manually push builds through in batches.",
+    "lesson": "Investing in architecture to reduce a known failure mode isn't enough — also build and rehearse the operational tooling needed to intervene quickly when that failure mode recurs at larger scale.",
+    "interview": "When asked how to prevent a shared database from becoming a single point of contention under load, discuss splitting hot datasets into isolated stores and building dedicated incident-response tooling ahead of time, not during the outage.",
+    "source": "https://status.circleci.com/incidents/8rklh3qqckp1",
+    "sourceLabel": "CircleCI Status",
+    "source_quote": "In July we had a similar issue with increasing load on the DB turning into queued operations to the point of a catastrophic failure.",
+    "archive_url": "",
+    "date_added": "2026-07-04",
+    "last_verified": "2026-07-04",
     "verified": false
   },
   {
@@ -723,6 +872,35 @@
     "archive_url": "",
     "date_added": "2026-06-27",
     "last_verified": "2026-06-27",
+    "verified": false
+  },
+  {
+    "id": "pagerduty-2013-dual-region-peering-outage",
+    "company": "PagerDuty",
+    "title": "Dual AWS region outage takes down notification dispatch",
+    "year": 2013,
+    "date": "2013-04-13",
+    "duration": "18 min",
+    "classes": [
+      "dependency",
+      "split-brain"
+    ],
+    "patterns": [
+      "shared-failure-domain",
+      "quorum-loss",
+      "hidden-topology-assumption"
+    ],
+    "impact": "Notification dispatch was completely down for 18 minutes after two of PagerDuty's three datacenters failed simultaneously; the events-ingestion API stayed up throughout.",
+    "trigger": "A peering point shared by two AWS regions PagerDuty treated as independent datacenters degraded, taking both regions offline at once.",
+    "mechanism": "PagerDuty had designed for a single datacenter failure across three sites, but two of the three secretly shared a network peering point; when it degraded, both went down together, the dispatch cluster couldn't reach quorum under the resulting latency, and a coordinator misconfiguration slowed recovery further.",
+    "lesson": "Redundancy plans must verify physical and network independence between supposedly separate failure domains, not just assume it from provider region boundaries.",
+    "interview": "When asked to design a highly-available multi-region system, discuss how to verify true failure-domain independence between regions rather than trusting provider abstractions.",
+    "source": "https://web.archive.org/web/20211019062735/https://www.pagerduty.com/blog/outage-post-mortem-april-13-2013/",
+    "sourceLabel": "PagerDuty blog (archived)",
+    "source_quote": "However, we have since learned that two of the datacenters shared a common peering point.",
+    "archive_url": "",
+    "date_added": "2026-07-04",
+    "last_verified": "2026-07-04",
     "verified": false
   },
   {
