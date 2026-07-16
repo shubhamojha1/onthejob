@@ -1,6 +1,6 @@
 # Incident extraction prompt
 
-You are extracting structured data from a public engineering postmortem for onthejob.dev —
+You are extracting structured data from a public engineering postmortem for systemsfailed.dev —
 a curated index of real-world incidents organised by failure class.
 
 ## Task

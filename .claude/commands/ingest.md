@@ -1,4 +1,4 @@
-You are ingesting a postmortem into onthejob.dev. $ARGUMENTS is the URL.
+You are ingesting a postmortem into systemsfailed.dev. $ARGUMENTS is the URL.
 
 Follow these steps in order — do not skip any, do not ask for confirmation between steps:
 

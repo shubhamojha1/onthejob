@@ -1,4 +1,4 @@
-# onthejob.dev
+# systemsfailed.dev
 
 A curated, searchable index of public engineering postmortems — organized by **failure class**, not company.
 

@@ -1,6 +1,6 @@
 # Incident ingestion workflow
 
-How a public postmortem goes from a URL to a live page on onthejob.dev.
+How a public postmortem goes from a URL to a live page on systemsfailed.dev.
 
 ---
 

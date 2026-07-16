@@ -66,7 +66,7 @@ npm run statuspage-worker -- --dry-run
 git identity for the PR commits the worker makes:
 
 ```bash
-git config user.name  "onthejob-worker"
+git config user.name  "systemsfailed-worker"
 git config user.email "subham.k.ojha@gmail.com"
 ```
 
@@ -90,11 +90,11 @@ crontab -e
 30 8 * * * /home/YOUR_USER/onthejob/scripts/worker-cron.sh
 ```
 
-Log: `~/onthejob-worker.log`. Rotate it:
+Log: `~/systemsfailed-worker.log`. Rotate it:
 
 ```bash
-sudo tee /etc/logrotate.d/onthejob-worker > /dev/null <<'EOF'
-/home/YOUR_USER/onthejob-worker.log {
+sudo tee /etc/logrotate.d/systemsfailed-worker > /dev/null <<'EOF'
+/home/YOUR_USER/systemsfailed-worker.log {
   weekly
   rotate 8
   compress
