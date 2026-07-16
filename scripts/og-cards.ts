@@ -28,14 +28,14 @@ const incidents: Incident[] = JSON.parse(
 )
 
 // ── Palette (kept in sync with src/styles/global.css tokens) ──────────────
-const INK = '#141A21'
-const MUTED = '#57626E'
-const FAINT = '#8B96A2'
-const LINE = '#DFE4E9'
+const INK = '#15191D'
+const MUTED = '#596168'
+const FAINT = '#858C91'
+const LINE = '#DFDDD6'
 const OK_DIM = '#BFD9C8'
-const DOWN = '#E0343F'
-const DOWN_INK = '#B8232D'
-const PAPER = '#F2F4F6'
+const DOWN = '#F04452'
+const DOWN_INK = '#C92736'
+const PAPER = '#F1F0EB'
 
 function font(pkg: string, file: string) {
   return readFileSync(join(ROOT, 'node_modules', '@fontsource', pkg, 'files', file))
@@ -323,30 +323,52 @@ function siteCard(count: number, yearMin: number, yearMax: number) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: PAPER,
+        background: '#0E141A',
         padding: '0 80px',
       },
       children: [
-        wordmark(24, DOWN_INK),
         {
           type: 'div',
           props: {
-            style: {
-              marginTop: 22,
-              fontFamily: 'Archivo',
-              fontSize: 78,
-              fontWeight: 800,
-              lineHeight: 1.02,
-              letterSpacing: -2.5,
-              color: INK,
-            },
-            children: "Every status page turns green again. This one doesn't.",
+            style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+            children: [
+              wordmark(24, '#F0F2EF'),
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex', fontFamily: 'IBM Plex Mono', fontSize: 15,
+                    letterSpacing: 2, color: '#FF7681', textTransform: 'uppercase',
+                  },
+                  children: 'Failure intelligence for engineers',
+                },
+              },
+            ],
           },
         },
         {
           type: 'div',
           props: {
-            style: { display: 'flex', gap: 6, marginTop: 52 },
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              marginTop: 36,
+              fontFamily: 'Archivo',
+              fontSize: 86,
+              fontWeight: 800,
+              lineHeight: .96,
+              letterSpacing: -3.5,
+            },
+            children: [
+              { type: 'div', props: { style: { display: 'flex', color: '#F0F2EF' }, children: 'Production breaks.' } },
+              { type: 'div', props: { style: { display: 'flex', color: '#FF6A76' }, children: 'The pattern repeats.' } },
+            ],
+          },
+        },
+        {
+          type: 'div',
+          props: {
+            style: { display: 'flex', gap: 6, marginTop: 44 },
             children: Array.from({ length: total }, (_, idx) => ({
               type: 'div',
               props: {
@@ -355,7 +377,7 @@ function siteCard(count: number, yearMin: number, yearMax: number) {
                   height: hits.has(idx) ? 56 : 40,
                   marginTop: hits.has(idx) ? 0 : 8,
                   borderRadius: 3,
-                  background: hits.has(idx) ? DOWN : OK_DIM,
+                  background: hits.has(idx) ? '#FF5361' : '#2B4938',
                 },
               },
             })),
@@ -370,11 +392,11 @@ function siteCard(count: number, yearMin: number, yearMax: number) {
               marginTop: 16,
               fontFamily: 'IBM Plex Mono',
               fontSize: 21,
-              color: FAINT,
+              color: '#707B84',
             },
             children: [
               { type: 'div', props: { style: { display: 'flex' }, children: `${yearMin}` } },
-              { type: 'div', props: { style: { display: 'flex', color: MUTED }, children: `${count} postmortems, indexed by failure class` } },
+              { type: 'div', props: { style: { display: 'flex', color: '#A8B0B7' }, children: `${count} real incidents · ${Object.keys(FAILURE_CLASSES).length} failure classes` } },
               { type: 'div', props: { style: { display: 'flex' }, children: `${yearMax}` } },
             ],
           },

@@ -1,10 +1,5 @@
-import { FAILURE_CLASSES } from '../../content/taxonomy'
 import { ThemeToggle } from './ThemeToggle'
-import incidentsData from '../generated/incidents-index.json'
-
-const incidents = incidentsData
-const yearMin = Math.min(...incidents.map((i: { year: number }) => i.year))
-const yearMax = Math.max(...incidents.map((i: { year: number }) => i.year))
+import { SITE_SHARE_HREF } from '../lib/site'
 
 /** The brand mark: the favicon's tick strip, drawn inline so it follows the theme tokens. */
 function LogoMark() {
@@ -22,16 +17,18 @@ function LogoMark() {
 export function Masthead() {
   return (
     <header className="oj-mast">
-      <a href="/" className="oj-wordmark">
-        <LogoMark />
-        <span>systemsfailed<small>.dev</small></span>
-      </a>
-      <nav className="oj-mast-meta">
-        <span>{incidents.length} incidents</span>
-        <span className="oj-dot" />
-        <span>{Object.keys(FAILURE_CLASSES).length} failure classes</span>
-        <span className="oj-dot" />
-        <span>{yearMin}–{yearMax}</span>
+      <div className="oj-brand-lockup">
+        <a href="/" className="oj-wordmark">
+          <LogoMark />
+          <span>systemsfailed<small>.dev</small></span>
+        </a>
+        <span className="oj-brand-tag">failure archive</span>
+      </div>
+      <nav className="oj-mast-meta" aria-label="Primary navigation">
+        <a className="oj-nav-link" href="/#archive">Browse archive</a>
+        <a className="oj-nav-share" href={SITE_SHARE_HREF} target="_blank" rel="noreferrer">
+          Share on X <span aria-hidden>↗</span>
+        </a>
         <ThemeToggle />
       </nav>
     </header>

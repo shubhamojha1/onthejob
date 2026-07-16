@@ -9,6 +9,8 @@ import { Masthead } from '../components/Masthead'
 import { Intro } from '../components/Intro'
 import { MasterStrip } from '../components/TickStrip'
 import { getSearchIndex, searchIds } from '../lib/search'
+import { FAILURE_CLASSES } from '../../content/taxonomy'
+import { SITE_SHARE_HREF } from '../lib/site'
 import type { Incident } from '../schema/incident'
 import incidentsData from '../generated/incidents-index.json'
 import type MiniSearch from 'minisearch'
@@ -20,6 +22,10 @@ export function loader() {
 export function Component() {
   const incidents = useLoaderData() as Incident[]
   const [searchParams] = useSearchParams()
+  const years = incidents.map(incident => incident.year)
+  const yearMin = Math.min(...years)
+  const yearMax = Math.max(...years)
+  const latestIncident = [...incidents].sort((a, b) => b.date.localeCompare(a.date))[0]
 
   const [active, setActive] = useState<Set<string>>(() => {
     const initial = new Set<string>()
@@ -146,15 +152,19 @@ export function Component() {
     <div className="oj-root">
         <Head>
           <meta charSet="UTF-8" />
-          <title>Systems Failed</title>
-          <meta name="description" content="Pick a way systems break and see who it bit, why it spread, and the transferable lesson." />
-          <meta property="og:title" content="Systems Failed — Engineering postmortems by failure class" />
-          <meta property="og:description" content="Pick a way systems break and see who it bit, why it spread, and the transferable lesson." />
+          <title>Systems Failed — Failure intelligence for engineers</title>
+          <meta name="description" content="Real engineering incidents indexed by how the system broke. Trace the trigger, cascade, impact, and transferable lesson." />
+          <meta property="og:title" content="Production breaks. The pattern repeats." />
+          <meta property="og:description" content="Explore real engineering postmortems by failure mode — not by company." />
+          <meta property="og:site_name" content="Systems Failed" />
           <meta property="og:type" content="website" />
           <meta property="og:image" content="https://www.systemsfailed.dev/og-image.png" />
           <meta property="og:url" content="https://www.systemsfailed.dev" />
           <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Production breaks. The pattern repeats." />
+          <meta name="twitter:description" content="Explore real engineering postmortems by failure mode — not by company." />
           <meta name="twitter:image" content="https://www.systemsfailed.dev/og-image.png" />
+          <meta name="twitter:creator" content="@claudeabuser" />
         </Head>
 
         <Intro incidentCount={incidents.length} />
@@ -162,29 +172,80 @@ export function Component() {
 
         {/* Hero */}
         <section className="oj-hero">
-          <p className="oj-eyebrow">The record of the red bars</p>
-          <h1 className="oj-h1">
-            Every status page turns green again.<br />
-            <em>This one doesn't.</em>
-          </h1>
-          <p className="oj-lede">
-            {incidents.length} public engineering postmortems, indexed by{' '}
-            <strong>how the system broke</strong> — so you can spot the pattern
-            before it repeats on your watch. Pick a company or a failure class.
-            Every entry links to the original writeup.
-          </p>
+          <div className="oj-hero-copy">
+            <p className="oj-eyebrow">Failure intelligence for engineers</p>
+            <h1 className="oj-h1">
+              Production breaks.<br />
+              <em>The pattern repeats.</em>
+            </h1>
+            <p className="oj-lede">
+              A field guide to real engineering incidents, indexed by{' '}
+              <strong>how the system broke</strong> — not by who had the outage.
+              Trace the trigger, the cascade, and the lesson before it repeats on your watch.
+            </p>
+            <div className="oj-hero-actions">
+              <a className="oj-primary-action" href="#archive">
+                Explore the archive <span aria-hidden>↓</span>
+              </a>
+              <a className="oj-secondary-action" href={SITE_SHARE_HREF} target="_blank" rel="noreferrer">
+                Share on X <span aria-hidden>↗</span>
+              </a>
+            </div>
+            <div className="oj-hero-stats" aria-label="Archive statistics">
+              <div><strong>{incidents.length}</strong><span>incident reports</span></div>
+              <div><strong>{Object.keys(FAILURE_CLASSES).length}</strong><span>failure classes</span></div>
+              <div><strong>{yearMin}–{yearMax}</strong><span>years on record</span></div>
+            </div>
+          </div>
+
+          <aside className="oj-signal-card" aria-label="How to read an incident">
+            <div className="oj-signal-topbar">
+              <span><i /> Archive signal</span>
+              <span>Permanent record</span>
+            </div>
+            <div className="oj-signal-body">
+              <div className="oj-signal-heading">
+                <span>Latest case file</span>
+                <b>{latestIncident.date}</b>
+              </div>
+              <h2>{latestIncident.company}</h2>
+              <p>{latestIncident.title}</p>
+              <div className="oj-signal-steps">
+                <span><b>01</b> Trigger</span>
+                <span><b>02</b> Mechanism</span>
+                <span><b>03</b> Impact</span>
+                <span><b>04</b> Lesson</span>
+              </div>
+              <a href={`/incident/${latestIncident.id}`}>
+                Open the latest report <span aria-hidden>→</span>
+              </a>
+            </div>
+          </aside>
         </section>
 
         {/* Master timeline strip */}
         <MasterStrip incidents={incidents} />
 
-        {/* Filter board: companies or failure classes */}
-        <FilterBoard
-          incidents={incidents}
-          active={active}
-          onToggle={toggleFilter}
-          initialMode={initialBoardMode}
-        />
+        <section className="oj-archive" id="archive">
+          <div className="oj-archive-intro">
+            <div>
+              <p className="oj-section-kicker">Browse the archive</p>
+              <h2>Start with who broke, or how.</h2>
+            </div>
+            <p>
+              Select one or more signals to cut through the record. Every case links back
+              to the original public postmortem.
+            </p>
+          </div>
+
+          {/* Filter board: companies or failure classes */}
+          <FilterBoard
+            incidents={incidents}
+            active={active}
+            onToggle={toggleFilter}
+            initialMode={initialBoardMode}
+          />
+        </section>
 
         {/* Toolbar + active pills */}
         <Toolbar
@@ -250,7 +311,16 @@ export function Component() {
 
         {/* Footer */}
         <footer className="oj-footer">
-          <p>
+          <div className="oj-footer-callout">
+            <div>
+              <span className="oj-section-kicker">The archive is never finished</span>
+              <h2>Know a failure worth remembering?</h2>
+            </div>
+            <a href="https://x.com/claudeabuser" target="_blank" rel="noreferrer">
+              Send it my way <span aria-hidden>↗</span>
+            </a>
+          </div>
+          <p className="oj-footer-note">
             A seed set, growing. Built on the shoulders of the public postmortem community —
             Dan Luu's{' '}
             <a href="https://github.com/danluu/post-mortems" target="_blank" rel="noreferrer">
@@ -262,9 +332,6 @@ export function Component() {
             </a>
             , and Lorin Hochstein's incident list. The difference here is the taxonomy:
             failure class first, company second.
-          </p>
-          <p className="oj-foot-cta">
-            Know one we're missing? The whole point is that the list keeps growing.
           </p>
           <p className="oj-foot-by">
             Built by{' '}
