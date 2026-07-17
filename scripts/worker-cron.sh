@@ -3,7 +3,7 @@
 # Runs on the headless Ubuntu server. Install (see docs/server-setup.md):
 #
 #   crontab -e
-#   30 8 * * *  /home/<user>/onthejob/scripts/worker-cron.sh
+#   */10 * * * *  /home/<user>/onthejob/scripts/worker-cron.sh
 #
 # Cron gives an almost-empty environment — everything is set explicitly here.
 

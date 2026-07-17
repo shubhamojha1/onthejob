@@ -73,8 +73,8 @@ git config user.email "subham.k.ojha@gmail.com"
 ## 4. Power (no 24/7 requirement)
 
 No always-on setup needed. Cron only fires while the machine is powered on and awake;
-if it's asleep or off at 08:30 UTC, that run is simply skipped. Dedup is stateless
-(derived from the repo, not run history — see "Operations" below), so a missed day is
+if it's asleep or off when a run is due, that run is simply skipped. Dedup is stateless
+(derived from the repo, not run history — see "Operations" below), so a missed run is
 harmless and gets picked up the next time cron fires on an awake machine. Leave lid-close
 and suspend behavior at their defaults.
 
@@ -85,9 +85,8 @@ crontab -e
 ```
 
 ```cron
-# statuspage ingestion worker — daily 08:30 UTC
-# (offset from the GitHub-Actions discovery bot at 07:00 UTC)
-30 8 * * * /home/YOUR_USER/onthejob/scripts/worker-cron.sh
+# statuspage ingestion worker — every 10 minutes while the machine is on
+*/10 * * * * /home/YOUR_USER/onthejob/scripts/worker-cron.sh
 ```
 
 Log: `~/systemsfailed-worker.log`. Rotate it:
