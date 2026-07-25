@@ -319,21 +319,21 @@
     "discovered_title": "this analysis",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://github.com/actions/checkout",
     "discovered_title": "actions/checkout",
     "source_feed": "danluu/post-mortems/prs",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "rejected"
   },
   {
     "url": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=actions/checkout&package-manager=github_actions&previous-version=6&new-version=7",
     "discovered_title": "![Dependabot compatibility score",
     "source_feed": "danluu/post-mortems/prs",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "rejected"
   },
   {
     "url": "https://slack.engineering/slack-ai-the-path-to-multi-cloud/",
