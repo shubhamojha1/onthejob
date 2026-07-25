@@ -88,21 +88,21 @@
     "discovered_title": "Amazon",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://aws.amazon.com/message/101925/",
     "discovered_title": "Amazon",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "rejected"
   },
   {
     "url": "https://github.blog/news-insights/the-library/downtime-last-saturday/",
     "discovered_title": "GitHub",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://github.blog/news-insights/company-news/github-availability-report-october-2020/",
