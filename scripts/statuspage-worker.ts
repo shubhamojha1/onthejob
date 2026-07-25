@@ -34,6 +34,7 @@ import {
   extractText,
   fetchPageText,
   loadExistingSourceUrls,
+  markQueueDone,
   saveToArchive,
   validateIncident,
   writeIncidentFile,
@@ -206,6 +207,37 @@ async function pollSource(source: StatuspageSource, seen: Set<string>): Promise<
   return items
 }
 
+/**
+ * Discovery queue (content/queue/candidates.json) — filled daily by
+ * `npm run discover` from postmortem collections and engineering-blog RSS
+ * feeds (danluu/post-mortems, Netflix, Stripe, AWS, etc.). Nothing previously
+ * turned those candidates into PRs automatically; this treats the queue as
+ * one more rotating source alongside the statuspages so non-statuspage
+ * incidents get picked up too, instead of sitting there until someone runs
+ * `npm run ingest` by hand.
+ */
+function pollQueue(seen: Set<string>): WorkItem[] {
+  if (!existsSync(QUEUE_FILE)) return []
+  const queue: Candidate[] = JSON.parse(readFileSync(QUEUE_FILE, 'utf-8'))
+  const items: WorkItem[] = []
+
+  for (const c of queue) {
+    if (c.status !== 'new') continue
+    const norm = normalizeUrl(c.url)
+    if (seen.has(norm)) continue
+
+    items.push({
+      url: c.url,
+      title: c.discovered_title,
+      sourceName: c.source_feed,
+      pageName: c.source_feed,
+      sourceText: '',
+    })
+    seen.add(norm)
+  }
+  return items
+}
+
 // ── Per-incident pipeline ─────────────────────────────────────────────────────
 
 async function ingestOne(item: WorkItem): Promise<void> {
@@ -217,7 +249,12 @@ async function ingestOne(item: WorkItem): Promise<void> {
   try {
     const pageText = await fetchPageText(item.url)
     sourceText = `${item.sourceText}\n\nINCIDENT PAGE:\n${pageText}`.slice(0, 80_000)
-  } catch {
+  } catch (e) {
+    // Statuspage items still have their structured API text to fall back on;
+    // queue items (sourceText === '') have nothing else to extract from.
+    if (!item.sourceText) {
+      throw new IngestError('fetch', `page fetch failed and no fallback source text: ${e instanceof Error ? e.message : e}`)
+    }
     console.warn('  incident page fetch failed — using API text only')
   }
 
@@ -237,6 +274,8 @@ async function ingestOne(item: WorkItem): Promise<void> {
 
   const prUrl = createDraftPr(incident, confidence, item.url, grounding, tweet)
   console.log(`  ✓ PR: ${prUrl}${grounding.pass ? '' : '  (flagged grounding-failed)'}`)
+
+  markQueueDone(item.url) // no-op if item.url isn't a queue candidate
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -262,21 +301,36 @@ async function main(): Promise<void> {
   }
 
   const seen = buildSeenSet()
-  const work: WorkItem[] = []
+  const bySource: WorkItem[][] = []
 
   for (const source of sources) {
     process.stdout.write(`Poll  ${source.name.padEnd(28)}`)
     const items = await pollSource(source, seen)
     console.log(`+${items.length}`)
-    work.push(...items)
+    bySource.push(items)
   }
 
+  process.stdout.write(`Poll  ${'queue (discovery bot)'.padEnd(28)}`)
+  const queueItems = pollQueue(seen)
+  console.log(`+${queueItems.length}`)
+  bySource.push(queueItems)
+
+  const work = bySource.flat()
   if (work.length === 0) {
     console.log('\n✓ Nothing new.')
     return
   }
 
-  const selected = work.slice(0, MAX_INGESTS)
+  // Round-robin across sources so one source's backlog (e.g. a status page
+  // that writes long detailed updates) can't monopolize the per-run quota
+  // and starve every other source indefinitely.
+  const selected: WorkItem[] = []
+  for (let round = 0; selected.length < MAX_INGESTS && round < Math.max(...bySource.map(s => s.length)); round++) {
+    for (const items of bySource) {
+      if (selected.length >= MAX_INGESTS) break
+      if (items[round]) selected.push(items[round])
+    }
+  }
   console.log(`\n${work.length} candidate(s), ingesting ${selected.length} (max ${MAX_INGESTS})${work.length > selected.length ? ' — rest picked up next run' : ''}\n`)
 
   if (DRY_RUN) {

@@ -261,7 +261,7 @@ export function createDraftPr(
   tweet?: string,
 ): string {
   const branch  = `draft/incident-${incident.id}`
-  const prTitle = `Draft incident: ${incident.company} ${incident.year}`
+  const prTitle = `Draft incident: ${incident.company} ${incident.year} — ${incident.title}`
   const prBody  = buildPrBody(incident, confidence, url, grounding, tweet)
 
   // Write PR body to temp file to avoid shell quoting issues on all platforms
@@ -273,7 +273,7 @@ export function createDraftPr(
     run('git', ['checkout', '-b', branch])
     branchCreated = true
     run('git', ['add', `content/incidents/${incident.id}.md`])
-    run('git', ['commit', '-m', `Draft incident: ${incident.company} ${incident.year} [skip ci]`])
+    run('git', ['commit', '-m', `Draft incident: ${incident.company} ${incident.year} — ${incident.title} [skip ci]`])
     run('git', ['push', '-u', 'origin', branch])
 
     const prUrl = run('gh', ['pr', 'create', '--draft', '--title', shellSafe(prTitle), '--body-file', tmpBody])
@@ -354,7 +354,7 @@ ${tweet}
 `
     : ''
 
-  return `## Draft incident: ${i.company} ${i.year}
+  return `## Draft incident: ${i.company} ${i.year} — ${i.title}
 
 **Source:** [${i.sourceLabel}](${sourceUrl})
 **Confidence:** ${badge}
