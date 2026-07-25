@@ -11,7 +11,7 @@
     "discovered_title": "signalvnoise.com",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "rejected"
   },
   {
     "url": "https://web.archive.org/web/20220529044310/https://m.signalvnoise.com/postmortem-on-the-read-only-outage-of-basecamp-on-november-9th-2018/",
@@ -25,7 +25,7 @@
     "discovered_title": "signalvnoise.com",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://aws.amazon.com/message/74876-2/",
@@ -46,7 +46,7 @@
     "discovered_title": "CircleCI",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://www.datadoghq.com/blog/2020-09-25-infrastructure-connectivity-issue/",
