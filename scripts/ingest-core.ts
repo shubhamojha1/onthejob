@@ -114,7 +114,13 @@ async function callSdk(prompt: string): Promise<string> {
 }
 
 function callClaudeCli(prompt: string): string {
-  const args = ['-p', '--output-format', 'text']
+  // --tools "" — every prompt here embeds untrusted third-party page content
+  // (the thing being extracted/grounded). Without this, `claude -p` runs as a
+  // full agent with real file/shell access to this repo; it has been observed
+  // wandering off-task (reading/rewriting unrelated incident files) instead of
+  // returning bare JSON, which is both the direct cause of "invalid JSON"
+  // extraction failures and a live prompt-injection surface.
+  const args = ['-p', '--output-format', 'text', '--tools', '']
   if (process.env.CLAUDE_CLI_MODEL) args.push('--model', process.env.CLAUDE_CLI_MODEL)
   const res = spawnSync('claude', args, {
     input: prompt,
