@@ -228,21 +228,21 @@
     "discovered_title": "CircleCI",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://discuss.circleci.com/t/postmortem-march-26-april-10-workflow-delay-incidents/30060",
     "discovered_title": "CircleCI",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://discuss.circleci.com/t/postmortem-may-21-2021-delay-in-starting-docker-jobs-machine-remote-docker-environments-blocked/40274",
     "discovered_title": "CircleCI",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://status.circleci.com/incidents/dcqb3fykhgvg",
