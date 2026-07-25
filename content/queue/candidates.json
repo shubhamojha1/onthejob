@@ -172,14 +172,14 @@
     "discovered_title": "GitHub",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "rejected"
   },
   {
     "url": "https://github.blog/2021-12-01-github-availability-report-november-2021/",
     "discovered_title": "GitHub",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://incident.io/blog/database-performance",
@@ -193,7 +193,7 @@
     "discovered_title": "incident.io",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://aws.amazon.com/message/65649/",
