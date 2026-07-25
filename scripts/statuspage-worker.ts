@@ -35,6 +35,8 @@ import {
   fetchPageText,
   loadExistingSourceUrls,
   markQueueDone,
+  markQueueRejected,
+  run,
   saveToArchive,
   validateIncident,
   writeIncidentFile,
@@ -85,6 +87,7 @@ interface WorkItem {
   sourceName: string
   pageName: string
   sourceText: string
+  fromQueue?: boolean
 }
 
 // ── Dedup (stateless — everything derived from the repo) ─────────────────────
@@ -232,10 +235,38 @@ function pollQueue(seen: Set<string>): WorkItem[] {
       sourceName: c.source_feed,
       pageName: c.source_feed,
       sourceText: '',
+      fromQueue: true,
     })
     seen.add(norm)
   }
   return items
+}
+
+/**
+ * markQueueDone/markQueueRejected write content/queue/candidates.json straight
+ * to disk — nothing else in this run's git flow (which only commits incident
+ * branches) ever persists that. Left uncommitted, it's local-only state that
+ * also collides with discovery.yml's daily commit to the same file on origin
+ * (its `git pull --ff-only` would fail against our dangling local diff). Push
+ * it directly to main, same "chore: ... [skip ci]" bookkeeping pattern
+ * discovery.yml/archive.yml already use.
+ */
+function commitQueueStatus(): void {
+  const status = spawnSync('git', ['status', '--porcelain', '--', 'content/queue/candidates.json'], {
+    cwd: ROOT,
+    encoding: 'utf-8',
+  })
+  if (!status.stdout.trim()) return
+
+  console.log('Committing discovery queue status updates ...')
+  try {
+    run('git', ['add', 'content/queue/candidates.json'])
+    run('git', ['commit', '-m', 'chore: update discovery queue status [skip ci]'])
+    run('git', ['push', 'origin', 'main'])
+    console.log('  ✓ pushed\n')
+  } catch (e) {
+    console.warn(`  ✗ failed to commit/push queue status: ${e instanceof Error ? e.message : e}\n`)
+  }
 }
 
 // ── Per-incident pipeline ─────────────────────────────────────────────────────
@@ -353,11 +384,20 @@ async function main(): Promise<void> {
       } else {
         console.error(`  ✗ ${e instanceof Error ? e.message : e}`)
       }
+      // Queue candidates have nowhere else to dedup from (no PR/incident file
+      // gets created on failure) — leaving them `new` means the exact same
+      // failure (bad extraction, already-covered incident, ...) gets retried
+      // and re-burns an LLM call every run, forever.
+      if (item.fromQueue) {
+        markQueueRejected(item.url)
+        console.error(`  → marked rejected in queue (won't retry)`)
+      }
     }
     console.log()
   }
 
   console.log(`✓ Run complete — ${ok} PR(s) opened, ${failed} failed.`)
+  commitQueueStatus()
   if (failed > 0) process.exitCode = 1
 }
 

@@ -311,12 +311,27 @@ export function createDraftPr(
 
 // ── Queue bookkeeping ─────────────────────────────────────────────────────────
 
-export function markQueueDone(url: string): void {
+function setQueueStatus(url: string, status: Candidate['status']): void {
   if (!existsSync(QUEUE_FILE)) return
   const queue: Candidate[] = JSON.parse(readFileSync(QUEUE_FILE, 'utf-8'))
   if (!queue.some(c => c.url === url)) return
-  const updated = queue.map(c => c.url === url ? { ...c, status: 'done' as const } : c)
+  const updated = queue.map(c => c.url === url ? { ...c, status } : c)
   writeFileSync(QUEUE_FILE, JSON.stringify(updated, null, 2) + '\n')
+}
+
+export function markQueueDone(url: string): void {
+  setQueueStatus(url, 'done')
+}
+
+/**
+ * A queue candidate that fails ingestion (bad extraction, already-covered
+ * incident, not actually a postmortem, ...) needs to stop being retried —
+ * otherwise it silently re-consumes an LLM call and a quota slot every single
+ * run, forever, since it never produces a PR/incident file for the repo-derived
+ * dedup to pick up.
+ */
+export function markQueueRejected(url: string): void {
+  setQueueStatus(url, 'rejected')
 }
 
 // ── PR body ───────────────────────────────────────────────────────────────────
