@@ -355,5 +355,12 @@
     "source_feed": "sre-weekly",
     "date_found": "2026-06-25",
     "status": "rejected"
+  },
+  {
+    "url": "https://sreweekly.com/sre-weekly-issue-527/",
+    "discovered_title": "SRE Weekly Issue #527",
+    "source_feed": "sre-weekly",
+    "date_found": "2026-07-27",
+    "status": "new"
   }
 ]
