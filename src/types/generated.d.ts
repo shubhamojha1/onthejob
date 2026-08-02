@@ -13,3 +13,9 @@ declare module '*/incidents-index.json' {
   const data: Incident[]
   export default data
 }
+
+declare module '*/interview-index.json' {
+  import type { InterviewIndexEntry } from '../schema/incident'
+  const data: InterviewIndexEntry[]
+  export default data
+}

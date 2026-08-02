@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 import matter from 'gray-matter'
 import MiniSearch from 'minisearch'
 import { IncidentSchema } from '../src/schema/incident.js'
-import type { Incident } from '../src/schema/incident.js'
+import type { Incident, InterviewIndexEntry } from '../src/schema/incident.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -63,6 +63,23 @@ writeFileSync(
   JSON.stringify(incidents, null, 2),
 )
 
+// Interview guide — only the fields needed by /interview.
+const interviewEntries: InterviewIndexEntry[] = incidents.map(incident => ({
+  id: incident.id,
+  company: incident.company,
+  year: incident.year,
+  title: incident.title,
+  classes: incident.classes,
+  patterns: incident.patterns,
+  lesson: incident.lesson,
+  mechanism: incident.mechanism,
+  interview: incident.interview,
+}))
+writeFileSync(
+  join(GENERATED_DIR, 'interview-index.json'),
+  JSON.stringify(interviewEntries, null, 2),
+)
+
 // Public copy — served statically, usable for future client-side fetching
 writeFileSync(
   join(PUBLIC_DATA_DIR, 'incidents-index.json'),
@@ -88,7 +105,7 @@ const SITE = 'https://www.systemsfailed.dev'
 const sitemap =
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-  [`${SITE}/`, ...incidents.map(i => `${SITE}/incident/${i.id}`)]
+  [`${SITE}/`, `${SITE}/interview`, ...incidents.map(i => `${SITE}/incident/${i.id}`)]
     .map(url => `  <url><loc>${url}</loc></url>`)
     .join('\n') +
   '\n</urlset>\n'
@@ -97,5 +114,6 @@ writeFileSync(join(ROOT, 'public', 'sitemap.xml'), sitemap)
 console.log(`\n✓ Built index: ${incidents.length} incidents`)
 console.log(`  → src/generated/incidents-all.json`)
 console.log(`  → src/generated/incidents-index.json`)
+console.log(`  → src/generated/interview-index.json`)
 console.log(`  → public/data/incidents-index.json`)
 console.log(`  → public/data/search-index.json`)

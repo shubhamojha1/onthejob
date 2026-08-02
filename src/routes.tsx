@@ -7,6 +7,10 @@ export const routes: RouteRecord[] = [
     lazy: () => import('./pages/index'),
   },
   {
+    path: '/interview',
+    lazy: () => import('./pages/interview'),
+  },
+  {
     path: '/incident/:id',
     lazy: () => import('./pages/incident/[id]'),
     getStaticPaths: () => incidentsIndex.map(i => `incident/${i.id}`),

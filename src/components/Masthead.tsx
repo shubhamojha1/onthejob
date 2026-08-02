@@ -1,5 +1,6 @@
 import { ThemeToggle } from './ThemeToggle'
 import { SITE_SHARE_HREF } from '../lib/site'
+import { NavLink } from 'react-router-dom'
 
 /** The brand mark: the favicon's tick strip, drawn inline so it follows the theme tokens. */
 function LogoMark() {
@@ -26,6 +27,14 @@ export function Masthead() {
       </div>
       <nav className="oj-mast-meta" aria-label="Primary navigation">
         <a className="oj-nav-link" href="/#archive">Browse archive</a>
+        <NavLink
+          className={({ isActive }) => `oj-nav-link oj-nav-interview${isActive ? ' is-active' : ''}`}
+          to="/interview"
+          aria-label="Interview prep"
+        >
+          <span className="oj-nav-interview-full">Interview prep</span>
+          <span className="oj-nav-interview-short">Prep</span>
+        </NavLink>
         <a className="oj-nav-share" href={SITE_SHARE_HREF} target="_blank" rel="noreferrer">
           Share on X <span aria-hidden>↗</span>
         </a>
