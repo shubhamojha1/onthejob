@@ -36,11 +36,7 @@ lesson: >-
   behaviors (like Dataplane V2 CPU amplification on connection churn) before
   blaming application-layer connection pools — node-level packet drops can mimic
   dozens of unrelated app failures at once.
-interview: >-
-  When a distributed system shows simultaneous timeouts to unrelated backends
-  (database and cache) on the same node but not others, what host-level and
-  network-level signals would you examine to distinguish a bad deployment from a
-  platform networking issue?
+interview: "Simultaneous timeouts to unrelated backends on one node point at the host or network, not the app — check NIC and conntrack counters before blaming the deploy."
 source: 'https://incident.io/blog/clouds-caches-and-connection-conundrums'
 sourceLabel: incident.io Engineering Blog
 source_quote: >-

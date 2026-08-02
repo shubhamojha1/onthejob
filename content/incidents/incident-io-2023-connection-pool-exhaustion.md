@@ -33,10 +33,7 @@ lesson: >-
   before an incident forces you to — connection pool exhaustion from many
   unnecessary short transactions is invisible without that data, and the root
   cause will look like a general slowdown with no obvious culprit.
-interview: >-
-  How would you design observability for a shared database connection pool to
-  identify which endpoints hold connections the longest and set meaningful
-  exhaustion alerts?
+interview: "Instrument connection pools by holder, not just utilization: know which endpoints hold connections longest before you try to alert on exhaustion."
 source: 'https://incident.io/blog/database-performance'
 sourceLabel: incident.io Engineering Blog
 source_quote: >-

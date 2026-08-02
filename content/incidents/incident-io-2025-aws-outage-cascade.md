@@ -37,10 +37,7 @@ lesson: >-
   audit not just which services you integrate with but which cloud provider each
   one runs on, and verify that your deployment pipeline itself has no implicit
   dependencies on the same failing infrastructure you need to fix.
-interview: >-
-  Design an on-call notification system that remains operable when both your
-  telecom provider and your deployment pipeline are simultaneously unavailable —
-  what redundancy and pre-baked fallback mechanisms would you build in?
+interview: "Paging paths need pre-baked, independently hosted fallbacks: when the telecom provider and the deploy pipeline fail together, you cannot ship a fix to your own alerting."
 source: 'https://incident.io/blog/service-disruption-october-20th-2025'
 sourceLabel: incident.io Engineering Blog
 source_quote: >-

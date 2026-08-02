@@ -36,11 +36,7 @@ lesson: >-
   Your process manager may silently cap OS resource limits like LimitNOFILE to a
   value orders of magnitude below what you configured — always check the actual
   ulimits live in production processes, not just the config files.
-interview: >-
-  You find ProxySQL failing under load but your config sets LimitNOFILE to 1
-  billion — where would you look to find what the actual running file descriptor
-  limit is, and how would you reliably verify it won't silently change after a
-  restart?
+interview: "Verify effective limits, not configured ones — read them off the running process, and prove they survive a restart rather than trusting the unit file."
 source: >-
   https://github.blog/news-insights/company-news/february-service-disruptions-post-incident-analysis/
 sourceLabel: GitHub Blog

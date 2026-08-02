@@ -38,10 +38,7 @@ lesson: >-
   when overloaded rather than failing hard — any system that grapples for a
   central dependency at startup turns a localized failure into a platform-wide
   thundering herd.
-interview: >-
-  How would you design a service discovery system so that a thundering herd of
-  reconnecting clients after an outage cannot cause the discovery cluster itself
-  to lose quorum and extend the outage?
+interview: "Recovery is its own load event: service discovery needs admission control and staggered reconnects so returning clients cannot cost it quorum."
 source: 'https://www.datadoghq.com/blog/2020-09-25-infrastructure-connectivity-issue/'
 sourceLabel: Datadog Engineering Blog
 source_quote: >-

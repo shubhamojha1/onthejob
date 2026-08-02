@@ -24,7 +24,7 @@ fences, no explanation — the response must be parseable by `JSON.parse()` with
   "trigger":     "<The immediate event that initiated the incident>",
   "mechanism":   "<How the failure propagated — cause → effect → effect>",
   "lesson":      "<The single most transferable engineering insight from this incident>",
-  "interview":   "<The system design interview question this incident would generate>",
+  "interview":   "<What to say in a system design interview on the topic this incident exemplifies>",
   "source":      "<canonical URL — use the URL provided, do not change it>",
   "sourceLabel": "<Human-readable label, e.g. 'Cloudflare blog' or 'AWS post-event summary'>",
   "source_quote": "<One sentence quoted verbatim from the postmortem that grounds the extraction>",
@@ -65,7 +65,9 @@ unavailable, and rough magnitude (% of users, dollar figure, duration mentioned 
 **lesson** — one sentence. The most transferable insight. Should be actionable for an engineer
 who was not involved.
 
-**interview** — one sentence framing a system design interview question this incident exemplifies.
+**interview** — one sentence of advice, as a STATEMENT, never a question. This field is a cram
+sheet: the reader wants to know what to say, not to be quizzed. Never begin with "How would you",
+"Design a", or "What would you".
 Example: "When asked about safe deploys, discuss canary rollouts and automatic CPU circuit
 breakers on rule engines."
 

@@ -35,9 +35,7 @@ lesson: >-
   Deployment systems that regenerate critical infrastructure config (like DNS
   zone files) must validate API responses for completeness before applying them
   — and must never depend on the very service they are rebuilding.
-interview: >-
-  How would you design a DNS zone file generation pipeline to be safe when the
-  DNS infrastructure it depends on is partially degraded?
+interview: "Circular dependencies in tooling: a pipeline that manages DNS must not need working DNS to run, or it cannot fix the outage it caused."
 source: 'https://github.blog/news-insights/the-library/dns-outage-post-mortem/'
 sourceLabel: GitHub Blog
 source_quote: >-

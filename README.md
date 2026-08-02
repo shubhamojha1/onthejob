@@ -35,7 +35,7 @@ impact: "One sentence on blast radius — users affected, revenue, SLA."
 trigger: "The immediate cause that set off the incident."
 mechanism: "How the failure propagated through the system."
 lesson: "The single most transferable insight from the postmortem."
-interview: "The question this incident would generate in a system design interview."
+interview: "A concise talking point to use in a system design interview."
 source: "https://example.com/postmortem"   # must be a valid URL
 sourceLabel: "Acme Engineering Blog"
 source_quote: "Optional direct quote from the postmortem."   # optional

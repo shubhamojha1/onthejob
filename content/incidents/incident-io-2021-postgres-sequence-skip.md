@@ -34,10 +34,7 @@ lesson: >-
   sequences do not guarantee gap-free increments and any failover, crash, or
   upgrade can silently advance them by up to 32; use an explicit MAX+1 approach
   instead.
-interview: >-
-  How would you implement a per-organization counter that guarantees sequential,
-  gap-free identifiers even across database failovers, follower promotions, and
-  transaction rollbacks?
+interview: "Database sequences guarantee uniqueness, not contiguity — gap-free per-tenant numbering needs an explicit counter row updated inside the transaction."
 source: 'https://incident.io/blog/one-two-skip-a-few'
 sourceLabel: incident.io Engineering Blog
 source_quote: >-

@@ -29,10 +29,7 @@ lesson: >-
   Your status page must be load-tested for outage-level traffic spikes, and
   incident communication must begin within five minutes of detection — not after
   internal triage is complete.
-interview: >-
-  When designing for availability under external attack, how would you architect
-  your status and incident-communication channels so they remain reachable
-  precisely when your primary service is not?
+interview: "Status and incident-communication channels must not share fate with the service they report on — they are needed exactly when it is down."
 source: 'https://signalvnoise.com/posts/3729-basecamp-network-attack-postmortem'
 sourceLabel: Signal v. Noise (Basecamp blog)
 source_quote: >-
