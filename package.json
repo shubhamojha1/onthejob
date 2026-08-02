@@ -8,6 +8,7 @@
     "dev": "vite-react-ssg dev",
     "prebuild": "tsx scripts/build-index.ts && tsx scripts/og-cards.ts",
     "build": "vite-react-ssg build",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "cards": "tsx scripts/og-cards.ts",
     "preview": "vite preview",
     "validate": "tsx scripts/validate-incidents.ts",

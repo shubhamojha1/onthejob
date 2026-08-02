@@ -19,6 +19,8 @@ export const IncidentSchema = z.object({
   trigger:     z.string().min(1),
   mechanism:   z.string().min(1),
   lesson:      z.string().min(1),
+  // A concise talking point for system design interviews. Voice is guided at
+  // extraction time; the schema validates content shape, not English grammar.
   interview:   z.string().min(1),
   source:      z.string().url(),
   sourceLabel: z.string().min(1),
@@ -31,3 +33,16 @@ export const IncidentSchema = z.object({
 })
 
 export type Incident = z.infer<typeof IncidentSchema>
+
+export type InterviewIndexEntry = Pick<
+  Incident,
+  | 'id'
+  | 'company'
+  | 'year'
+  | 'title'
+  | 'classes'
+  | 'patterns'
+  | 'lesson'
+  | 'mechanism'
+  | 'interview'
+>
