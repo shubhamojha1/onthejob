@@ -11,6 +11,9 @@ public/og-image.png
 public/apple-touch-icon.png
 public/sitemap.xml
 
+# Local handoff files created by the manual ingestion workflow
+content/queue/.pending-*
+
 # Editor
 .DS_Store
 *.local
