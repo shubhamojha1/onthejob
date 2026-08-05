@@ -369,5 +369,12 @@
     "source_feed": "sre-weekly",
     "date_found": "2026-08-03",
     "status": "rejected"
+  },
+  {
+    "url": "https://blog.cloudflare.com/engineering-standards-enforcement/",
+    "discovered_title": "How Cloudflare enforces engineering standards using AI",
+    "source_feed": "cloudflare-blog",
+    "date_found": "2026-08-05",
+    "status": "new"
   }
 ]
