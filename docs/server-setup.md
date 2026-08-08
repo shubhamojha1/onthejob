@@ -85,14 +85,14 @@ crontab -e
 ```
 
 ```cron
-# statuspage ingestion worker — every 10 minutes while the machine is on
-*/10 * * * * /home/YOUR_USER/onthejob/scripts/worker-cron.sh
+# statuspage ingestion worker — every 30 minutes while the machine is on
+*/30 * * * * /home/YOUR_USER/onthejob/scripts/worker-cron.sh
 ```
 
 Log: `~/systemsfailed-worker.log`. Rotate it:
 
 The wrapper uses a non-blocking `flock` in `/tmp` (or `$XDG_RUNTIME_DIR`) so a
-slow ingestion run is never overlapped by the next ten-minute cron tick. A
+slow ingestion run is never overlapped by the next thirty-minute cron tick. A
 skipped overlapping run is logged and exits successfully.
 
 ```bash
