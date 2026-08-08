@@ -41,6 +41,9 @@ There are two paths depending on whether you have an Anthropic API key:
 ## Finding candidates
 
 The discovery bot runs daily and appends new postmortem URLs to `content/queue/candidates.json`.
+It also watches official OpenAI, Google, and Google DeepMind feeds for production-failure
+language; the Ubuntu worker polls OpenAI and Anthropic status pages directly. Candidates
+still pass the same primary-source and production-impact gates as conventional incidents.
 
 ```bash
 # See what's in the queue
@@ -48,9 +51,20 @@ npm run queue
 
 # Run the discovery bot manually (also runs automatically via GitHub Actions)
 npm run discover
+
+# Preview a one-time curated-list backlog without writing candidates.json
+npm run discover:backfill:dry
+
+# Import that backlog into a manual-review holding state
+npm run discover:backfill
+npm run queue -- --status review
 ```
 
-Pick a URL with `status: "new"` from the queue output.
+Backfilled list entries are never consumed automatically: they remain `review`
+until a human confirms that the linked page is an attributable primary source.
+Run `npm run ingest -- <url>` directly for an approved review entry; successful
+ingestion marks it `done`. Pick ordinary discovered URLs with `status: "new"`
+from the queue output.
 
 ---
 

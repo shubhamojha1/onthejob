@@ -10,6 +10,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { ingestedSources, reconcile } from './discovery.js'
 import type { Candidate } from './discovery.js'
 
 const ROOT       = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -20,7 +21,19 @@ if (!existsSync(CANDIDATES)) {
   process.exit(0)
 }
 
-const all: Candidate[] = JSON.parse(readFileSync(CANDIDATES, 'utf-8'))
+// A candidate whose URL is already an incident source is done, however it got
+// there. Correct the view so the queue never reports work that is finished —
+// but never write: worker-cron.sh does `git pull --ff-only`, so a read command
+// that dirties candidates.json would wedge the server's next run. `npm run
+// discover` persists the same reconciliation, and commits it properly.
+const { candidates: all, healed } = reconcile(
+  JSON.parse(readFileSync(CANDIDATES, 'utf-8')) as Candidate[],
+  ingestedSources(),
+)
+if (healed > 0) {
+  console.log(`\n  ${healed} candidate(s) shown as done — already in the archive, not yet written back.`)
+  console.log('  Run `npm run discover` to persist.')
+}
 
 // --pick <n>: print the full URL for entry #n and exit
 // npm eats --pick on some platforms, so also detect a bare number argument
