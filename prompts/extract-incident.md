@@ -50,10 +50,9 @@ fences, no explanation — the response must be parseable by `JSON.parse()` with
 - `dependency` — An upstream or downstream service (internal or third-party) gives out.
 - `automation-misfire` — A failover, autoscaler, or cleanup job does the wrong thing, confidently.
 
-**patterns[]** — 1 to 5 lowercase kebab-case strings naming recurring failure patterns visible
-in this incident. Examples: `no-staged-rollout`, `cascading-retry`, `global-blast-radius`,
-`untested-backups`, `health-check-flapping`. Invent patterns that are specific and reusable
-across incidents.
+**patterns[]** — 1 to 5 lowercase kebab-case strings naming preventable, recurring mechanisms.
+Reuse the established vocabulary where it fits; do not restate a failure class, domain, impact,
+trigger, or remedy as a pattern. Introduce a new pattern only when no existing term is accurate.
 
 **impact** — one sentence, no longer. Focus on scope (global / regional / partial), what was
 unavailable, and rough magnitude (% of users, dollar figure, duration mentioned in lede).
@@ -96,6 +95,8 @@ If the page:
 - is not actually a postmortem (marketing content, general blog post, news article)
 - returned an error or is behind a paywall with no readable content
 - lacks enough information to determine company, year, and a plausible root cause
+- describes only a hypothetical AI risk, benchmark, research result, or demo rather than an
+  observed production event with user or operational impact
 
 Output exactly: `{"error": "<brief reason>"}`
 
