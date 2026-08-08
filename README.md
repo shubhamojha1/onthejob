@@ -7,11 +7,14 @@ A curated, searchable index of public engineering postmortems — organized by *
 | Command | What it does |
 |---|---|
 | `npm run dev` | Prebuild + Vite dev server with SSR |
-| `npm run build` | Schema validation → SSG build (16 prerendered pages) |
+| `npm run build` | Schema validation → generated indexes/cards/feeds → SSG build of every route |
+| `npm test` | Run unit and corpus-level regression tests |
+| `npm run typecheck` | Type-check application, scripts, and content helpers without emitting files |
 | `npm run preview` | Serve the production build locally on port 4173 |
 | `npm run validate` | Zod schema check on all incidents (no file generation) |
-| `npm run link-check` | HEAD-checks every `source` URL in `content/incidents/` |
+| `npm run link-check` | Checks every source with HEAD/minimal GET; rejects missing or failing hosts |
 | `npm run archive` | Saves source URLs to archive.org; writes back `archive_url` fields |
+| `npm run discover:backfill:dry` | Preview curated-list backfill without changing the queue |
 
 `predev` and `prebuild` are npm lifecycle hooks — the prebuild script runs automatically before `dev` and `build`.
 
@@ -52,4 +55,13 @@ verified: false
 
 Defined in `content/taxonomy.ts`. Current set:
 
-`split-brain` · `cascade` · `config-change` · `dependency` · `resource-exhaustion` · `thundering-herd` · `data-corruption` · `network-partition` · `human-error` · `observability-gap`
+`split-brain` · `cascade` · `thundering-herd` · `config-change` · `resource-exhaustion` · `bad-deploy` · `data-loss` · `dns-bgp` · `dependency` · `automation-misfire`
+
+### AI and recommendation-system incidents
+
+AI incidents use the same failure classes and preventive patterns as the rest of the archive.
+See [`docs/ai-incident-model.md`](docs/ai-incident-model.md) for the source and eligibility
+rubric.
+
+The build also publishes `/feed.xml`, `/sitemap.xml`, one page per incident, and one page per
+failure class.
