@@ -1,5 +1,6 @@
 import MiniSearch from 'minisearch'
 import type { Incident } from '../schema/incident'
+import { SEARCH_FIELDS, SEARCH_STORE_FIELDS } from './search-config'
 
 let instance: MiniSearch | null = null
 let loading: Promise<MiniSearch> | null = null
@@ -12,8 +13,8 @@ export async function getSearchIndex(): Promise<MiniSearch> {
     .then(r => r.json())
     .then(data => {
       instance = MiniSearch.loadJSON<Incident>(JSON.stringify(data), {
-        fields: ['title', 'company', 'impact', 'lesson', 'trigger', 'mechanism', 'interview'],
-        storeFields: ['id'],
+        fields: [...SEARCH_FIELDS],
+        storeFields: [...SEARCH_STORE_FIELDS],
       })
       return instance
     })

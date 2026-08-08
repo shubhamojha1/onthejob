@@ -10,6 +10,7 @@ public/cards/
 public/og-image.png
 public/apple-touch-icon.png
 public/sitemap.xml
+public/feed.xml
 
 # Local handoff files created by the manual ingestion workflow
 content/queue/.pending-*
