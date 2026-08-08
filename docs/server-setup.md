@@ -14,7 +14,7 @@ GitHub for review/merge.
 ## 1. Base packages
 
 ```bash
-sudo apt update && sudo apt install -y git curl
+sudo apt update && sudo apt install -y git curl util-linux
 
 # Node 20+ (NodeSource)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
@@ -91,6 +91,10 @@ crontab -e
 
 Log: `~/systemsfailed-worker.log`. Rotate it:
 
+The wrapper uses a non-blocking `flock` in `/tmp` (or `$XDG_RUNTIME_DIR`) so a
+slow ingestion run is never overlapped by the next ten-minute cron tick. A
+skipped overlapping run is logged and exits successfully.
+
 ```bash
 sudo tee /etc/logrotate.d/systemsfailed-worker > /dev/null <<'EOF'
 /home/YOUR_USER/systemsfailed-worker.log {
@@ -133,3 +137,9 @@ Dedup is stateless — derived from merged incident files, open PR bodies, and t
 discovery queue. Deleting a PR **branch without merging** makes the worker re-ingest
 that incident on the next run (close the PR and merge nothing = reject by adding the
 URL to `content/queue/candidates.json` with `"status": "rejected"`).
+
+Queue status writes are replayed onto the latest `origin/main` and retried three
+times. If another workflow keeps winning the push race, the wrapper leaves the
+checkout clean and stores the transition in
+`~/.systemsfailed-pending-queue-status.json` for the next run instead of breaking
+future pulls. The file is removed after a successful push.

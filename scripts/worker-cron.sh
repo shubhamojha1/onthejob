@@ -23,6 +23,14 @@ fail() {
   exit 1
 }
 
+command -v flock >/dev/null || fail "flock not in PATH (install util-linux)"
+LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/systemsfailed-worker-${UID}.lock"
+exec 9>"$LOCK_FILE" || fail "cannot open lock file $LOCK_FILE"
+if ! flock -n 9; then
+  log "run skipped: another worker still holds $LOCK_FILE"
+  exit 0
+fi
+
 log "── run start ──"
 cd "$REPO_DIR" || fail "cannot cd to $REPO_DIR"
 

@@ -18,8 +18,10 @@
  * Sources: content/statuspage-sources.json
  */
 
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import {
   IngestError,
@@ -43,8 +45,15 @@ import {
 } from './ingest-core.js'
 import { verifyGrounding } from './grounding.js'
 import type { Candidate } from './discovery.js'
+import {
+  applyQueueStatusUpdates,
+  deriveQueueStatusUpdates,
+  mergeQueueStatusUpdates,
+  type QueueStatusUpdate,
+} from './lib/queue-status.js'
 
 const SOURCES_FILE = resolve(ROOT, 'content/statuspage-sources.json')
+const PENDING_QUEUE_STATUS_FILE = resolve(homedir(), '.systemsfailed-pending-queue-status.json')
 
 const DRY_RUN = process.argv.includes('--dry-run')
 const maxArg  = process.argv.indexOf('--max')
@@ -245,28 +254,129 @@ function pollQueue(seen: Set<string>): WorkItem[] {
 /**
  * markQueueDone/markQueueRejected write content/queue/candidates.json straight
  * to disk — nothing else in this run's git flow (which only commits incident
- * branches) ever persists that. Left uncommitted, it's local-only state that
- * also collides with discovery.yml's daily commit to the same file on origin
- * (its `git pull --ff-only` would fail against our dangling local diff). Push
- * it directly to main, same "chore: ... [skip ci]" bookkeeping pattern
- * discovery.yml/archive.yml already use.
+ * branches) ever persists that. Replay this run's status transitions onto the
+ * latest remote queue before pushing, so discovery.yml can add candidates at
+ * the same time without either writer discarding the other's work.
  */
-function commitQueueStatus(): void {
+function commitQueueStatus(): boolean {
   const status = spawnSync('git', ['status', '--porcelain', '--', 'content/queue/candidates.json'], {
     cwd: ROOT,
     encoding: 'utf-8',
   })
-  if (!status.stdout.trim()) return
 
-  console.log('Committing discovery queue status updates ...')
-  try {
-    run('git', ['add', 'content/queue/candidates.json'])
-    run('git', ['commit', '-m', 'chore: update discovery queue status [skip ci]'])
-    run('git', ['push', 'origin', 'main'])
-    console.log('  ✓ pushed\n')
-  } catch (e) {
-    console.warn(`  ✗ failed to commit/push queue status: ${e instanceof Error ? e.message : e}\n`)
+  const queuePath = 'content/queue/candidates.json'
+  let currentUpdates: QueueStatusUpdate[] = []
+  if (status.stdout.trim()) {
+    const before = JSON.parse(run('git', ['show', `HEAD:${queuePath}`], { quiet: true })) as Candidate[]
+    const after = JSON.parse(readFileSync(QUEUE_FILE, 'utf-8')) as Candidate[]
+    currentUpdates = deriveQueueStatusUpdates(before, after)
   }
+
+  let persistedUpdates: QueueStatusUpdate[] = []
+  if (existsSync(PENDING_QUEUE_STATUS_FILE)) {
+    try {
+      persistedUpdates = JSON.parse(readFileSync(PENDING_QUEUE_STATUS_FILE, 'utf-8')) as QueueStatusUpdate[]
+    } catch {
+      console.warn(`  ✗ discarded unreadable pending queue status file: ${PENDING_QUEUE_STATUS_FILE}`)
+      try { unlinkSync(PENDING_QUEUE_STATUS_FILE) } catch {}
+    }
+  }
+
+  const updates = mergeQueueStatusUpdates(persistedUpdates, currentUpdates)
+  if (updates.length === 0) return true
+
+  const pendingTemp = `${PENDING_QUEUE_STATUS_FILE}.tmp`
+  try {
+    writeFileSync(pendingTemp, JSON.stringify(updates, null, 2) + '\n')
+    renameSync(pendingTemp, PENDING_QUEUE_STATUS_FILE)
+  } catch (error) {
+    try { unlinkSync(pendingTemp) } catch {}
+    try {
+      run('git', ['restore', '--source=HEAD', '--staged', '--worktree', queuePath], { quiet: true })
+    } catch {}
+    console.warn(`  ✗ could not persist queue status for retry: ${error instanceof Error ? error.message : error}`)
+    return false
+  }
+
+  // Replay only this run's transitions over the newest remote queue. This
+  // preserves candidates added concurrently by discovery.yml and prevents a
+  // rejected push from leaving main ahead or the working tree dirty.
+  run('git', ['restore', '--source=HEAD', '--staged', '--worktree', queuePath], { quiet: true })
+  console.log('Committing discovery queue status updates ...')
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    let commitCreated = false
+    try {
+      run('git', ['fetch', 'origin', 'main'], { quiet: true })
+      run('git', ['merge', '--ff-only', 'origin/main'], { quiet: true })
+
+      const latest = JSON.parse(readFileSync(QUEUE_FILE, 'utf-8')) as Candidate[]
+      const merged = applyQueueStatusUpdates(latest, updates)
+      writeFileSync(QUEUE_FILE, JSON.stringify(merged, null, 2) + '\n')
+
+      const changed = spawnSync('git', ['status', '--porcelain', '--', queuePath], {
+        cwd: ROOT,
+        encoding: 'utf-8',
+      }).stdout.trim()
+      if (!changed) {
+        try { unlinkSync(PENDING_QUEUE_STATUS_FILE) } catch {}
+        console.log('  ✓ already current\n')
+        return !existsSync(PENDING_QUEUE_STATUS_FILE)
+      }
+
+      run('git', ['add', queuePath])
+      run('git', ['commit', '-m', 'chore: update discovery queue status [skip ci]'])
+      commitCreated = true
+      run('git', ['push', 'origin', 'main'])
+      try { unlinkSync(PENDING_QUEUE_STATUS_FILE) } catch {}
+      console.log('  ✓ pushed\n')
+      return !existsSync(PENDING_QUEUE_STATUS_FILE)
+    } catch (error) {
+      // A discovery commit may have landed after fetch. Remove only the
+      // queue-status commit just created, clean that file, and retry.
+      if (commitCreated) {
+        try { run('git', ['reset', '--mixed', 'HEAD^'], { quiet: true }) } catch {}
+      }
+      try {
+        run('git', ['restore', '--source=HEAD', '--staged', '--worktree', queuePath], { quiet: true })
+      } catch {}
+      console.warn(`  ✗ queue sync attempt ${attempt}/3 failed: ${error instanceof Error ? error.message : error}`)
+      if (attempt === 3) {
+        console.warn(`  queue status deferred in ${PENDING_QUEUE_STATUS_FILE}; checkout left clean\n`)
+        return false
+      }
+    }
+  }
+
+  return false
+}
+
+interface QueueRecoveryOptions {
+  dryRun: boolean
+  hasPending: () => boolean
+  sync: () => boolean
+}
+
+/**
+ * Reconcile a status update left by an earlier failed push before the queue is
+ * read. Otherwise a remote `new` row can be selected again, or a deduped `done`
+ * row can make the worker return without ever replaying the saved transition.
+ */
+export async function withQueueRecoveryBeforePolling<T>(
+  poll: () => T | Promise<T>,
+  options: QueueRecoveryOptions = {
+    dryRun: DRY_RUN,
+    hasPending: () => existsSync(PENDING_QUEUE_STATUS_FILE),
+    sync: commitQueueStatus,
+  },
+): Promise<T> {
+  if (!options.dryRun && options.hasPending()) {
+    const recovered = options.sync()
+    if (!recovered || options.hasPending()) {
+      throw new Error('Pending queue status could not be synchronized; deferring ingestion')
+    }
+  }
+  return await poll()
 }
 
 // ── Per-incident pipeline ─────────────────────────────────────────────────────
@@ -331,20 +441,23 @@ async function main(): Promise<void> {
     }
   }
 
-  const seen = buildSeenSet()
-  const bySource: WorkItem[][] = []
+  const bySource = await withQueueRecoveryBeforePolling(async () => {
+    const seen = buildSeenSet()
+    const polled: WorkItem[][] = []
 
-  for (const source of sources) {
-    process.stdout.write(`Poll  ${source.name.padEnd(28)}`)
-    const items = await pollSource(source, seen)
-    console.log(`+${items.length}`)
-    bySource.push(items)
-  }
+    for (const source of sources) {
+      process.stdout.write(`Poll  ${source.name.padEnd(28)}`)
+      const items = await pollSource(source, seen)
+      console.log(`+${items.length}`)
+      polled.push(items)
+    }
 
-  process.stdout.write(`Poll  ${'queue (discovery bot)'.padEnd(28)}`)
-  const queueItems = pollQueue(seen)
-  console.log(`+${queueItems.length}`)
-  bySource.push(queueItems)
+    process.stdout.write(`Poll  ${'queue (discovery bot)'.padEnd(28)}`)
+    const queueItems = pollQueue(seen)
+    console.log(`+${queueItems.length}`)
+    polled.push(queueItems)
+    return polled
+  })
 
   const work = bySource.flat()
   if (work.length === 0) {
@@ -401,4 +514,10 @@ async function main(): Promise<void> {
   if (failed > 0) process.exitCode = 1
 }
 
-main().catch(e => { console.error(e); process.exit(1) })
+const isDirectRun = process.argv[1]
+  ? resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+  : false
+
+if (isDirectRun) {
+  main().catch(e => { console.error(e); process.exit(1) })
+}

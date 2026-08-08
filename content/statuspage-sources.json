@@ -1,4 +1,6 @@
 [
+  { "name": "openai",     "api": "https://status.openai.com/api/v2/incidents.json" },
+  { "name": "anthropic",  "api": "https://status.anthropic.com/api/v2/incidents.json" },
   { "name": "github",     "api": "https://www.githubstatus.com/api/v2/incidents.json" },
   { "name": "cloudflare", "api": "https://www.cloudflarestatus.com/api/v2/incidents.json" },
   { "name": "discord",    "api": "https://discordstatus.com/api/v2/incidents.json" },
