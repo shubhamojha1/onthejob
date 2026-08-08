@@ -3,15 +3,23 @@ import { FAILURE_CLASSES } from '../../content/taxonomy'
 import { UptimeStrip } from './TickStrip'
 import { ImpactText } from './ImpactText'
 import type { Incident } from '../schema/incident'
+import type { FailureClassKey } from '../../content/taxonomy'
 
-interface Props {
+interface SharedProps {
   incident: Incident
   open: boolean
   onToggleOpen: () => void
-  onTag: (tag: string) => void
+  onPattern: (pattern: string) => void
 }
 
-export function Card({ incident: i, open, onToggleOpen, onTag }: Props) {
+type Props = SharedProps & (
+  | { linkClasses: true }
+  | { linkClasses?: false; onClass: (classKey: FailureClassKey) => void }
+)
+
+export function Card(props: Props) {
+  const { incident: i, open, onToggleOpen, onPattern } = props
+
   return (
     <article className="oj-card">
       <div className="oj-card-body">
@@ -35,17 +43,32 @@ export function Card({ incident: i, open, onToggleOpen, onTag }: Props) {
         </h2>
 
         <div className="oj-chips">
-          {i.classes.map(c => (
-            <button
-              key={c}
-              className="oj-chip"
-              style={{ '--c': FAILURE_CLASSES[c].color } as React.CSSProperties}
-              onClick={() => onTag(c)}
-              title={`Filter by ${FAILURE_CLASSES[c].label}`}
-            >
-              {FAILURE_CLASSES[c].label}
-            </button>
-          ))}
+          {i.classes.map(c => {
+            const meta = FAILURE_CLASSES[c]
+            const style = { '--c': meta.color } as React.CSSProperties
+
+            return props.linkClasses ? (
+              <Link
+                key={c}
+                to={`/class/${c}`}
+                className="oj-chip"
+                style={style}
+                title={`Browse ${meta.label} incidents`}
+              >
+                {meta.label}
+              </Link>
+            ) : (
+              <button
+                key={c}
+                className="oj-chip"
+                style={style}
+                onClick={() => props.onClass(c)}
+                title={`Filter by ${meta.label}`}
+              >
+                {meta.label}
+              </button>
+            )
+          })}
         </div>
 
         <p className="oj-impact"><ImpactText text={i.impact} /></p>
@@ -64,7 +87,7 @@ export function Card({ incident: i, open, onToggleOpen, onTag }: Props) {
               <span className="oj-detail-label">Recurring patterns</span>
               <div className="oj-pattern-tags">
                 {i.patterns.map(p => (
-                  <button key={p} className="oj-pattern" onClick={() => onTag(p)}>
+                  <button key={p} className="oj-pattern" onClick={() => onPattern(p)}>
                     {p}
                   </button>
                 ))}

@@ -8,17 +8,23 @@ import { Masthead } from '../../components/Masthead'
 import { ShareRow } from '../../components/ShareRow'
 import { ImpactText } from '../../components/ImpactText'
 import { UptimeStrip } from '../../components/TickStrip'
+import { relatedIncidents } from '../../lib/related'
+import { SITE_URL as SITE } from '../../lib/site'
 
-const SITE = 'https://www.systemsfailed.dev'
+interface IncidentPageData {
+  incident: Incident
+  related: Incident[]
+}
 
-export async function loader({ params }: LoaderFunctionArgs): Promise<Incident> {
-  const incident = (allIncidents as Incident[]).find(i => i.id === params.id)
+export async function loader({ params }: LoaderFunctionArgs): Promise<IncidentPageData> {
+  const all = allIncidents as Incident[]
+  const incident = all.find(i => i.id === params.id)
   if (!incident) throw new Response('Not found', { status: 404 })
-  return incident
+  return { incident, related: relatedIncidents(incident, all) }
 }
 
 export function Component() {
-  const i = useLoaderData() as Incident
+  const { incident: i, related } = useLoaderData() as IncidentPageData
 
   const ogTitle = `${i.title} — ${i.company} (${i.year})`
   const ogDesc = i.impact
@@ -71,7 +77,7 @@ export function Component() {
                 {i.classes.map(c => (
                   <Link
                     key={c}
-                    to={`/?class=${c}`}
+                    to={`/class/${c}`}
                     className="oj-chip"
                     style={{ '--c': FAILURE_CLASSES[c].color, textDecoration: 'none' } as React.CSSProperties}
                   >
@@ -115,6 +121,24 @@ export function Component() {
                   ))}
                 </div>
               </div>
+
+              {related.length > 0 && (
+                <nav className="oj-related" aria-label="Related incidents">
+                  <div className="oj-section-label">Failed the same way</div>
+                  <ul>
+                    {related.map(r => (
+                      <li key={r.id}>
+                        <Link to={`/incident/${r.id}`}>
+                          <span className="oj-related-meta">
+                            {r.company} <span className="oj-sep">/</span> {r.year}
+                          </span>
+                          <span className="oj-related-title">{r.title}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
 
               <ShareRow incident={i} />
 

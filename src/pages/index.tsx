@@ -344,7 +344,8 @@ export function Component() {
                       incident={incident}
                       open={expanded.has(incident.id)}
                       onToggleOpen={() => toggle(setExpanded, incident.id)}
-                      onTag={t => toggle(setActive, t)}
+                      onClass={classKey => toggle(setActive, classKey)}
+                      onPattern={pattern => toggle(setActive, pattern)}
                     />
                   </div>
                 )

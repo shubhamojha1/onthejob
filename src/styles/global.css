@@ -203,10 +203,12 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
   display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
   gap:8px; padding:12px;
 }
+.oj-tile-shell{display:flex; min-width:0; flex-direction:column}
 .oj-tile{
   --c:#888; text-align:left; background:var(--card); cursor:pointer;
   color:var(--ink); font-family:inherit; padding:12px 14px 13px;
   display:flex; flex-direction:column; gap:6px;
+  width:100%; flex:1;
   border:1px solid var(--line); border-radius:10px;
   transition:background .14s ease, border-color .14s ease, transform .14s ease;
 }
@@ -240,6 +242,14 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
 }
 .oj-tile.on .oj-tile-count{color:color-mix(in srgb,var(--c) 55%,var(--ink)); font-weight:600}
 .oj-tile-desc{font-size:12px; line-height:1.45; color:var(--muted)}
+.oj-tile-shell.has-page .oj-tile{border-bottom:0; border-radius:10px 10px 0 0}
+.oj-tile-page{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:7px 14px; border:1px solid var(--line); border-top-color:var(--line2); border-radius:0 0 10px 10px;
+  background:var(--card); color:var(--faint); text-decoration:none;
+  font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+}
+.oj-tile-page:hover{border-color:color-mix(in srgb,var(--c) 45%,var(--line)); color:var(--ink)}
 
 /* ─── Toolbar ────────────────────────────────────────────────────────────── */
 
@@ -314,6 +324,7 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
 .oj-title a:hover{color:var(--down-ink)}
 .oj-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
 .oj-chip{
+  display:inline-flex; align-items:center; text-decoration:none;
   --c:#888; background:color-mix(in srgb,var(--c) 12%,var(--card));
   border:1px solid color-mix(in srgb,var(--c) 38%,var(--line));
   color:color-mix(in srgb,var(--c) 42%,var(--ink)); border-radius:6px;
@@ -958,4 +969,51 @@ html[data-theme='dark'] .oj-root{
 @media (prefers-reduced-motion:reduce){
   .oj-iv-topic-index a:hover{transform:none}
   .oj-iv-source:hover i{transform:none}
+}
+
+/* ---- Failure class pages (/class/:key) ---- */
+.oj-class-page{max-width:960px; margin:0 auto; padding:36px 20px 72px}
+.oj-class-head{margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--line)}
+.oj-class-head .oj-section-kicker{display:flex; align-items:center; gap:7px}
+.oj-class-head .oj-section-kicker i{width:8px; height:8px; border-radius:2px; background:var(--c)}
+.oj-class-head h1{
+  font-family:var(--display); font-weight:800; font-size:36px; line-height:1.08;
+  letter-spacing:-.025em; margin:0 0 10px; color:var(--ink);
+}
+.oj-class-desc{margin:0 0 12px; font-size:16.5px; line-height:1.6; color:var(--muted); max-width:62ch}
+.oj-class-count{
+  margin:0; font-family:var(--mono); font-size:11.5px; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--faint);
+}
+.oj-class-nav{margin-top:38px; padding-top:24px; border-top:1px solid var(--line)}
+.oj-class-nav>div{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.oj-class-nav a{
+  display:inline-flex; align-items:center; gap:7px; text-decoration:none;
+  font-size:13px; color:var(--muted); background:var(--card);
+  border:1px solid var(--line2); border-radius:999px; padding:5px 12px;
+}
+.oj-class-nav a:hover{border-color:var(--c); color:var(--ink)}
+.oj-class-nav a i{width:7px; height:7px; border-radius:2px; background:var(--c); flex:none}
+
+@media (max-width:640px){
+  .oj-class-page{padding:24px 14px 56px}
+  .oj-class-head h1{font-size:28px}
+}
+
+/* ---- Related incidents (incident detail foot) ---- */
+.oj-related{margin-top:30px; padding-top:22px; border-top:1px solid var(--line)}
+.oj-related ul{list-style:none; margin:10px 0 0; padding:0; display:grid; gap:8px}
+.oj-related a{
+  display:block; text-decoration:none; background:var(--card);
+  border:1px solid var(--line2); border-left:2px solid var(--line2);
+  border-radius:6px; padding:11px 14px;
+}
+.oj-related a:hover{border-color:var(--line); border-left-color:var(--down)}
+.oj-related-meta{
+  display:block; font-family:var(--mono); font-size:11px; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--faint); margin-bottom:4px;
+}
+.oj-related-title{
+  display:block; font-family:var(--display); font-weight:600; font-size:15px;
+  line-height:1.35; color:var(--ink);
 }

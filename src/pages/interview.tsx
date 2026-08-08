@@ -5,8 +5,7 @@ import interviewEntries from '../generated/interview-index.json'
 import { buildInterviewGuide } from '../features/interview/guide'
 import type { InterviewIndexEntry } from '../schema/incident'
 import { Masthead } from '../components/Masthead'
-
-const SITE = 'https://www.systemsfailed.dev'
+import { SITE_URL as SITE } from '../lib/site'
 const TITLE = 'Interview prep — system design lessons from real outages'
 const DESC =
   'Browse concise system design talking points grounded in real engineering incidents, organized by failure mode.'
@@ -43,11 +42,11 @@ export function Component() {
         <meta property="og:description" content={DESC} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`${SITE}/interview`} />
-        <meta property="og:image" content={`${SITE}/og-image.png`} />
+        <meta property="og:image" content={`${SITE}/cards/interview.png`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={TITLE} />
         <meta name="twitter:description" content={DESC} />
-        <meta name="twitter:image" content={`${SITE}/og-image.png`} />
+        <meta name="twitter:image" content={`${SITE}/cards/interview.png`} />
       </Head>
 
       <Masthead />

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { FAILURE_CLASSES, colorForCompany, type FailureClassKey } from '../../content/taxonomy'
+import { Link } from 'react-router-dom'
+import { FAILURE_CLASSES, FAILURE_CLASS_KEYS, colorForCompany } from '../../content/taxonomy'
 import { CompanyMark } from './CompanyMark'
 import type { Incident } from '../schema/incident'
 
@@ -20,7 +21,7 @@ export function FilterBoard({ incidents, active, onToggle, initialMode = 'compan
 
   const classes: Tile[] = useMemo(
     () =>
-      (Object.keys(FAILURE_CLASSES) as FailureClassKey[]).map(key => ({
+      FAILURE_CLASS_KEYS.map(key => ({
         key,
         label: FAILURE_CLASSES[key].label,
         desc: FAILURE_CLASSES[key].desc,
@@ -64,26 +65,41 @@ export function FilterBoard({ incidents, active, onToggle, initialMode = 'compan
             </button>
           </div>
         </div>
-        <span className="oj-board-hint">select to filter the record</span>
+        <span className="oj-board-hint">
+          {mode === 'class' ? 'select to filter · or browse the full class' : 'select to filter the record'}
+        </span>
       </div>
       <div className="oj-board-grid">
         {tiles.map(t => {
           const on = active.has(t.key)
           return (
-            <button
+            <div
               key={t.key}
-              className={'oj-tile' + (on ? ' on' : '')}
+              className={'oj-tile-shell' + (mode === 'class' ? ' has-page' : '')}
               style={{ '--c': t.color } as React.CSSProperties}
-              aria-pressed={on}
-              onClick={() => onToggle(t.key)}
             >
-              <span className="oj-tile-top">
-                {mode === 'company' ? <CompanyMark company={t.key} /> : <span className="oj-swatch" />}
-                <span className="oj-tile-label">{t.label}</span>
-                <span className="oj-tile-count">{t.count}</span>
-              </span>
-              {t.desc && <span className="oj-tile-desc">{t.desc}</span>}
-            </button>
+              <button
+                className={'oj-tile' + (on ? ' on' : '')}
+                aria-pressed={on}
+                onClick={() => onToggle(t.key)}
+              >
+                <span className="oj-tile-top">
+                  {mode === 'company' ? <CompanyMark company={t.key} /> : <span className="oj-swatch" />}
+                  <span className="oj-tile-label">{t.label}</span>
+                  <span className="oj-tile-count">{t.count}</span>
+                </span>
+                {t.desc && <span className="oj-tile-desc">{t.desc}</span>}
+              </button>
+              {mode === 'class' && (
+                <Link
+                  className="oj-tile-page"
+                  to={`/class/${t.key}`}
+                  aria-label={`Browse all ${t.label} incidents`}
+                >
+                  Browse incidents <span aria-hidden>→</span>
+                </Link>
+              )}
+            </div>
           )
         })}
       </div>

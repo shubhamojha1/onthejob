@@ -54,6 +54,12 @@ export const FAILURE_CLASSES = {
 export type FailureClassKey = keyof typeof FAILURE_CLASSES
 export type FailureClassMeta = (typeof FAILURE_CLASSES)[FailureClassKey]
 
+export const FAILURE_CLASS_KEYS = Object.keys(FAILURE_CLASSES) as FailureClassKey[]
+
+export function isFailureClassKey(value: unknown): value is FailureClassKey {
+  return typeof value === "string" && Object.hasOwn(FAILURE_CLASSES, value)
+}
+
 // Reused for company tiles, which have no fixed taxonomy color of their own
 const PALETTE = Object.values(FAILURE_CLASSES).map(c => c.color)
 

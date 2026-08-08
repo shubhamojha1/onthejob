@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { Incident } from '../schema/incident'
-
-const SITE = 'https://www.systemsfailed.dev'
+import { SITE_URL as SITE } from '../lib/site'
 
 /** Post to X, copy the link, or grab the pre-rendered share card. */
 export function ShareRow({ incident: i }: { incident: Incident }) {

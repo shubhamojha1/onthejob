@@ -406,6 +406,112 @@ function siteCard(count: number, yearMin: number, yearMax: number) {
   }
 }
 
+/** Dark-ground card shared by the class and interview pages. */
+function pageCard(opts: {
+  kicker: string
+  headline: string
+  headlineColor: string
+  blurb: string
+  strip: Incident[]
+  footLeft: string
+  footRight: string
+  footCentre: string
+}) {
+  const total = 52
+  const years = incidents.map(i => i.year)
+  const [yearMin, yearMax] = [Math.min(...years), Math.max(...years)]
+  const hits = new Set<number>()
+  for (const i of opts.strip) {
+    const [y, m] = i.date.split('-').map(Number)
+    hits.add(Math.min(total - 1, Math.floor(((y - yearMin + (m - 1) / 12) / (yearMax - yearMin + 1)) * total)))
+  }
+  return {
+    type: 'div',
+    props: {
+      style: {
+        width: 1200, height: 630, display: 'flex', flexDirection: 'column',
+        justifyContent: 'center', background: '#0E141A', padding: '0 80px',
+      },
+      children: [
+        {
+          type: 'div',
+          props: {
+            style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+            children: [
+              wordmark(24, '#F0F2EF'),
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex', fontFamily: 'IBM Plex Mono', fontSize: 15,
+                    letterSpacing: 2, color: opts.headlineColor, textTransform: 'uppercase',
+                  },
+                  children: opts.kicker,
+                },
+              },
+            ],
+          },
+        },
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex', marginTop: 34, fontFamily: 'Archivo', fontSize: 76,
+              fontWeight: 800, lineHeight: .98, letterSpacing: -3,
+              color: '#F0F2EF', lineClamp: 2,
+            },
+            children: opts.headline,
+          },
+        },
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex', marginTop: 18, fontFamily: 'Public Sans', fontSize: 25,
+              lineHeight: 1.4, color: '#A8B0B7', maxWidth: 900, lineClamp: 2,
+            },
+            children: opts.blurb,
+          },
+        },
+        {
+          type: 'div',
+          props: {
+            style: { display: 'flex', gap: 6, marginTop: 40 },
+            children: Array.from({ length: total }, (_, idx) => ({
+              type: 'div',
+              props: {
+                style: {
+                  flexGrow: 1,
+                  height: hits.has(idx) ? 48 : 34,
+                  marginTop: hits.has(idx) ? 0 : 7,
+                  borderRadius: 3,
+                  // Always red: green means healthy everywhere else on the site,
+                  // so a green down-tick would invert the whole visual language.
+                  background: hits.has(idx) ? '#FF5361' : '#2B4938',
+                },
+              },
+            })),
+          },
+        },
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex', justifyContent: 'space-between', marginTop: 16,
+              fontFamily: 'IBM Plex Mono', fontSize: 21, color: '#707B84',
+            },
+            children: [
+              { type: 'div', props: { style: { display: 'flex' }, children: opts.footLeft } },
+              { type: 'div', props: { style: { display: 'flex', color: '#A8B0B7' }, children: opts.footCentre } },
+              { type: 'div', props: { style: { display: 'flex' }, children: opts.footRight } },
+            ],
+          },
+        },
+      ],
+    },
+  }
+}
+
 async function render(node: object, outPath: string) {
   const svg = await satori(node as Parameters<typeof satori>[0], { width: 1200, height: 630, fonts })
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng()
@@ -426,6 +532,40 @@ await render(
   join(ROOT, 'public', 'og-image.png'),
 )
 
+// Class and interview cards quote live counts, so they go stale when the
+// archive grows — never cached, always regenerated.
+for (const [key, meta] of Object.entries(FAILURE_CLASSES)) {
+  const matching = incidents.filter(i => i.classes.includes(key as keyof typeof FAILURE_CLASSES))
+  const n = matching.length
+  await render(
+    pageCard({
+      kicker: 'Failure class',
+      headline: meta.label,
+      headlineColor: meta.color,
+      blurb: meta.desc,
+      strip: matching,
+      footLeft: `${Math.min(...years)}`,
+      footRight: `${Math.max(...years)}`,
+      footCentre: `${n} real ${n === 1 ? 'incident' : 'incidents'}`,
+    }),
+    join(CARDS_DIR, `class-${key}.png`),
+  )
+}
+
+await render(
+  pageCard({
+    kicker: 'Interview field guide',
+    headline: 'Build stronger answers from real failures.',
+    headlineColor: '#FF6A76',
+    blurb: 'Concise talking points from public postmortems, filed under every failure topic they can help you discuss.',
+    strip: incidents,
+    footLeft: `${Math.min(...years)}`,
+    footRight: `${Math.max(...years)}`,
+    footCentre: `${incidents.length} incidents · ${Object.keys(FAILURE_CLASSES).length} topics`,
+  }),
+  join(CARDS_DIR, 'interview.png'),
+)
+
 // Apple touch icon: rasterize the favicon (resvg renders its light variant)
 const faviconSvg = readFileSync(join(ROOT, 'public', 'favicon.svg'), 'utf-8')
 writeFileSync(
@@ -433,5 +573,7 @@ writeFileSync(
   new Resvg(faviconSvg, { fitTo: { mode: 'width', value: 180 } }).render().asPng(),
 )
 
-console.log(`✓ Share cards: ${made} generated, ${incidents.length - made} cached → public/cards/`)
+const alwaysRebuilt = Object.keys(FAILURE_CLASSES).length + 1
+console.log(`✓ Incident cards: ${made} generated, ${incidents.length - made} cached → public/cards/`)
+console.log(`✓ Class + interview cards: ${alwaysRebuilt} regenerated (counts go stale, never cached)`)
 console.log('✓ Site og-image.png regenerated')
