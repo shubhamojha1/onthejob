@@ -1,6 +1,6 @@
 import { ThemeToggle } from './ThemeToggle'
 import { SITE_SHARE_HREF } from '../lib/site'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 /** The brand mark: the favicon's tick strip, drawn inline so it follows the theme tokens. */
 function LogoMark() {
@@ -16,6 +16,10 @@ function LogoMark() {
 }
 
 export function Masthead() {
+  const { pathname } = useLocation()
+  const archiveIsActive =
+    pathname === '/' || pathname.startsWith('/incident/') || pathname.startsWith('/class/')
+
   return (
     <header className="oj-mast">
       <div className="oj-brand-lockup">
@@ -27,7 +31,13 @@ export function Masthead() {
       </div>
       <nav className="oj-mast-meta" aria-label="Primary navigation">
         <div className="oj-nav-destinations">
-          <a className="oj-nav-link oj-nav-archive" href="/#archive">Browse archive</a>
+          <a
+            className={`oj-nav-link oj-nav-archive${archiveIsActive ? ' is-active' : ''}`}
+            href="/#archive"
+            aria-current={archiveIsActive ? 'page' : undefined}
+          >
+            Browse archive
+          </a>
           <NavLink
             className={({ isActive }) => `oj-nav-link oj-nav-interview${isActive ? ' is-active' : ''}`}
             to="/interview"

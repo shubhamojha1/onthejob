@@ -614,22 +614,30 @@ html[data-theme='dark'] .oj-root{
 }
 .oj-mast-meta{gap:9px}
 .oj-nav-destinations{
-  display:flex; align-items:center; gap:3px; padding:3px;
+  display:flex; align-items:center; gap:2px; padding:3px;
   border:1px solid var(--line2); border-radius:10px;
-  background:color-mix(in srgb,var(--card) 84%,transparent);
+  background:color-mix(in srgb,var(--paper) 78%,var(--card));
   box-shadow:0 10px 28px -24px var(--ink);
 }
 .oj-nav-link,.oj-nav-share{
   padding:7px 10px; border-radius:7px; text-decoration:none;
   font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.02em;
 }
-.oj-nav-link{display:inline-flex; align-items:center; gap:8px; color:var(--ink)!important}
+.oj-nav-link{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:34px; color:var(--muted)!important;
+  transition:background .14s ease,color .14s ease,box-shadow .14s ease;
+}
 .oj-nav-link::before{content:''; width:6px; height:6px; flex:none; border-radius:50%; background:var(--ok)}
-.oj-nav-archive{background:color-mix(in srgb,var(--ok) 6%,transparent)}
-.oj-nav-interview{background:color-mix(in srgb,var(--down) 7%,transparent)}
+.oj-nav-link:not(.is-active)::before{opacity:.5}
 .oj-nav-interview::before{background:var(--down)}
-.oj-nav-link:hover{background:color-mix(in srgb,var(--ink) 7%,transparent)}
-.oj-nav-link.is-active{background:color-mix(in srgb,var(--down) 11%,var(--card)); color:var(--down-ink)!important}
+.oj-nav-link:hover{color:var(--ink)!important; background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.oj-nav-link.is-active{
+  background:var(--ink); color:var(--card)!important;
+  box-shadow:0 7px 16px -10px var(--ink);
+}
+.oj-nav-interview.is-active{background:var(--down); color:#fff!important; box-shadow:0 7px 16px -10px var(--down)}
+.oj-nav-link.is-active::before{background:currentColor; opacity:.72}
 .oj-nav-interview-short{display:none}
 .oj-nav-share{color:var(--down-ink)!important; border:1px solid color-mix(in srgb,var(--down) 30%,var(--line))}
 .oj-nav-share:hover{background:color-mix(in srgb,var(--down) 8%,transparent); border-color:var(--down)}
