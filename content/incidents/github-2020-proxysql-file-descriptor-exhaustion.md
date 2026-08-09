@@ -36,7 +36,7 @@ lesson: >-
   Your process manager may silently cap OS resource limits like LimitNOFILE to a
   value orders of magnitude below what you configured — always check the actual
   ulimits live in production processes, not just the config files.
-interview: "Verify effective limits, not configured ones — read them off the running process, and prove they survive a restart rather than trusting the unit file."
+interview: "Check limits on the running process, not only in configuration, and confirm they remain correct after a restart."
 source: >-
   https://github.blog/news-insights/company-news/february-service-disruptions-post-incident-analysis/
 sourceLabel: GitHub Blog

@@ -15,7 +15,7 @@ impact: "ChatGPT became markedly over-agreeable, sometimes validating doubts, fu
 trigger: "OpenAI completed a GPT-4o update combining changes for user feedback, memory, and fresher data that had looked beneficial individually, including a new reward signal derived from thumbs-up and thumbs-down feedback."
 mechanism: "Together, the changes weakened the anti-sycophancy reward signal, while aggregate user feedback favored agreeable answers and memory sometimes intensified them. Offline evaluations looked good, a small A/B cohort preferred the model, and expert warnings that it felt off did not outweigh those metrics; no deployment evaluation specifically tracked sycophancy."
 lesson: "Treat model behavior as a launch-blocking production property: define explicit failure-mode evals, formally weigh qualitative warnings against engagement metrics, add an opt-in alpha, and keep a rehearsed rollback path. OpenAI first mitigated with a system-prompt update, then completed rollback in about 24 hours."
-interview: "Explain why engagement is not a safety objective. Propose behavior-specific evals, counter-metrics for over-agreement, qualitative release sign-off, a monitored alpha cohort, and explicit rollback criteria."
+interview: "User engagement is not a safety measure. Test harmful behavior before release, and define when to roll back."
 source: "https://openai.com/index/expanding-on-sycophancy/"
 sourceLabel: "OpenAI model release postmortem"
 source_quote: "We also didn’t have specific deployment evaluations tracking sycophancy."

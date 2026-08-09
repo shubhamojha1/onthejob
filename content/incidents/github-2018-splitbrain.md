@@ -16,7 +16,7 @@ impact: "A day of stale, read-only metadata; webhooks and Pages builds frozen; m
 trigger: "A 43-second network partition between the US-East hub and the primary data center during optical-equipment maintenance."
 mechanism: "Orchestrator (Raft-based MySQL failover) promoted West-Coast primaries. When the link healed, East and West had each accepted writes the other lacked — divergence. Cross-country latency then made the app unusable."
 lesson: "Automated failover that reacts faster than your network heals can manufacture split-brain. Tune failover to application topology, not just node liveness."
-interview: "The canonical CAP-in-practice story: consistency vs availability under partition, plus async-replication data-loss risk."
+interview: "During a network split, decide whether consistency or availability matters more, and account for data loss from delayed replication."
 source: "https://github.blog/news-insights/company-news/oct21-post-incident-analysis/"
 sourceLabel: "The GitHub Blog"
 source_quote: ""

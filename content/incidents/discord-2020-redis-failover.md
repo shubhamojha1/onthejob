@@ -16,7 +16,7 @@ impact: "A real-time outage that forced a full service restart, reconnecting mil
 trigger: "Google Cloud automatically live-migrated the VM hosting Discord's primary Redis node."
 mechanism: "The node briefly dropped offline; the HA cluster rebalanced and hit known bugs in Discord's Redis-failover handling. The partial outage exposed latent issues elsewhere, cascading through the real-time system until a full restart was required."
 lesson: "Your cloud provider's routine automation — like live migration — is an event your failover code must survive. Test failover against real triggers, not just clean kills."
-interview: "Failover correctness under provider-initiated events; chaos-testing the real failure triggers."
+interview: "Test failover with the events your cloud provider can actually trigger, not only clean shutdowns."
 source: "https://status.discordapp.com/incidents/qk9cdgnqnhcn"
 sourceLabel: "Discord status"
 source_quote: ""

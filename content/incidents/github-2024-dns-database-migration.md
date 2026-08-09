@@ -33,10 +33,7 @@ lesson: >-
   A quick mitigation for a localized infra failure can silently break cross-site
   connectivity elsewhere, so any DNS or routing fix should be validated for its
   effect on the broader topology before being treated as the resolution.
-interview: >-
-  When asked to design multi-site DNS infrastructure, discuss how to isolate a
-  single site's DNS failure from database maintenance and how to validate that
-  failover mitigations don't break connectivity between sites.
+interview: "Keep each site's DNS independent from database maintenance, and test that failover still preserves connectivity between sites."
 source: >-
   https://github.blog/news-insights/company-news/github-availability-report-october-2024/
 sourceLabel: 'GitHub Availability Report, October 2024'

@@ -31,7 +31,7 @@ lesson: >-
   — a single bad config push that breaks health check responses can cause the
   routing layer to simultaneously drop all database hosts, producing a total
   outage with no code change involved.
-interview: "Config pipelines need the same staged rollout as code, so one bad push cannot mark every database host unhealthy to the routing layer at once."
+interview: "Roll out database configuration gradually so one bad change cannot mark every host unhealthy at once."
 source: >-
   https://github.blog/news-insights/company-news/github-availability-report-august-2024/
 sourceLabel: GitHub Blog — Availability Report August 2024

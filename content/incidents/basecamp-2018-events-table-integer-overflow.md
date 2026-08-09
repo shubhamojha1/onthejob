@@ -29,10 +29,7 @@ lesson: >-
   When a hot, shared table nears a known integer key ceiling, treat the
   migration as urgent and monitor actual headroom, not just awareness that a fix
   is 'in progress.'
-interview: >-
-  When asked about scaling a high-write table, discuss choosing 64-bit primary
-  keys upfront and monitoring key-space headroom as a first-class production
-  metric.
+interview: "Use 64-bit IDs for fast-growing tables, and alert well before the available ID range runs out."
 source: >-
   https://web.archive.org/web/20220529044310/https://m.signalvnoise.com/postmortem-on-the-read-only-outage-of-basecamp-on-november-9th-2018/
 sourceLabel: 'Signal v. Noise (Basecamp blog, archived)'

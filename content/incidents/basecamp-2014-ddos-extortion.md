@@ -29,7 +29,7 @@ lesson: >-
   Your status page must be load-tested for outage-level traffic spikes, and
   incident communication must begin within five minutes of detection — not after
   internal triage is complete.
-interview: "Status and incident-communication channels must not share fate with the service they report on — they are needed exactly when it is down."
+interview: "Status pages must handle the traffic an outage creates. Load-test them before an incident."
 source: 'https://signalvnoise.com/posts/3729-basecamp-network-attack-postmortem'
 sourceLabel: Signal v. Noise (Basecamp blog)
 source_quote: >-

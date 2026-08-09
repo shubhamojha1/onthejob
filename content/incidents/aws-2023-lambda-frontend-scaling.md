@@ -32,10 +32,7 @@ lesson: >-
   Autoscaling systems can hide defects that only trigger past capacity levels
   never previously exercised in production, so scaling logic must be tested well
   beyond historical peak, not just up to it.
-interview: >-
-  When asked about safe autoscaling design, discuss why untested scale
-  thresholds are as risky as untested code paths, and how cellular architectures
-  contain blast radius when a cell fails.
+interview: "Test scaling thresholds like code, and split capacity into independent cells so one scaling failure stays contained."
 source: 'https://aws.amazon.com/message/061323/'
 sourceLabel: AWS post-event summary
 source_quote: >-

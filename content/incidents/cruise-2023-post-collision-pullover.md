@@ -15,7 +15,7 @@ impact: "A driverless Cruise vehicle pulled a pedestrian forward after contact; 
 trigger: "A human-driven vehicle struck a pedestrian and propelled the person onto the ground directly in the autonomous vehicle's path, forcing an unusual post-collision decision."
 mechanism: "The Cruise vehicle braked aggressively but still made contact. Its subsystem chose between pulling over and remaining stationary using perceived actors, impact location, and severity; it mischaracterized this as a lateral collision and commanded a pullover while the pedestrian was low beneath its path. Cruise then used historical driving data and simulation to test recurrence."
 lesson: "When perception is uncertain after a collision, the minimum-risk fallback must prevent additional motion. Test rare, high-severity scenarios in simulation, constrain uncertain classifications from authorizing irreversible actuation, and evaluate the complete perception-to-action chain. Cruise's remedy would have kept the vehicle stationary."
-interview: "Discuss fail-safe planning: carry confidence into the planner, separate uncertain classification from actuation, default to a stationary state after impact, and require simulation-based safety evidence before restoring a driverless fleet."
+interview: "When the system is uncertain after a collision, keep the vehicle stopped. Prove safer behavior in simulation before returning it to service."
 source: "https://static.nhtsa.gov/odi/rcl/2023/RCLRPT-23E086-7725.PDF"
 sourceLabel: "NHTSA Part 573 recall report"
 source_quote: "After coming to an initial stop, the AV attempted to pull over out of traffic, pulling the individual forward."

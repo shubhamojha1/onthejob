@@ -32,11 +32,7 @@ lesson: >-
   Investing in architecture to reduce a known failure mode isn't enough — also
   build and rehearse the operational tooling needed to intervene quickly when
   that failure mode recurs at larger scale.
-interview: >-
-  When asked how to prevent a shared database from becoming a single point of
-  contention under load, discuss splitting hot datasets into isolated stores and
-  building dedicated incident-response tooling ahead of time, not during the
-  outage.
+interview: "Split heavily used data across isolated stores before one shared database becomes the bottleneck. Build outage tools before you need them."
 source: 'https://status.circleci.com/incidents/8rklh3qqckp1'
 sourceLabel: CircleCI Status
 source_quote: >-

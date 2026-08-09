@@ -16,7 +16,7 @@ impact: "Build throughput collapsed to roughly one transaction per minute; the b
 trigger: "GitHub recovered from its own outage, and all the backed-up webhooks and builds hit CircleCI at once."
 mechanism: "The recovery surge pushed CircleCI's queue subsystem into a pathological slow state. With throughput near zero, the flood of queued work had nowhere to go."
 lesson: "Recovery is a traffic event. The herd that hits you when an upstream comes back can be worse than its going down."
-interview: "Designing for upstream-recovery surges: backpressure, rate limits, and draining strategies."
+interview: "A recovering dependency can create another traffic spike. Limit incoming work so the backlog drains safely."
 source: "https://circleci.statuspage.io/incidents/hr0mm9xmm3x6"
 sourceLabel: "CircleCI status"
 source_quote: ""

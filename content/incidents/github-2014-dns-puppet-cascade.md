@@ -35,7 +35,7 @@ lesson: >-
   Deployment systems that regenerate critical infrastructure config (like DNS
   zone files) must validate API responses for completeness before applying them
   — and must never depend on the very service they are rebuilding.
-interview: "Circular dependencies in tooling: a pipeline that manages DNS must not need working DNS to run, or it cannot fix the outage it caused."
+interview: "Recovery tools must not depend on the system they repair. A DNS repair pipeline still needs to work when DNS is down."
 source: 'https://github.blog/news-insights/the-library/dns-outage-post-mortem/'
 sourceLabel: GitHub Blog
 source_quote: >-

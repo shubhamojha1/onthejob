@@ -30,7 +30,7 @@ lesson: >-
   Configuration parameters that control minimum capacity thresholds must have
   semantic validation — silently defaulting to zero when a floor setting is
   removed is a single config push away from a regional outage.
-interview: "Safe defaults in config management: removing or zeroing a capacity floor should fail loudly, never silently fall back to a dangerous default."
+interview: "Reject unsafe configuration changes. If a minimum capacity setting is removed, do not silently replace it with a dangerous default."
 source: 'https://aws.amazon.com/message/74876-2/'
 sourceLabel: AWS Post-Event Summary
 source_quote: >-

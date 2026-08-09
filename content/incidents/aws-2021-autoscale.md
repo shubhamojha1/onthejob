@@ -16,7 +16,7 @@ impact: "A major us-east-1 disruption affecting a long list of AWS services and 
 trigger: "Automated scaling activity on the main AWS network provoked unexpected behavior from a large number of internal clients."
 mechanism: "A surge of connection activity overwhelmed networking devices between the internal and main networks. Retries plus the impaired network created a congestion-collapse feedback loop — and monitoring rode the same impaired path, blinding responders."
 lesson: "Feedback loops between automated clients and the network they depend on cause congestion collapse. Monitoring must not share fate with the thing it monitors."
-interview: "Congestion collapse, backoff/jitter on retries, and observability that survives the outage it's reporting on."
+interview: "Retries can deepen an overload. Wait longer between attempts, spread them out, and keep monitoring available during the outage."
 source: "https://aws.amazon.com/message/12721/"
 sourceLabel: "AWS post-event summary"
 source_quote: ""

@@ -31,10 +31,7 @@ lesson: >-
   A rollback is not automatically safe when a schema or format change has
   already been written to storage in the new shape — verify backward AND forward
   read compatibility before treating rollback as the safe default.
-interview: >-
-  When asked about safe database migrations, discuss why a schema change must be
-  readable by both old and new code during the rollout window, including during
-  a rollback.
+interview: "Keep database changes readable by both old and new code until the rollout and any rollback are complete."
 source: >-
   https://discuss.circleci.com/t/incident-report-november-8-2021-jobs-stuck-in-a-not-running-state/41890
 sourceLabel: CircleCI Discuss

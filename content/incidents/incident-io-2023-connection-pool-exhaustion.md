@@ -33,7 +33,7 @@ lesson: >-
   before an incident forces you to — connection pool exhaustion from many
   unnecessary short transactions is invisible without that data, and the root
   cause will look like a general slowdown with no obvious culprit.
-interview: "Instrument connection pools by holder, not just utilization: know which endpoints hold connections longest before you try to alert on exhaustion."
+interview: "Track which endpoints hold database connections and for how long, not only how full the pool is."
 source: 'https://incident.io/blog/database-performance'
 sourceLabel: incident.io Engineering Blog
 source_quote: >-

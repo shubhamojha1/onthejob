@@ -28,7 +28,7 @@ lesson: >-
   Isolate unauthenticated traffic to separate backend resources or rate-limit
   public endpoints independently to prevent malicious traffic surges from
   degrading service for authenticated users.
-interview: "Isolate public and authenticated request paths — separate pools and quotas — so an abusive surge on open endpoints cannot starve authenticated users."
+interview: "Give public and signed-in traffic separate capacity and limits, so abuse cannot starve signed-in users."
 source: 'https://www.githubstatus.com/incidents/m7n7sm0sr1pz'
 sourceLabel: GitHub Status Page
 source_quote: >-

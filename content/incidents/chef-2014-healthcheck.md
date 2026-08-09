@@ -15,7 +15,7 @@ impact: "The Supermarket community site crashed two hours after launch with inte
 trigger: "Launch-day load caused intermittent latency spikes."
 mechanism: "Health-check timeouts were set so low that a brief latency blip made healthy nodes look dead. They were pulled from rotation, concentrating load on the rest, causing more latency — a self-reinforcing removal spiral."
 lesson: "Aggressive health checks turn a latency blip into an outage. Set timeouts comfortably above your real tail latency."
-interview: "Why health-check thresholds must account for p99 latency, not just the mean."
+interview: "Use slow-request latency, not the average, when setting health-check limits."
 source: "https://www.chef.io/blog/2014/07/10/supermarket-intermittent-unresponsiveness-postmortem"
 sourceLabel: "Chef blog"
 source_quote: ""

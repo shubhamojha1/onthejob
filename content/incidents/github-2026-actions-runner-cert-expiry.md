@@ -36,11 +36,7 @@ lesson: >-
   automated with independent expiry monitoring, and reconnect paths need circuit
   breakers so a recovering fleet of clients doesn't stampede shared APIs on its
   way back up.
-interview: >-
-  When asked to design a large fleet of self-hosted job runners, discuss
-  automated certificate lifecycle management, independent expiry alerting, and
-  backoff/circuit-breaking on reconnect storms so a single expired credential
-  can't cascade into platform-wide API degradation.
+interview: "Renew certificates automatically and alert before they expire. Slow reconnection attempts so one expiry does not overload shared APIs."
 source: 'https://www.githubstatus.com/incidents/8vfyvq16hzh9'
 sourceLabel: GitHub Status incident report
 source_quote: >-

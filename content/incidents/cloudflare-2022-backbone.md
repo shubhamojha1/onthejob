@@ -15,7 +15,7 @@ impact: "19 of Cloudflare's busiest data centers dropped offline at once, hittin
 trigger: "A routing-policy change made during a long-running project to increase backbone resilience."
 mechanism: "An incorrect change to how traffic was routed withdrew routes and concentrated load, taking the busiest sites down together — ironically, during resilience work."
 lesson: "Network and routing changes deserve the same staged rollout and review as application code. The \"resilience project\" is itself a risk window."
-interview: "Change management for network config; why infra changes need canaries too."
+interview: "Network changes need the same safety checks as code. Roll them out gradually and watch for failures."
 source: "https://blog.cloudflare.com/cloudflare-outage-on-june-21-2022/"
 sourceLabel: "Cloudflare blog"
 source_quote: ""

@@ -24,7 +24,7 @@ fences, no explanation — the response must be parseable by `JSON.parse()` with
   "trigger":     "<The immediate event that initiated the incident>",
   "mechanism":   "<How the failure propagated — cause → effect → effect>",
   "lesson":      "<The single most transferable engineering insight from this incident>",
-  "interview":   "<What to say in a system design interview on the topic this incident exemplifies>",
+  "interview":   "<A plain-language interview takeaway: one principle and one concrete safeguard>",
   "source":      "<canonical URL — use the URL provided, do not change it>",
   "sourceLabel": "<Human-readable label, e.g. 'Cloudflare blog' or 'AWS post-event summary'>",
   "source_quote": "<One sentence quoted verbatim from the postmortem that grounds the extraction>",
@@ -64,11 +64,11 @@ unavailable, and rough magnitude (% of users, dollar figure, duration mentioned 
 **lesson** — one sentence. The most transferable insight. Should be actionable for an engineer
 who was not involved.
 
-**interview** — one sentence of advice, as a STATEMENT, never a question. This field is a cram
-sheet: the reader wants to know what to say, not to be quizzed. Never begin with "How would you",
-"Design a", or "What would you".
-Example: "When asked about safe deploys, discuss canary rollouts and automatic CPU circuit
-breakers on rule engines."
+**interview** — one or two short sentences in plain language. State the lesson directly; do not
+frame it with "When asked", "Discuss", "Explain", "Propose", or "cite". Give one main principle
+and one concrete safeguard instead of a long checklist. Avoid unexplained acronyms and specialist
+terms when ordinary words are accurate.
+Example: "Roll out rules gradually, and stop automatically if CPU use or latency jumps."
 
 **source_quote** — exactly one sentence, verbatim from the postmortem text. Choose a sentence
 that best proves the root cause was correctly identified.

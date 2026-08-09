@@ -16,7 +16,7 @@ impact: "Widespread connection failures on the first work-Monday of the year, ex
 trigger: "A return-from-holiday traffic spike hit while Slack's AWS Transit Gateways were still scaling up."
 mechanism: "Network saturation caused packet loss; that tripped health checks, which pulled servers from rotation, concentrating load on fewer machines — a downward spiral. Autoscaling lagged partly because the provisioning service itself was starved."
 lesson: "Demand can outrun autoscaling. Pre-scale for known surges and make health checks resilient to transient loss so they don't amplify the failure."
-interview: "Health-check design under load, pre-warming for predictable spikes, and avoiding retry amplification."
+interview: "Prepare capacity for predictable spikes. Make health checks tolerate brief network failures so they do not remove healthy servers."
 source: "https://slack.engineering/slacks-outage-on-january-4th-2021/"
 sourceLabel: "Slack Engineering"
 source_quote: ""

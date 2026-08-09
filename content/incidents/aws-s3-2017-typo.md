@@ -16,7 +16,7 @@ impact: "S3 in us-east-1 down for hours; thousands of dependent sites and servic
 trigger: "While debugging a billing-system slowdown, an engineer ran a playbook command with a mistyped parameter, removing far more capacity than intended."
 mechanism: "Two core S3 subsystems (indexing and placement) required a full restart. They hadn't been fully restarted in years and took hours to come back; everything depending on S3 in the region degraded with them."
 lesson: "Tooling should refuse to remove capacity below safe thresholds. And your status page must never depend on the thing that's down."
-interview: "Blast-radius control: guardrails on destructive ops, plus out-of-band status reporting."
+interview: "Block destructive commands that cross a safe limit. Keep status reporting separate from the affected system."
 source: "https://aws.amazon.com/message/41926/"
 sourceLabel: "AWS post-event summary"
 source_quote: ""

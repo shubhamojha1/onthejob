@@ -16,7 +16,7 @@ impact: "Global 502s across ~10% of the web — Discord, Shopify, and Cloudflare
 trigger: "A new WAF managed rule for XSS detection was pushed to every edge server worldwide in a single deploy."
 mechanism: "The rule contained a regex with catastrophic backtracking. On every HTTP request it drove CPU to 100% across all edge cores at once. A CPU guard that would have caught it had been removed in an earlier refactor."
 lesson: "Config changes need the same staged rollout as code. \"It's just a rule\" is how a global outage starts."
-interview: "When asked about safe deploys, cite canary rollouts plus automatic CPU/latency circuit breakers on rule engines."
+interview: "Roll out rules gradually, and stop the rollout automatically if CPU use or latency jumps."
 source: "https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/"
 sourceLabel: "Cloudflare blog"
 source_quote: ""

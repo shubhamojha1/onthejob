@@ -36,7 +36,7 @@ lesson: >-
   behaviors (like Dataplane V2 CPU amplification on connection churn) before
   blaming application-layer connection pools — node-level packet drops can mimic
   dozens of unrelated app failures at once.
-interview: "Simultaneous timeouts to unrelated backends on one node point at the host or network, not the app — check NIC and conntrack counters before blaming the deploy."
+interview: "If unrelated services time out on one node, check that node's network limits before blaming the application."
 source: 'https://incident.io/blog/clouds-caches-and-connection-conundrums'
 sourceLabel: incident.io Engineering Blog
 source_quote: >-

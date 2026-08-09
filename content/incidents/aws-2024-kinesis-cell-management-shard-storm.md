@@ -37,10 +37,7 @@ lesson: >-
   can still misbehave on a skewed profile — test cluster-management automation
   against shard-count extremes, not just throughput extremes, and cap its
   reaction rate so a false health signal cannot trigger a redistribution storm.
-interview: >-
-  When asked to design a health-checking control plane for a sharded data
-  service, discuss how oversized or delayed heartbeats can masquerade as host
-  failure and why remediation actions need rate limits and blast-radius caps.
+interview: "Delayed health reports can make healthy hosts look dead. Limit how quickly automated recovery can move work between hosts."
 source: 'https://aws.amazon.com/message/073024/'
 sourceLabel: AWS post-event summary
 source_quote: >-

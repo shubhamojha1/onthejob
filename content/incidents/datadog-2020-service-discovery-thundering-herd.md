@@ -38,7 +38,7 @@ lesson: >-
   when overloaded rather than failing hard — any system that grapples for a
   central dependency at startup turns a localized failure into a platform-wide
   thundering herd.
-interview: "Recovery is its own load event: service discovery needs admission control and staggered reconnects so returning clients cannot cost it quorum."
+interview: "Recovery creates its own traffic spike. Reconnect clients gradually so service discovery stays available."
 source: 'https://www.datadoghq.com/blog/2020-09-25-infrastructure-connectivity-issue/'
 sourceLabel: Datadog Engineering Blog
 source_quote: >-

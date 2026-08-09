@@ -28,10 +28,7 @@ lesson: >-
   Redundancy plans must verify physical and network independence between
   supposedly separate failure domains, not just assume it from provider region
   boundaries.
-interview: >-
-  When asked to design a highly-available multi-region system, discuss how to
-  verify true failure-domain independence between regions rather than trusting
-  provider abstractions.
+interview: "Do not assume cloud regions fail independently. Test that one region can fail without breaking the other."
 source: >-
   https://web.archive.org/web/20211019062735/https://www.pagerduty.com/blog/outage-post-mortem-april-13-2013/
 sourceLabel: PagerDuty blog (archived)

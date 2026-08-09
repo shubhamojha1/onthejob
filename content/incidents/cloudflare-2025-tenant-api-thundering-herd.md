@@ -36,7 +36,7 @@ lesson: >-
   staged rollouts with automatic rollback and substantial capacity headroom — a
   single client-side loop bug can generate enough traffic to collapse
   authentication for an entire platform.
-interview: "A client-side retry loop is a server-side capacity problem: cite request deduplication, backoff with jitter, and circuit breakers on anything in the authorization path."
+interview: "One client bug can overwhelm a shared service. Limit repeated requests before they reach critical authorization systems."
 source: >-
   https://blog.cloudflare.com/deep-dive-into-cloudflares-sept-12-dashboard-and-api-outage/
 sourceLabel: Cloudflare Blog
