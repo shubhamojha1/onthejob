@@ -26,15 +26,17 @@ export function Masthead() {
         <span className="oj-brand-tag">failure archive</span>
       </div>
       <nav className="oj-mast-meta" aria-label="Primary navigation">
-        <a className="oj-nav-link" href="/#archive">Browse archive</a>
-        <NavLink
-          className={({ isActive }) => `oj-nav-link oj-nav-interview${isActive ? ' is-active' : ''}`}
-          to="/interview"
-          aria-label="Interview prep"
-        >
-          <span className="oj-nav-interview-full">Interview prep</span>
-          <span className="oj-nav-interview-short">Prep</span>
-        </NavLink>
+        <div className="oj-nav-destinations">
+          <a className="oj-nav-link oj-nav-archive" href="/#archive">Browse archive</a>
+          <NavLink
+            className={({ isActive }) => `oj-nav-link oj-nav-interview${isActive ? ' is-active' : ''}`}
+            to="/interview"
+            aria-label="Interview prep"
+          >
+            <span className="oj-nav-interview-full">Interview prep</span>
+            <span className="oj-nav-interview-short">Prep</span>
+          </NavLink>
+        </div>
         <a className="oj-nav-share" href={SITE_SHARE_HREF} target="_blank" rel="noreferrer">
           Share on X <span aria-hidden>↗</span>
         </a>
