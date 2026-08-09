@@ -32,7 +32,7 @@
     "discovered_title": "Amazon",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://discuss.circleci.com/t/incident-report-november-8-2021-jobs-stuck-in-a-not-running-state/41890",
@@ -67,7 +67,7 @@
     "discovered_title": "GitHub",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://github.blog/news-insights/company-news/github-availability-report-february-2026/",
@@ -221,7 +221,7 @@
     "discovered_title": "Amazon",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-06-25",
-    "status": "new"
+    "status": "done"
   },
   {
     "url": "https://web.archive.org/web/20180121023549/http://circleci.com/blog/mongohq-security-incident-response/",
