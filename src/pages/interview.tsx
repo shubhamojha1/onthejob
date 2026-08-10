@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Head } from 'vite-react-ssg'
 import interviewEntries from '../generated/interview-index.json'
 import { buildInterviewGuide } from '../features/interview/guide'
+import type { InterviewGuideGroup } from '../features/interview/guide'
 import type { InterviewIndexEntry } from '../schema/incident'
 import { Masthead } from '../components/Masthead'
 import { SITE_URL as SITE } from '../lib/site'
@@ -14,15 +15,40 @@ const entries = interviewEntries as InterviewIndexEntry[]
 
 export function Component() {
   const [query, setQuery] = useState('')
+  const [activeCaseByTopic, setActiveCaseByTopic] = useState<Record<string, number>>({})
+  const [caseAnnouncement, setCaseAnnouncement] = useState('')
   const allGuide = useMemo(() => buildInterviewGuide(entries), [])
   const guide = useMemo(() => buildInterviewGuide(entries, query), [query])
   const { groups, incidentCount: matchCount } = guide
 
+  useEffect(() => {
+    if (!window.location.hash.startsWith('#topic-')) return
+    const target = document.getElementById(window.location.hash.slice(1))
+    if (target?.tagName === 'DETAILS') (target as HTMLDetailsElement).open = true
+  }, [])
+
+  function updateQuery(nextQuery: string) {
+    setActiveCaseByTopic({})
+    setCaseAnnouncement('')
+    setQuery(nextQuery)
+  }
+
+  function cycleTopicCase(group: InterviewGuideGroup, direction: -1 | 1) {
+    const currentIndex = (activeCaseByTopic[group.key] ?? 0) % group.items.length
+    const nextIndex = (currentIndex + direction + group.items.length) % group.items.length
+
+    setActiveCaseByTopic(current => ({ ...current, [group.key]: nextIndex }))
+    setCaseAnnouncement(
+      `${group.label}, case ${nextIndex + 1} of ${group.items.length}. ${group.items[nextIndex].interview}`,
+    )
+  }
+
   function jumpToTopic(key: string) {
-    setQuery('')
+    updateQuery('')
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const target = document.getElementById(`topic-${key}`)
       if (!target) return
+      if (target.tagName === 'DETAILS') (target as HTMLDetailsElement).open = true
       window.history.replaceState(null, '', `#topic-${key}`)
       target.focus({ preventScroll: true })
       target.scrollIntoView({
@@ -90,29 +116,31 @@ export function Component() {
               <input
                 type="search"
                 value={query}
-                onChange={event => setQuery(event.target.value)}
+                onChange={event => updateQuery(event.target.value)}
                 placeholder="e.g. retries, DNS, GitHub…"
               />
             </label>
           </div>
 
-          <nav className="oj-iv-topic-index" aria-label="Interview topics">
-            {allGuide.groups.map(group => (
-              <a
-                key={group.key}
-                href={`#topic-${group.key}`}
-                style={{ '--c': group.color } as React.CSSProperties}
-                onClick={event => {
-                  event.preventDefault()
-                  jumpToTopic(group.key)
-                }}
-              >
-                <i aria-hidden />
-                <span>{group.label}</span>
-                <b>{group.items.length}</b>
-              </a>
-            ))}
-          </nav>
+          <label className="oj-iv-topic-select">
+            <span>Failure mode</span>
+            <select
+              defaultValue=""
+              onChange={event => {
+                const key = event.currentTarget.value
+                if (!key) return
+                jumpToTopic(key)
+                event.currentTarget.value = ''
+              }}
+            >
+              <option value="" disabled>Select a failure mode</option>
+              {allGuide.groups.map(group => (
+                <option key={group.key} value={group.key}>
+                  {group.label} · {group.items.length} {group.items.length === 1 ? 'case' : 'cases'}
+                </option>
+              ))}
+            </select>
+          </label>
         </section>
 
         <div className="oj-iv-results-head" aria-live="polite">
@@ -121,50 +149,89 @@ export function Component() {
               ? `${matchCount} ${matchCount === 1 ? 'incident' : 'incidents'} across ${groups.length} ${groups.length === 1 ? 'topic' : 'topics'}`
               : 'All interview topics'}
           </p>
-          {query && <button type="button" onClick={() => setQuery('')}>Clear search</button>}
+          {query && <button type="button" onClick={() => updateQuery('')}>Clear search</button>}
         </div>
+
+        <p className="oj-iv-case-status" aria-live="polite" aria-atomic="true">
+          {caseAnnouncement}
+        </p>
 
         {groups.length === 0 ? (
           <div className="oj-iv-empty">
             <h2>No matching lessons</h2>
             <p>Try a company, technology, failure mode, or engineering concept.</p>
-            <button type="button" onClick={() => setQuery('')}>Show every topic</button>
+            <button type="button" onClick={() => updateQuery('')}>Show every topic</button>
           </div>
         ) : (
           <div className="oj-iv-groups">
-            {groups.map(group => (
-              <section
-                key={group.key}
-                id={`topic-${group.key}`}
-                className="oj-iv-group"
-                tabIndex={-1}
-                style={{ '--c': group.color } as React.CSSProperties}
-              >
-                <header className="oj-iv-group-head">
-                  <div>
-                    <p className="oj-iv-topic-label"><i aria-hidden /> Failure mode</p>
-                    <h2>{group.label}</h2>
+            {groups.map(group => {
+              const activeIndex = (activeCaseByTopic[group.key] ?? 0) % group.items.length
+              const entry = group.items[activeIndex]
+
+              return (
+                <details
+                  key={group.key}
+                  id={`topic-${group.key}`}
+                  className="oj-iv-group"
+                  tabIndex={-1}
+                  open={query.trim() ? true : undefined}
+                  onToggle={event => {
+                    if (query.trim() && !event.currentTarget.open) event.currentTarget.open = true
+                  }}
+                  style={{ '--c': group.color } as React.CSSProperties}
+                >
+                  <summary className="oj-iv-group-head">
+                    <h2>
+                      <span className="oj-iv-group-title">
+                        <span className="oj-iv-topic-label"><i aria-hidden /> Failure mode</span>
+                        <span className="oj-iv-group-name">{group.label}</span>
+                      </span>
+                      <span className="oj-iv-group-count">{group.items.length} {group.items.length === 1 ? 'case' : 'cases'}</span>
+                      <i className="oj-iv-group-toggle" aria-hidden />
+                      <span className="oj-iv-group-description">{group.description}</span>
+                    </h2>
+                  </summary>
+
+                  <div className="oj-iv-case-viewer">
+                    <article
+                      className="oj-iv-case"
+                      aria-label={`${group.label} case ${activeIndex + 1} of ${group.items.length}`}
+                    >
+                      <div key={entry.id} className="oj-iv-case-content">
+                        <p className="oj-iv-line">{entry.interview}</p>
+                        <Link to={`/incident/${entry.id}`} className="oj-iv-source">
+                          <span>{entry.company} · {entry.year}</span>
+                          <strong>{entry.title}</strong>
+                          <i aria-hidden>→</i>
+                        </Link>
+                      </div>
+                    </article>
+
+                    {group.items.length > 1 && (
+                      <div className="oj-iv-case-controls" role="group" aria-label={`${group.label} cases`}>
+                        <button
+                          type="button"
+                          aria-label={`Previous ${group.label} case`}
+                          onClick={() => cycleTopicCase(group, -1)}
+                        >
+                          <span aria-hidden>←</span>
+                        </button>
+                        <span>{activeIndex + 1} / {group.items.length}</span>
+                        <button
+                          type="button"
+                          aria-label={`Next ${group.label} case`}
+                          onClick={() => cycleTopicCase(group, 1)}
+                        >
+                          <span aria-hidden>→</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <span>{group.items.length} {group.items.length === 1 ? 'case' : 'cases'}</span>
-                  <p>{group.description}</p>
-                </header>
 
-                <ul className="oj-iv-list">
-                  {group.items.map(entry => (
-                    <li key={entry.id} className="oj-iv-item">
-                      <p className="oj-iv-line">{entry.interview}</p>
-                      <Link to={`/incident/${entry.id}`} className="oj-iv-source">
-                        <span>{entry.company} · {entry.year}</span>
-                        <strong>{entry.title}</strong>
-                        <i aria-hidden>→</i>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-
-                <a className="oj-iv-top-link" href="#browse-interview-guide">Back to topics ↑</a>
-              </section>
-            ))}
+                  <a className="oj-iv-top-link" href="#browse-interview-guide">Back to topics ↑</a>
+                </details>
+              )
+            })}
           </div>
         )}
       </main>
