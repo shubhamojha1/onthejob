@@ -200,9 +200,9 @@ export function Component() {
                       <div key={entry.id} className="oj-iv-case-content">
                         <p className="oj-iv-line">{entry.interview}</p>
                         <Link to={`/incident/${entry.id}`} className="oj-iv-source">
-                          <span>{entry.company} · {entry.year}</span>
+                          <span className="oj-iv-source-meta">{entry.company} · {entry.year}</span>
                           <strong>{entry.title}</strong>
-                          <i aria-hidden>→</i>
+                          <span className="oj-iv-source-action">Read full incident report</span>
                         </Link>
                       </div>
                     </article>
