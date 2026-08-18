@@ -8,10 +8,10 @@
     "github-engineering": "2026-08-10T19:30:00.000Z",
     "netflix-tech-blog": "2026-08-07T16:01:02.000Z",
     "sre-weekly": "2026-08-03T01:56:15.000Z",
-    "aws-blog": "2026-08-10T15:45:03.000Z",
-    "openai-news": "2026-08-13T11:00:00.000Z",
+    "aws-blog": "2026-08-17T16:02:36.000Z",
+    "openai-news": "2026-08-17T05:30:00.000Z",
     "google-deepmind": "2026-08-13T17:04:18.000Z",
-    "google-blog": "2026-08-13T17:00:00.000Z"
+    "google-blog": "2026-08-17T08:00:00.000Z"
   },
   "last_pr_number": {
     "danluu/post-mortems": 260
