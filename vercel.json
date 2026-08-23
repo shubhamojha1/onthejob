@@ -1,4 +1,29 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "header", "key": "accept", "value": "(?!.*text/html).*text/markdown.*" }],
+      "destination": "/md/index.md"
+    },
+    {
+      "source": "/incident/:id",
+      "has": [{ "type": "header", "key": "accept", "value": "(?!.*text/html).*text/markdown.*" }],
+      "destination": "/md/incident/:id.md"
+    },
+    {
+      "source": "/class/:key",
+      "has": [{ "type": "header", "key": "accept", "value": "(?!.*text/html).*text/markdown.*" }],
+      "destination": "/md/class/:key.md"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Vary", "value": "Accept, Accept-Encoding" }
+      ]
+    }
+  ]
 }

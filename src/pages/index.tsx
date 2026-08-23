@@ -192,6 +192,35 @@ export function Component() {
     window.scrollTo({ top: window.scrollY + top - 18, behavior: reduceMotion ? 'auto' : 'smooth' })
   }, [results])
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Systems Failed',
+    alternateName: 'systemsfailed.dev',
+    url: 'https://www.systemsfailed.dev',
+    description: 'A field guide to real engineering incidents, indexed by how the system broke. Trace the trigger, cascade, impact, and transferable lesson.',
+    author: {
+      '@type': 'Person',
+      name: 'Shubham Ojha',
+      url: 'https://shubham-ojha.com',
+      sameAs: [
+        'https://x.com/claudeabuser',
+        'https://www.linkedin.com/in/shubhamojha1/',
+      ],
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Shubham Ojha',
+      url: 'https://shubham-ojha.com',
+    },
+    inLanguage: 'en',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://www.systemsfailed.dev/?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <div className="oj-root">
         <Head>
@@ -210,6 +239,7 @@ export function Component() {
           <meta name="twitter:image" content="https://www.systemsfailed.dev/og-image.png" />
           <meta name="twitter:creator" content="@claudeabuser" />
         </Head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
         <Intro incidentCount={incidents.length} />
         <Masthead />
@@ -353,6 +383,21 @@ export function Component() {
             </div>
           )}
 
+          {/* Static fallback for SSG / no-JS crawlers — hidden once JS hydrates */}
+          <noscript>
+            <h2>Incident archive</h2>
+            <ul>
+              {incidents.map(i => (
+                <li key={i.id}>
+                  <a href={`/incident/${i.id}`}>
+                    <strong>{i.company}</strong> ({i.year}) — {i.title}
+                  </a>
+                  <br />{i.impact}
+                </li>
+              ))}
+            </ul>
+          </noscript>
+
           {capped && (
             <div className="oj-showall">
               <button onClick={() => changeLimit('all')}>
@@ -361,6 +406,23 @@ export function Component() {
             </div>
           )}
         </main>
+
+        {/* Failure classes summary — visible to SSG crawlers for richer static content */}
+        <section className="oj-taxonomy-summary" aria-label="Failure taxonomy">
+          <h2>Failure classes</h2>
+          <p>
+            Every incident in the archive is tagged with one or more failure classes — the
+            mechanism of breakdown, not the company that broke. This taxonomy surfaces patterns
+            that repeat across organizations, stacks, and decades.
+          </p>
+          <ul>
+            {Object.entries(FAILURE_CLASSES).map(([key, cls]) => (
+              <li key={key}>
+                <a href={`/class/${key}`}><strong>{cls.label}</strong></a>: {cls.desc}
+              </li>
+            ))}
+          </ul>
+        </section>
 
         {/* Footer */}
         <footer className="oj-footer">

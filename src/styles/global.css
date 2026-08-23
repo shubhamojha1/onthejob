@@ -431,6 +431,15 @@ html[data-theme='dark'] .oj-theme i{background:var(--down)}
 .oj-foot-cta{color:var(--muted)!important}
 .oj-foot-by{color:var(--faint)!important; font-size:12px!important; margin-top:14px!important}
 
+.oj-taxonomy-summary{max-width:1060px; margin:48px auto 0; padding:0 16px}
+.oj-taxonomy-summary h2{font-family:var(--display); font-size:22px; letter-spacing:-.02em; margin:0 0 10px}
+.oj-taxonomy-summary p{font-size:14px; line-height:1.6; color:var(--muted); max-width:68ch; margin:0 0 14px}
+.oj-taxonomy-summary ul{list-style:none; padding:0; margin:0; columns:1}
+.oj-taxonomy-summary li{font-size:13px; line-height:1.7; color:var(--faint); break-inside:avoid; margin-bottom:4px}
+.oj-taxonomy-summary li a{color:var(--ink); text-decoration:none}
+.oj-taxonomy-summary li a:hover{text-decoration:underline}
+@media(min-width:768px){.oj-taxonomy-summary ul{columns:2; column-gap:32px}}
+
 /* ─── Incident report page ───────────────────────────────────────────────── */
 
 .oj-detail-page{max-width:780px; margin:0 auto; padding:36px 0 72px}

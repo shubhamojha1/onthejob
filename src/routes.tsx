@@ -27,6 +27,10 @@ export const routes: RouteRecord[] = [
         getStaticPaths: () => incidentsIndex.map(i => `incident/${i.id}`),
       },
       {
+        path: '404',
+        lazy: () => import('./pages/404'),
+      },
+      {
         path: '*',
         lazy: () => import('./pages/404'),
       },

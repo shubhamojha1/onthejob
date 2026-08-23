@@ -39,6 +39,31 @@ export function Component() {
     navigate(`/?pattern=${pattern}`)
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: meta.label,
+    description: desc,
+    url: `${SITE}/class/${key}`,
+    image: `${SITE}/cards/class-${key}.png`,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Systems Failed',
+      url: SITE,
+    },
+    numberOfItems: incidents.length,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: incidents.length,
+      itemListElement: incidents.map((inc, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        url: `${SITE}/incident/${inc.id}`,
+        name: `${inc.company} — ${inc.title} (${inc.year})`,
+      })),
+    },
+  }
+
   return (
     <div className="oj-root">
       <Head>
@@ -55,6 +80,7 @@ export function Component() {
         <meta name="twitter:description" content={desc} />
         <meta name="twitter:image" content={`${SITE}/cards/class-${key}.png`} />
       </Head>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <Masthead />
 

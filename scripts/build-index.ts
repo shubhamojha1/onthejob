@@ -7,7 +7,7 @@ import { writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import MiniSearch from 'minisearch'
-import { FAILURE_CLASS_KEYS } from '../content/taxonomy.js'
+import { FAILURE_CLASSES, FAILURE_CLASS_KEYS } from '../content/taxonomy.js'
 import { SITE_URL as SITE } from '../src/lib/site.js'
 import { SEARCH_FIELDS, SEARCH_STORE_FIELDS } from '../src/lib/search-config.js'
 import { buildRssFeed } from '../src/lib/rss.js'
@@ -102,6 +102,173 @@ writeFileSync(join(ROOT, 'public', 'sitemap.xml'), sitemap)
 // RSS — newest additions to the archive, not newest incidents in the world.
 writeFileSync(join(ROOT, 'public', 'feed.xml'), buildRssFeed(incidents, SITE))
 
+// llms.txt — machine-readable guide for LLMs and AI agents
+const llmsTxt = `# Systems Failed
+
+> A field guide to real engineering incidents, indexed by how the system broke — not by who had the outage.
+
+Systems Failed is a curated archive of ${incidents.length} public engineering postmortems, organized by failure taxonomy. Each incident is indexed by failure class (the mechanism of breakdown), company, year, and recurring patterns. The archive helps engineers study how production systems fail so they can recognize and prevent similar failures.
+
+## Key pages
+
+- [Homepage](${SITE}/): Browse the full incident archive with filters and search
+- [Interview Prep](${SITE}/interview): System design interview questions drawn from real failures
+- [RSS Feed](${SITE}/feed.xml): Latest incident additions
+- [Sitemap](${SITE}/sitemap.xml): All pages on this site
+
+## Failure classes
+
+${Object.entries(FAILURE_CLASSES).map(([key, cls]) =>
+  `- [${cls.label}](${SITE}/class/${key}): ${cls.desc}`
+).join('\n')}
+
+## Incidents
+
+${incidents.map(i =>
+  `- [${i.company} — ${i.title}](${SITE}/incident/${i.id}) (${i.year}): ${i.impact}`
+).join('\n')}
+
+## API / Data
+
+- [incidents-index.json](${SITE}/data/incidents-index.json): Full incident metadata (JSON array)
+- [search-index.json](${SITE}/data/search-index.json): Pre-built MiniSearch index
+
+## Optional
+
+- [llms-full.txt](${SITE}/llms-full.txt): Complete incident details in plain text
+`
+writeFileSync(join(ROOT, 'public', 'llms.txt'), llmsTxt)
+
+// llms-full.txt — expanded version with full incident content
+const llmsFullTxt = `# Systems Failed — Complete Archive
+
+> ${incidents.length} real engineering postmortems, organized by failure taxonomy.
+
+${incidents.map(i => `## ${i.company} — ${i.title} (${i.year})
+
+- **Date**: ${i.date}
+- **Duration**: ${i.duration}
+- **Failure classes**: ${i.classes.map(c => FAILURE_CLASSES[c].label).join(', ')}
+- **Patterns**: ${i.patterns.join(', ')}
+- **Impact**: ${i.impact}
+- **Trigger**: ${i.trigger}
+- **Mechanism**: ${i.mechanism}
+- **Lesson**: ${i.lesson}
+- **Source**: ${i.source}
+- **URL**: ${SITE}/incident/${i.id}
+`).join('\n')}
+`
+writeFileSync(join(ROOT, 'public', 'llms-full.txt'), llmsFullTxt)
+
+// Markdown version of homepage for content negotiation
+const homepageMd = `# Systems Failed — Failure intelligence for engineers
+
+Production breaks. *The pattern repeats.*
+
+A field guide to real engineering incidents, indexed by **how the system broke** — not by who had the outage. Trace the trigger, the cascade, and the lesson before it repeats on your watch.
+
+- **${incidents.length}** incident reports
+- **${Object.keys(FAILURE_CLASSES).length}** failure classes
+- **${Math.min(...incidents.map(i => i.year))}–${Math.max(...incidents.map(i => i.year))}** years on record
+
+## Failure classes
+
+${Object.entries(FAILURE_CLASSES).map(([key, cls]) =>
+  `- [${cls.label}](${SITE}/class/${key}): ${cls.desc}`
+).join('\n')}
+
+## Incident archive
+
+${incidents.map(i =>
+  `- [${i.company} — ${i.title}](${SITE}/incident/${i.id}) (${i.year}): ${i.impact}`
+).join('\n')}
+
+## Resources
+
+- [Interview Prep](${SITE}/interview)
+- [RSS Feed](${SITE}/feed.xml)
+- [llms.txt](${SITE}/llms.txt)
+- [JSON data](${SITE}/data/incidents-index.json)
+
+---
+
+Built by [Shubham Ojha](https://shubham-ojha.com) · [@claudeabuser](https://x.com/claudeabuser)
+`
+mkdirSync(join(ROOT, 'public', 'md'), { recursive: true })
+writeFileSync(join(ROOT, 'public', 'md', 'index.md'), homepageMd)
+
+// Markdown version of each incident for content negotiation
+const incidentMdDir = join(ROOT, 'public', 'md', 'incident')
+mkdirSync(incidentMdDir, { recursive: true })
+for (const i of incidents) {
+  const md = `# ${i.company} — ${i.title}
+
+**${i.date}** · ${i.duration} · ${i.classes.map(c => FAILURE_CLASSES[c].label).join(', ')}
+
+## Impact
+
+${i.impact}
+
+## Trigger
+
+${i.trigger}
+
+## Mechanism
+
+${i.mechanism}
+
+## Lesson
+
+${i.lesson}
+
+## Interview lens
+
+${i.interview}
+
+## Patterns
+
+${i.patterns.join(', ')}
+
+## Source
+
+[${i.sourceLabel}](${i.source})
+
+---
+
+[View on systemsfailed.dev](${SITE}/incident/${i.id}) · [All incidents](${SITE}/)
+`
+  writeFileSync(join(incidentMdDir, `${i.id}.md`), md)
+}
+
+// Markdown version of each failure class page
+const classMdDir = join(ROOT, 'public', 'md', 'class')
+mkdirSync(classMdDir, { recursive: true })
+for (const key of FAILURE_CLASS_KEYS) {
+  const cls = FAILURE_CLASSES[key]
+  const classIncidents = incidents.filter(i => i.classes.includes(key))
+  const md = `# ${cls.label} — ${classIncidents.length} real ${classIncidents.length === 1 ? 'incident' : 'incidents'}
+
+${cls.desc}
+
+## Incidents
+
+${classIncidents.map(i =>
+  `- [${i.company} — ${i.title}](${SITE}/incident/${i.id}) (${i.year}): ${i.impact}`
+).join('\n')}
+
+## Other failure classes
+
+${FAILURE_CLASS_KEYS.filter(k => k !== key).map(k =>
+  `- [${FAILURE_CLASSES[k].label}](${SITE}/class/${k}): ${FAILURE_CLASSES[k].desc}`
+).join('\n')}
+
+---
+
+[Back to archive](${SITE}/)
+`
+  writeFileSync(join(classMdDir, `${key}.md`), md)
+}
+
 console.log(`\n✓ Built index: ${incidents.length} incidents`)
 console.log(`  → src/generated/incidents-all.json`)
 console.log(`  → src/generated/incidents-index.json`)
@@ -110,3 +277,6 @@ console.log(`  → public/data/incidents-index.json`)
 console.log(`  → public/data/search-index.json`)
 console.log(`  → public/sitemap.xml`)
 console.log(`  → public/feed.xml`)
+console.log(`  → public/llms.txt`)
+console.log(`  → public/llms-full.txt`)
+console.log(`  → public/md/ (markdown content negotiation files)`)

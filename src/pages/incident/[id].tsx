@@ -30,6 +30,38 @@ export function Component() {
   const ogDesc = i.impact
   const ogImage = `${SITE}/cards/${i.id}.png`
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${i.title} — ${i.company} (${i.year})`,
+    description: i.impact,
+    datePublished: i.date,
+    dateModified: i.last_verified ?? i.date_added,
+    url: `${SITE}/incident/${i.id}`,
+    image: ogImage,
+    author: {
+      '@type': 'Person',
+      name: 'Shubham Ojha',
+      url: 'https://shubham-ojha.com',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Shubham Ojha',
+      url: 'https://shubham-ojha.com',
+    },
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Systems Failed',
+      url: SITE,
+    },
+    about: i.classes.map(c => ({
+      '@type': 'Thing',
+      name: FAILURE_CLASSES[c].label,
+      url: `${SITE}/class/${c}`,
+    })),
+    keywords: [...i.classes.map(c => FAILURE_CLASSES[c].label), ...i.patterns, i.company].join(', '),
+  }
+
   return (
     <div className="oj-root">
         <Head>
@@ -46,6 +78,7 @@ export function Component() {
           <meta name="twitter:description" content={ogDesc} />
           <meta name="twitter:image" content={ogImage} />
         </Head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
         <Masthead />
 
