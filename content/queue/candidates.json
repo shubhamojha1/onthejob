@@ -376,5 +376,103 @@
     "source_feed": "cloudflare-blog",
     "date_found": "2026-08-05",
     "status": "rejected"
+  },
+  {
+    "url": "https://blog.cloudflare.com/5-december-2025-outage/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-outage-february-20-2026/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-incident-on-february-6-2025/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-incident-march-21-2025/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-incident-on-june-20-2024/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-incident-on-october-30-2023/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/route-leak-incident-january-22-2026/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/major-data-center-power-failure-again-cloudflare-code-orange-tested/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-incident-on-august-21-2025/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/cloudflare-service-outage-june-12-2025/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/how-cloudflare-mitigated-yet-another-okta-compromise/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/response-to-salesloft-drift-incident/",
+    "discovered_title": "Cloudflare",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://dougseven.com/2014/04/17/knightmare-a-devops-cautionary-tale/",
+    "discovered_title": "Knight Capital",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
+  },
+  {
+    "url": "https://web.archive.org/web/20260315142701/https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital.html",
+    "discovered_title": "longer write-up",
+    "source_feed": "danluu/post-mortems",
+    "date_found": "2026-08-31",
+    "status": "new"
   }
 ]
