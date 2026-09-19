@@ -147,7 +147,7 @@ export function Component() {
     })
 
     return list.sort((a, b) =>
-      sort === 'year' ? b.year - a.year : a.company.localeCompare(b.company)
+      sort === 'year' ? b.year - a.year || b.date.localeCompare(a.date) : a.company.localeCompare(b.company)
     )
   }, [incidents, active, query, sort, searchIndex])
 

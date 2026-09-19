@@ -52,6 +52,7 @@ const interviewEntries: InterviewIndexEntry[] = incidents.map(incident => ({
   id: incident.id,
   company: incident.company,
   year: incident.year,
+  date: incident.date,
   title: incident.title,
   classes: incident.classes,
   patterns: incident.patterns,

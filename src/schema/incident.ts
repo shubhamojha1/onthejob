@@ -56,6 +56,7 @@ export type InterviewIndexEntry = Pick<
   | 'id'
   | 'company'
   | 'year'
+  | 'date'
   | 'title'
   | 'classes'
   | 'patterns'

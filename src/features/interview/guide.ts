@@ -72,7 +72,7 @@ export function buildInterviewGuide(
       const items = entries
         .filter(entry => entry.classes.includes(key))
         .filter(entry => !hasQuery || topicMatches || entryMatches(entry, tokens))
-        .sort((a, b) => b.year - a.year || a.company.localeCompare(b.company))
+        .sort((a, b) => b.year - a.year || b.date.localeCompare(a.date) || a.company.localeCompare(b.company))
 
       return {
         key,

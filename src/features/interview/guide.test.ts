@@ -8,6 +8,7 @@ const entries: InterviewIndexEntry[] = [
     id: 'acme-2025-retry-storm',
     company: 'Acme',
     year: 2025,
+    date: '2025-03-10',
     title: 'Retries overwhelmed the control plane',
     classes: ['cascade', 'dependency'],
     patterns: ['retry-storm', 'shared-dependency'],
@@ -19,6 +20,7 @@ const entries: InterviewIndexEntry[] = [
     id: 'example-2024-overload',
     company: 'Example',
     year: 2024,
+    date: '2024-06-01',
     title: 'A queue collapsed under load',
     classes: ['cascade'],
     patterns: ['missing-backpressure'],
@@ -41,6 +43,16 @@ test('a multi-class incident is browsable under every relevant topic', () => {
     ['acme-2025-retry-storm'],
   )
   assert.equal(guide.incidentCount, 2)
+})
+
+test('within a year, the newest incident is listed first', () => {
+  const older: InterviewIndexEntry = { ...entries[0]!, id: 'aardvark-2025-older', company: 'Aardvark', date: '2025-01-05' }
+  const guide = buildInterviewGuide([older, entries[0]!])
+
+  assert.deepEqual(
+    guide.groups.find(group => group.key === 'cascade')?.items.map(item => item.id),
+    ['acme-2025-retry-storm', 'aardvark-2025-older'],
+  )
 })
 
 test('search filters talking points while preserving their relevant topics', () => {
