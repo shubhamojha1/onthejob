@@ -445,7 +445,7 @@
     "discovered_title": "Cloudflare",
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-08-31",
-    "status": "new"
+    "status": "rejected"
   },
   {
     "url": "https://blog.cloudflare.com/how-cloudflare-mitigated-yet-another-okta-compromise/",
