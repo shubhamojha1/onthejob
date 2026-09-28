@@ -3,7 +3,7 @@
     "danluu/post-mortems": "2026-08-31T14:55:49.513Z"
   },
   "last_feed_date": {
-    "cloudflare-blog": "2026-09-25T13:00:00.000Z",
+    "cloudflare-blog": "2026-09-28T14:51:57.000Z",
     "slack-engineering": "2026-07-14T16:10:08.000Z",
     "github-engineering": "2026-09-25T15:00:00.000Z",
     "netflix-tech-blog": "2026-09-25T16:01:03.000Z",
@@ -11,7 +11,7 @@
     "aws-blog": "2026-09-24T20:58:46.000Z",
     "openai-news": "2026-09-25T19:00:00.000Z",
     "google-deepmind": "2026-09-24T16:20:39.000Z",
-    "google-blog": "2026-09-24T17:00:00.000Z"
+    "google-blog": "2026-09-28T13:00:00.000Z"
   },
   "last_pr_number": {
     "danluu/post-mortems": 261
