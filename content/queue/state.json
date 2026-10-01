@@ -3,15 +3,15 @@
     "danluu/post-mortems": "2026-08-31T14:55:49.513Z"
   },
   "last_feed_date": {
-    "cloudflare-blog": "2026-09-30T13:01:55.000Z",
+    "cloudflare-blog": "2026-10-01T13:04:19.000Z",
     "slack-engineering": "2026-07-14T16:10:08.000Z",
     "github-engineering": "2026-09-25T15:00:00.000Z",
     "netflix-tech-blog": "2026-09-25T16:01:03.000Z",
     "sre-weekly": "2026-08-03T01:56:15.000Z",
-    "aws-blog": "2026-09-28T16:14:54.000Z",
-    "openai-news": "2026-09-29T10:00:00.000Z",
-    "google-deepmind": "2026-09-24T16:20:39.000Z",
-    "google-blog": "2026-09-29T18:00:00.000Z"
+    "aws-blog": "2026-09-30T22:10:00.000Z",
+    "openai-news": "2026-09-30T10:30:00.000Z",
+    "google-deepmind": "2026-09-30T20:01:45.000Z",
+    "google-blog": "2026-09-30T21:30:00.000Z"
   },
   "last_pr_number": {
     "danluu/post-mortems": 261
