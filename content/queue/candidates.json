@@ -474,5 +474,12 @@
     "source_feed": "danluu/post-mortems",
     "date_found": "2026-08-31",
     "status": "rejected"
+  },
+  {
+    "url": "https://blog.cloudflare.com/radar-redesign/",
+    "discovered_title": "Bridging technical depth and usability: The story behind Radar’s redesign",
+    "source_feed": "cloudflare-blog",
+    "date_found": "2026-10-08",
+    "status": "new"
   }
 ]
