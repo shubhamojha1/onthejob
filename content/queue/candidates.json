@@ -481,5 +481,19 @@
     "source_feed": "cloudflare-blog",
     "date_found": "2026-10-08",
     "status": "new"
+  },
+  {
+    "url": "https://github.com/Continuum-AI-Corp/Orca-AI-Incident-Archive",
+    "discovered_title": "Orca AI Incident Archive",
+    "source_feed": "danluu/post-mortems/prs",
+    "date_found": "2026-10-10",
+    "status": "new"
+  },
+  {
+    "url": "https://claude.com/claude-code",
+    "discovered_title": "Claude Code",
+    "source_feed": "danluu/post-mortems/prs",
+    "date_found": "2026-10-10",
+    "status": "new"
   }
 ]
