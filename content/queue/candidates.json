@@ -495,5 +495,12 @@
     "source_feed": "danluu/post-mortems/prs",
     "date_found": "2026-10-10",
     "status": "new"
+  },
+  {
+    "url": "https://blog.cloudflare.com/yandex-outage/",
+    "discovered_title": "Yandex outage: Data shows that instead of going dark, malicious bots went on the move",
+    "source_feed": "cloudflare-blog",
+    "date_found": "2026-10-15",
+    "status": "new"
   }
 ]
