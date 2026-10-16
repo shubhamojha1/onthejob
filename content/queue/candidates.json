@@ -502,5 +502,12 @@
     "source_feed": "cloudflare-blog",
     "date_found": "2026-10-15",
     "status": "new"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Cluster_%28spacecraft%29?oldid=217305667",
+    "discovered_title": "existing cited permanent revision",
+    "source_feed": "danluu/post-mortems/prs",
+    "date_found": "2026-10-16",
+    "status": "rejected"
   }
 ]
