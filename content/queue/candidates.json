@@ -516,5 +516,12 @@
     "source_feed": "openai-news",
     "date_found": "2026-10-27",
     "status": "new"
+  },
+  {
+    "url": "https://benchlet.com/incidentlib/",
+    "discovered_title": "Incident Library",
+    "source_feed": "danluu/post-mortems/prs",
+    "date_found": "2026-11-11",
+    "status": "new"
   }
 ]
